@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getImageUrl } from "@/lib/directus";
 import Header from "@/app/components/Header";
+import { useWishlistStore } from "@/lib/wishlist-store";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryDeep:"#007A76",
@@ -20,21 +21,21 @@ const GRADE_STYLE: Record<string,{color:string,bg:string,border:string}> = {
 };
 
 const ICONS: Record<string,string> = {
-  pc:"💻",laptop:"💻",desktop:"🖥️",smartphones:"📱",
-  tablets:"📱",peripherals:"🖥️",parts:"🔧",accessories:"🎧",
+  pc:"\uD83D\uDCBB",laptop:"\uD83D\uDCBB",desktop:"\uD83D\uDDA5\uFE0F",smartphones:"\uD83D\uDCF1",
+  tablets:"\uD83D\uDCF1",peripherals:"\uD83D\uDDA5\uFE0F",parts:"\uD83D\uDD27",accessories:"\uD83C\uDFA7",
 };
 
 const GRID_ADS = [
-  {bg:"#FF6600",text:"期間限定セール",url:"/search"},
-  {bg:"#0055AA",text:"MacBook特集",url:"/category/laptops-used-mac"},
-  {bg:"#007A76",text:"iPhone中古",url:"/category/smartphones-iphone-used"},
-  {bg:"#884400",text:"ゲーミングPC",url:"/category/desktops-gaming"},
-  {bg:"#550055",text:"タブレット特集",url:"/category/tablets"},
-  {bg:"#AA0000",text:"タイムセール",url:"/search"},
-  {bg:"#004400",text:"SSD大特集",url:"/category/storage-ssd-internal"},
-  {bg:"#003366",text:"ビジネスPC",url:"/category/laptops-used-business"},
-  {bg:"#663300",text:"Android中古",url:"/category/smartphones-android-used"},
-  {bg:"#2A4A4A",text:"周辺機器特集",url:"/category/peripherals"},
+  {text:"\u671F\u9593\u9650\u5B9A\u30BB\u30FC\u30EB",url:"/search"},
+  {text:"MacBook\u7279\u96C6",url:"/category/laptops-used-mac"},
+  {text:"iPhone\u4E2D\u53E4",url:"/category/smartphones-iphone-used"},
+  {text:"\u30B2\u30FC\u30DF\u30F3\u30B0PC",url:"/category/desktops-gaming"},
+  {text:"\u30BF\u30D6\u30EC\u30C3\u30C8\u7279\u96C6",url:"/category/tablets"},
+  {text:"\u30BF\u30A4\u30E0\u30BB\u30FC\u30EB",url:"/search"},
+  {text:"SSD\u5927\u7279\u96C6",url:"/category/storage-ssd-internal"},
+  {text:"\u30D3\u30B8\u30CD\u30B9PC",url:"/category/laptops-used-business"},
+  {text:"Android\u4E2D\u53E4",url:"/category/smartphones-android-used"},
+  {text:"\u5468\u8FBA\u6A5F\u5668\u7279\u96C6",url:"/category/peripherals"},
 ];
 
 function GridBanner() {
@@ -43,21 +44,16 @@ function GridBanner() {
   const MarqueeRow = ({reversed}: {reversed:boolean}) => (
     <div style={{overflow:"hidden",height:155,marginBottom:4}}>
       <div style={{
-        display:"flex",
-        height:"100%",
+        display:"flex",height:"100%",
         animation:`${reversed?"marqueeReverse":"marqueeForward"} 60s linear infinite`,
         width:"max-content",
       }}>
         {doubled.map((ad,i)=>(
           <div key={i} onClick={()=>router.push(ad.url)}
-            style={{
-              width:200,height:155,marginRight:4,flexShrink:0,
-              background:ad.bg,display:"flex",alignItems:"center",
-              justifyContent:"center",cursor:"pointer",borderRadius:2,
-            }}
+            style={{width:200,height:155,marginRight:4,flexShrink:0,background:"#E0E0E0",border:"1px dashed #AAA",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",borderRadius:2}}
             onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
             onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
-            <div style={{fontSize:13,fontWeight:700,color:"#fff",textAlign:"center",padding:"0 8px"}}>{ad.text}</div>
+            <div style={{fontSize:13,fontWeight:700,color:"#888",textAlign:"center",padding:"0 8px"}}>{ad.text}</div>
           </div>
         ))}
       </div>
@@ -66,14 +62,8 @@ function GridBanner() {
   return (
     <>
       <style>{`
-        @keyframes marqueeForward {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-        @keyframes marqueeReverse {
-          from { transform: translateX(-50%); }
-          to { transform: translateX(0); }
-        }
+        @keyframes marqueeForward { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+        @keyframes marqueeReverse { from{transform:translateX(-50%)} to{transform:translateX(0)} }
       `}</style>
       <MarqueeRow reversed={false}/>
       <MarqueeRow reversed={true}/>
@@ -84,36 +74,44 @@ function GridBanner() {
 function GradeBadge({grade}: {grade:string|null}) {
   if(!grade) return null;
   const s = GRADE_STYLE[grade]||GRADE_STYLE.C;
-  return <span style={{display:"inline-block",background:s.bg,color:s.color,border:`1px solid ${s.border}`,borderRadius:2,fontSize:10,fontWeight:700,padding:"1px 5px",marginRight:4}}>グレード{grade}</span>;
+  return <span style={{display:"inline-block",background:s.bg,color:s.color,border:`1px solid ${s.border}`,borderRadius:2,fontSize:10,fontWeight:700,padding:"1px 5px",marginRight:4}}>{"\u30B0\u30EC\u30FC\u30C9"}{grade}</span>;
 }
 
 function ProductCard({product, size="normal"}: {product:any, size?:string}) {
   const [hov,setHov]=useState(false);
   const router=useRouter();
+  const { toggle, hasItem } = useWishlistStore();
+  const [mounted,setMounted]=useState(false);
+  useEffect(()=>setMounted(true),[]);
   const disc=product.compare_at_price?Math.round((1-product.price/product.compare_at_price)*100):0;
   const imgId=product.images?.[0]?.directus_files_id;
   const imgUrl=imgId?getImageUrl(imgId,300,225):null;
+  const liked=mounted&&hasItem(String(product.id));
 
   return (
     <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       style={{background:C.white,border:`1px solid ${hov?C.primary:C.border}`,borderRadius:2,padding:size==="small"?8:10,cursor:"pointer",transition:"border-color 0.15s",display:"flex",flexDirection:"column",gap:4}}>
       <div onClick={()=>router.push(`/products/${product.slug}`)}
         style={{background:"#F5FAFA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",aspectRatio:"4/3",position:"relative",border:`1px solid ${C.primaryBorder}`,marginBottom:6,overflow:"hidden"}}>
-        {imgUrl?<img src={imgUrl} alt={product.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:size==="small"?36:48}}>💻</span>}
+        {imgUrl?<img src={imgUrl} alt={product.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:size==="small"?36:48}}>{"\uD83D\uDCBB"}</span>}
         {disc>=10&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
+        <div onClick={e=>{e.stopPropagation();toggle({id:String(product.id),slug:product.slug,name:product.name,price:product.price,imageUrl:imgUrl,brand:product.brand_id?.name||"",grade:product.grade});}}
+          style={{position:"absolute",top:6,left:6,width:26,height:26,background:"rgba(255,255,255,0.9)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:14,boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>
+          {liked?"\u2764\uFE0F":"\uD83E\uDD0D"}
+        </div>
       </div>
       <div onClick={()=>router.push(`/products/${product.slug}`)}>
         <div style={{fontSize:10,color:C.textLight}}>{product.brand_id?.name||"—"}</div>
         <div style={{fontSize:size==="small"?11:12,color:hov?C.primary:C.text,lineHeight:1.5,display:"-webkit-box" as any,WebkitLineClamp:3,WebkitBoxOrient:"vertical" as any,overflow:"hidden"}}>{product.name}</div>
         {product.grade&&<div style={{marginTop:2}}><GradeBadge grade={product.grade}/></div>}
         <div style={{marginTop:4}}>
-          {product.compare_at_price&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>定価 ¥{product.compare_at_price.toLocaleString()}</div>}
-          <div style={{fontSize:size==="small"?14:16,fontWeight:700,color:C.red}}>¥{product.price.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>（税込）</span></div>
+          {product.compare_at_price&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>{"\u5B9A\u4FA1"} &yen;{product.compare_at_price.toLocaleString()}</div>}
+          <div style={{fontSize:size==="small"?14:16,fontWeight:700,color:C.red}}>&yen;{product.price.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>{"\uFF08\u7A0E\u8FBC\uFF09"}</span></div>
         </div>
       </div>
       <button onClick={()=>router.push(`/products/${product.slug}`)}
         style={{marginTop:"auto",background:hov?C.primaryDark:C.primary,color:"#fff",border:"none",borderRadius:2,padding:"6px 8px",fontSize:11,fontWeight:700,cursor:"pointer",width:"100%",fontFamily:"inherit"}}>
-        詳細を見る →
+        {"\u8A73\u7D30\u3092\u898B\u308B"} &rarr;
       </button>
     </div>
   );
@@ -128,7 +126,7 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
   return (
     <div style={{width:185,flexShrink:0}}>
       <div style={{background:C.primary,color:"#fff",padding:"7px 10px",fontSize:12,fontWeight:700,borderBottom:`1px solid ${C.primaryDark}`,display:"flex",alignItems:"center",gap:6}}>
-        <span>■</span> カテゴリ <span style={{fontSize:9,fontWeight:400,marginLeft:2,opacity:0.8}}>category</span>
+        <span>&#9632;</span> {"\u30AB\u30C6\u30B4\u30EA"} <span style={{fontSize:9,fontWeight:400,marginLeft:2,opacity:0.8}}>category</span>
       </div>
       {roots.map(cat=>{
         const children=getChildren(String(cat.id));
@@ -136,7 +134,7 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
         return (
           <div key={cat.id}>
             <div onClick={()=>toggle(String(cat.id))} style={{padding:"8px 10px",background:isOpen?C.primaryBg:"#F9F9F9",borderBottom:"1px solid #D8ECEC",cursor:"pointer",display:"flex",alignItems:"center",gap:6,borderLeft:`3px solid ${isOpen?C.primary:"transparent"}`}}>
-              <span style={{fontSize:14}}>{ICONS[cat.slug]||"📦"}</span>
+              <span style={{fontSize:14}}>{ICONS[cat.slug]||"\uD83D\uDCE6"}</span>
               <div style={{flex:1}}><div style={{fontSize:12,fontWeight:700,color:C.text}}>{cat.name}</div></div>
               <span style={{fontSize:10,color:C.primary,fontWeight:700}}>{isOpen?"▲":"▶"}</span>
             </div>
@@ -156,7 +154,7 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
                   onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
                   onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
                   <span style={{color:C.primary,fontSize:9}}>▶</span>
-                  <span>すべて見る</span>
+                  <span>{"\u3059\u3079\u3066\u898B\u308B"}</span>
                 </div>
               </div>
             )}
@@ -164,7 +162,11 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
         );
       })}
       <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
-        {[{icon:"🚚",title:"送料について",sub:"全国一律送料"},{icon:"🛡️",title:"30日間保証",sub:"全商品保証付き"},{icon:"📞",title:"お問い合わせ",sub:"03-0000-0000"}].map((item,i)=>(
+        {[
+          {icon:"\uD83D\uDE9A",title:"\u9001\u6599\u306B\u3064\u3044\u3066",sub:"\u5168\u56FD\u4E00\u5F8B\u9001\u6599"},
+          {icon:"\uD83D\uDEE1\uFE0F",title:"30\u65E5\u9593\u4FDD\u8A3C",sub:"\u5168\u5546\u54C1\u4FDD\u8A3C\u4ED8\u304D"},
+          {icon:"\uD83D\uDCDE",title:"\u304A\u554F\u3044\u5408\u308F\u305B",sub:"03-0000-0000"},
+        ].map((item,i)=>(
           <div key={i} style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>
             <div style={{fontSize:12,fontWeight:700,color:C.text,display:"flex",alignItems:"center",gap:5}}><span>{item.icon}</span>{item.title}</div>
             <div style={{fontSize:10,color:C.textLight,marginTop:2}}>{item.sub}</div>
@@ -176,31 +178,31 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
 }
 
 const LEFT_ADS = [
-  {bg:"#FF6600",text:"期間限定\nセール",url:"/search"},
-  {bg:"#0055AA",text:"MacBook\n特集",url:"/category/laptops-used-mac"},
-  {bg:"#007A76",text:"iPhone\n中古",url:"/category/smartphones-iphone-used"},
-  {bg:"#884400",text:"ゲーミング\nPC",url:"/category/desktops-gaming"},
-  {bg:"#550055",text:"タブレット\n特集",url:"/category/tablets"},
+  {text:"\u671F\u9593\u9650\u5B9A\n\u30BB\u30FC\u30EB",url:"/search"},
+  {text:"MacBook\n\u7279\u96C6",url:"/category/laptops-used-mac"},
+  {text:"iPhone\n\u4E2D\u53E4",url:"/category/smartphones-iphone-used"},
+  {text:"\u30B2\u30FC\u30DF\u30F3\u30B0\nPC",url:"/category/desktops-gaming"},
+  {text:"\u30BF\u30D6\u30EC\u30C3\u30C8\n\u7279\u96C6",url:"/category/tablets"},
 ];
 
 const RIGHT_ADS = [
-  {bg:"#AA0000",text:"本日限定\nタイムセール",url:"/search"},
-  {bg:"#004400",text:"SSD\n大特集",url:"/category/storage-ssd-internal"},
-  {bg:"#003366",text:"ビジネス\nPC",url:"/category/laptops-used-business"},
-  {bg:"#663300",text:"Android\n中古",url:"/category/smartphones-android-used"},
-  {bg:"#2A4A4A",text:"周辺機器\n特集",url:"/category/peripherals"},
+  {text:"\u672C\u65E5\u9650\u5B9A\n\u30BF\u30A4\u30E0\u30BB\u30FC\u30EB",url:"/search"},
+  {text:"SSD\n\u5927\u7279\u96C6",url:"/category/storage-ssd-internal"},
+  {text:"\u30D3\u30B8\u30CD\u30B9\nPC",url:"/category/laptops-used-business"},
+  {text:"Android\n\u4E2D\u53E4",url:"/category/smartphones-android-used"},
+  {text:"\u5468\u8FBA\u6A5F\u5668\n\u7279\u96C6",url:"/category/peripherals"},
 ];
 
-function AdColumn({ads}: {ads:typeof LEFT_ADS}) {
+function AdColumn({ads}: {ads:{text:string,url:string}[]}) {
   const router = useRouter();
   return (
-    <div style={{width:100,flexShrink:0,display:"flex",flexDirection:"column",gap:4}}>
+    <div style={{width:90,flexShrink:0,display:"flex",flexDirection:"column",gap:4}}>
       {ads.map((ad,i)=>(
         <div key={i} onClick={()=>router.push(ad.url)}
-          style={{background:ad.bg,borderRadius:2,height:120,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",padding:4,transition:"opacity 0.15s"}}
+          style={{width:90,height:400,background:"#E8E8E8",border:"1px dashed #AAA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"opacity 0.15s",writingMode:"vertical-rl",textOrientation:"mixed"}}
           onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
           onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
-          <div style={{fontSize:10,fontWeight:700,color:"#fff",textAlign:"center",lineHeight:1.5,whiteSpace:"pre-line"}}>{ad.text}</div>
+          <div style={{fontSize:11,color:"#999",textAlign:"center",lineHeight:1.8,whiteSpace:"pre-line"}}>{ad.text}</div>
         </div>
       ))}
     </div>
@@ -222,38 +224,35 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
   const [openCats,setOpenCats]=useState(roots.length>0?[String(roots[0]?.id)]:["1"]);
 
   return (
-    <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
+    <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
 
       <Header/>
       <div style={{maxWidth:1100,margin:"4px auto",padding:"0 10px",overflow:"hidden"}}>
-  <GridBanner/>
-</div>
+        <GridBanner/>
+      </div>
 
       <div style={{maxWidth:1100,margin:"10px auto",padding:"0 10px"}}>
         <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
 
-          {/* 左广告位 */}
           <AdColumn ads={LEFT_ADS}/>
-
           <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats}/>
 
           <div style={{flex:1,minWidth:0}}>
 
-
             <div style={{background:`linear-gradient(135deg,${C.primaryBg},#C8EEEC)`,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"14px 18px",marginBottom:10,display:"flex",alignItems:"center",gap:16}}>
-              <div style={{fontSize:44}}>🖥️</div>
+              <div style={{fontSize:44}}>{"\uD83D\uDDA5\uFE0F"}</div>
               <div>
-                <div style={{fontSize:18,fontWeight:900,color:C.primaryDeep}}>中古PC・スマートフォンが豊富！</div>
-                <div style={{fontSize:12,color:C.textSub,marginTop:4}}>全商品30日間動作保証付き・即日発送対応</div>
+                <div style={{fontSize:18,fontWeight:900,color:C.primaryDeep}}>{"\u4E2D\u53E4PC\u30FB\u30B9\u30DE\u30FC\u30C8\u30D5\u30A9\u30F3\u304C\u8C4A\u5BCC\uFF01"}</div>
+                <div style={{fontSize:12,color:C.textSub,marginTop:4}}>{"\u5168\u5546\u54C130\u65E5\u9593\u52D5\u4F5C\u4FDD\u8A3C\u4ED8\u304D\u30FB\u5373\u65E5\u767A\u9001\u5BFE\u5FDC"}</div>
               </div>
               <div style={{marginLeft:"auto"}}>
-                <button onClick={()=>router.push("/search")} style={{background:C.primary,color:"#fff",border:"none",padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>商品一覧を見る →</button>
+                <button onClick={()=>router.push("/search")} style={{background:C.primary,color:"#fff",border:"none",padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>{"\u5546\u54C1\u4E00\u89A7\u3092\u898B\u308B"} &rarr;</button>
               </div>
             </div>
 
             <div style={{background:C.white,border:`1px solid ${C.border}`,padding:"6px 10px",marginBottom:10,display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
-              <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>グレードガイド：</span>
-              {[{g:"S",l:"未使用品"},{g:"A",l:"美品"},{g:"B",l:"中古良品"},{g:"C",l:"中古品"}].map(({g,l})=>(
+              <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>{"\u30B0\u30EC\u30FC\u30C9\u30AC\u30A4\u30C9\uFF1A"}</span>
+              {[{g:"S",l:"\u672A\u4F7F\u7528\u54C1"},{g:"A",l:"\u7F8E\u54C1"},{g:"B",l:"\u4E2D\u53E4\u826F\u54C1"},{g:"C",l:"\u4E2D\u53E4\u54C1"}].map(({g,l})=>(
                 <span key={g} style={{display:"flex",alignItems:"center",gap:4}}>
                   <GradeBadge grade={g}/><span style={{fontSize:10,color:C.textSub}}>{l}</span>
                 </span>
@@ -261,14 +260,14 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
             </div>
 
             <div style={{marginBottom:14}}>
-              <SectionHeader icon="★" title="注目商品一覧" en="FEATURED ITEMS"/>
+              <SectionHeader icon="★" title={"\u6CE8\u76EE\u5546\u54C1\u4E00\u89A7"} en="FEATURED ITEMS"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
                 {featured.map((p:any)=><ProductCard key={p.id} product={p}/>)}
               </div>
             </div>
 
             <div style={{marginBottom:14}}>
-              <SectionHeader icon="🆕" title="新着商品" en="NEW ARRIVALS" color={C.primaryDeep}/>
+              <SectionHeader icon="🆕" title={"\u65B0\u7740\u5546\u54C1"} en="NEW ARRIVALS" color={C.primaryDeep}/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
                 {newArrivals.map((p:any)=><ProductCard key={p.id} product={p} size="small"/>)}
               </div>
@@ -276,9 +275,9 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
 
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
               {[
-                {icon:"🛡️",title:"30日間動作保証",body:"全商品に動作保証を付けてお届けします。万が一の際は交換・返金対応いたします。"},
-                {icon:"🚚",title:"即日・翌日発送",body:"平日14時までのご注文は当日発送。最短翌日お届けが可能です（一部地域除く）。"},
-                {icon:"📞",title:"専門スタッフが対応",body:"商品選びのご相談は電話・メールで承っております。お気軽にお問い合わせください。"},
+                {icon:"\uD83D\uDEE1\uFE0F",title:"30\u65E5\u9593\u52D5\u4F5C\u4FDD\u8A3C",body:"\u5168\u5546\u54C1\u306B\u52D5\u4F5C\u4FDD\u8A3C\u3092\u4ED8\u3051\u3066\u304A\u5C4A\u3051\u3057\u307E\u3059\u3002\u4E07\u304C\u4E00\u306E\u969B\u306F\u4EA4\u63DB\u30FB\u8FD4\u91D1\u5BFE\u5FDC\u3044\u305F\u3057\u307E\u3059\u3002"},
+                {icon:"\uD83D\uDE9A",title:"\u5373\u65E5\u30FB\u7FCC\u65E5\u767A\u9001",body:"\u5E73\u65E514\u6642\u307E\u3067\u306E\u3054\u6CE8\u6587\u306F\u5F53\u65E5\u767A\u9001\u3002\u6700\u77ED\u7FCC\u65E5\u304A\u5C4A\u3051\u304C\u53EF\u80FD\u3067\u3059\uFF08\u4E00\u90E8\u5730\u57DF\u9664\u304F\uFF09\u3002"},
+                {icon:"\uD83D\uDCDE",title:"\u5C02\u9580\u30B9\u30BF\u30C3\u30D5\u304C\u5BFE\u5FDC",body:"\u5546\u54C1\u9078\u3073\u306E\u3054\u76F8\u8AC7\u306F\u96FB\u8A71\u30FB\u30E1\u30FC\u30EB\u3067\u627F\u3063\u3066\u304A\u308A\u307E\u3059\u3002\u304A\u6C17\u8EFD\u306B\u304A\u554F\u3044\u5408\u308F\u305B\u304F\u3060\u3055\u3044\u3002"},
               ].map((item,i)=>(
                 <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,padding:10,borderRadius:"0 0 2px 2px"}}>
                   <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:6,display:"flex",alignItems:"center",gap:6}}>
@@ -290,7 +289,7 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
             </div>
 
             <div style={{marginBottom:14}}>
-              <SectionHeader icon="🏷️" title="ブランドから探す" en="BRANDS" color="#555"/>
+              <SectionHeader icon="🏷️" title={"\u30D6\u30E9\u30F3\u30C9\u304B\u3089\u63A2\u3059"} en="BRANDS" color="#555"/>
               <div style={{display:"flex",flexWrap:"wrap",gap:6,background:C.white,border:`1px solid ${C.border}`,padding:10}}>
                 {brands.map((b:any)=>(
                   <div key={b.id} onClick={()=>router.push(`/search?brand=${b.slug}`)}
@@ -303,7 +302,6 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
             </div>
           </div>
 
-          {/* 右广告位 */}
           <AdColumn ads={RIGHT_ADS}/>
 
         </div>
@@ -311,14 +309,14 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
 
       <div style={{background:"#2A4A4A",color:"#AACCCC",padding:"16px 10px",marginTop:10}}>
         <div style={{maxWidth:1100,margin:"0 auto"}}>
-          <div style={{fontSize:20,fontWeight:900,color:C.primary,fontFamily:"Arial Black,sans-serif",marginBottom:8,cursor:"pointer"}} onClick={()=>router.push("/")}>デジマルショップ</div>
+          <div style={{fontSize:20,fontWeight:900,color:C.primary,fontFamily:"Arial Black,sans-serif",marginBottom:8,cursor:"pointer"}} onClick={()=>router.push("/")}>{"\u30C7\u30B8\u30DE\u30EB\u30B7\u30E7\u30C3\u30D7"}</div>
           <div style={{display:"flex",gap:20,marginBottom:10,flexWrap:"wrap"}}>
-            {["会社概要","特定商取引法に基づく表記","プライバシーポリシー","ショッピングガイド","お問い合わせ"].map(l=>(
+            {["\u4F1A\u793E\u6982\u8981","\u7279\u5B9A\u5546\u53D6\u5F15\u6CD5\u306B\u57FA\u3065\u304F\u8868\u8A18","\u30D7\u30E9\u30A4\u30D0\u30B7\u30FC\u30DD\u30EA\u30B7\u30FC","\u30B7\u30E7\u30C3\u30D4\u30F3\u30B0\u30AC\u30A4\u30C9","\u304A\u554F\u3044\u5408\u308F\u305B"].map(l=>(
               <span key={l} style={{fontSize:11,cursor:"pointer",color:"#7AACAC"}}>{l}</span>
             ))}
           </div>
           <div style={{fontSize:10,color:"#5A8A8A",borderTop:"1px solid #3A6A6A",paddingTop:10}}>
-            © 2024 デジマルショップ. All Rights Reserved.
+            &copy; 2024 {"\u30C7\u30B8\u30DE\u30EB\u30B7\u30E7\u30C3\u30D7"}. All Rights Reserved.
           </div>
         </div>
       </div>

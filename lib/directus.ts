@@ -1,0 +1,131 @@
+const DIRECTUS_URL = "https://directus-production-2cfe.up.railway.app";
+const ADMIN_TOKEN = "a5RnKIXFibE5JV_50ir42Hk84JnMZVMb";
+
+const adminHeaders = {
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${ADMIN_TOKEN}`,
+};
+
+const publicHeaders = {
+  "Content-Type": "application/json",
+};
+
+// ─── PRODUCTS ─────────────────────────────────────────────────
+export async function getProducts(options: {
+  limit?: number;
+  filter?: Record<string, any>;
+  sort?: string[];
+} = {}) {
+  const { limit = 20, filter = {}, sort = ["-published_at"] } = options;
+  const params = new URLSearchParams({
+    limit: String(limit),
+    sort: sort.join(","),
+    "fields[]": "id,slug,name,short_description,price,compare_at_price,grade,condition,is_featured,is_new,published_at,cpu,os,memory,storage,display_size,brand_id.name,brand_id.slug,category_id.name,category_id.slug,category_id.id,images.directus_files_id",
+  });
+  if (Object.keys(filter).length > 0) params.append("filter", JSON.stringify(filter));
+  try {
+    const res = await fetch(`${DIRECTUS_URL}/items/products?${params}`, { headers: publicHeaders, cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return (await res.json()).data || [];
+  } catch (e) { console.error("[getProducts]", e); return []; }
+}
+
+export async function getFeaturedProducts() {
+  return getProducts({ limit: 8, filter: { is_published: { _eq: true }, is_featured: { _eq: true } } });
+}
+
+export async function getNewArrivals() {
+  return getProducts({ limit: 4, filter: { is_published: { _eq: true } }, sort: ["-published_at"] });
+}
+
+export async function getProductBySlug(slug: string) {
+  try {
+    const res = await fetch(
+      `${DIRECTUS_URL}/items/products?filter[slug][_eq]=${slug}&fields[]=id,slug,name,description,short_description,price,compare_at_price,grade,condition,cpu,os,memory,storage,display_size,brand_id.name,category_id.name,category_id.slug,images.directus_files_id`,
+      { headers: publicHeaders, cache: "no-store" }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return (await res.json()).data?.[0] || null;
+  } catch (e) { console.error("[getProductBySlug]", e); return null; }
+}
+
+export async function getCategories() {
+  try {
+    const res = await fetch(`${DIRECTUS_URL}/items/categories?limit=50&sort[]=sort_order&fields[]=id,name,slug,parent_id`, { headers: publicHeaders, cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return (await res.json()).data || [];
+  } catch (e) { console.error("[getCategories]", e); return []; }
+}
+
+export async function getBrands() {
+  try {
+    const res = await fetch(`${DIRECTUS_URL}/items/brands?limit=50&sort[]=sort_order&fields[]=id,name,slug`, { headers: publicHeaders, cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return (await res.json()).data || [];
+  } catch (e) { console.error("[getBrands]", e); return []; }
+}
+
+export function getImageUrl(fileId: string, width = 400, height = 300) {
+  if (!fileId) return null;
+  return `${DIRECTUS_URL}/assets/${fileId}?width=${width}&height=${height}&fit=cover`;
+}
+
+// ─── AUTH ─────────────────────────────────────────────────────
+export async function loginUser(email: string, password: string) {
+  try {
+    const res = await fetch(`${DIRECTUS_URL}/auth/login`, {
+      method: "POST",
+      headers: publicHeaders,
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.errors?.[0]?.message || "ログイン失敗");
+    return { success: true, token: data.data.access_token, refresh_token: data.data.refresh_token };
+  } catch (e: any) {
+    return { success: false, error: e.message };
+  }
+}
+
+export async function registerUser(email: string, password: string, firstName: string, lastName: string) {
+  try {
+    // Directusのユーザー登録
+    const res = await fetch(`${DIRECTUS_URL}/users`, {
+      method: "POST",
+      headers: adminHeaders,
+      body: JSON.stringify({
+        email,
+        password,
+        first_name: firstName,
+        last_name: lastName,
+        status: "active",
+        role: "506b19d2-ae5d-47af-a560-5637ed29febf", // 一般ユーザーロール
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.errors?.[0]?.message || "登録失敗");
+    // 登録後すぐログイン
+    return loginUser(email, password);
+  } catch (e: any) {
+    return { success: false, error: e.message };
+  }
+}
+
+export async function getCurrentUser(token: string) {
+  try {
+    const res = await fetch(`${DIRECTUS_URL}/users/me`, {
+      headers: { ...publicHeaders, "Authorization": `Bearer ${token}` },
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return (await res.json()).data || null;
+  } catch { return null; }
+}
+
+export async function logoutUser(token: string) {
+  try {
+    await fetch(`${DIRECTUS_URL}/auth/logout`, {
+      method: "POST",
+      headers: { ...publicHeaders, "Authorization": `Bearer ${token}` },
+    });
+  } catch {}
+}

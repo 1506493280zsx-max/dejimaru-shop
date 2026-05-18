@@ -1,0 +1,146 @@
+"use client";
+import { useRouter } from "next/navigation";
+import Sidebar from "@/app/components/Sidebar";
+
+const C = {
+  primary:"#0ABAB5", primaryDark:"#089490", primaryBg:"#E8F8F8",
+  primaryBorder:"#B0E0DE", text:"#333", textSub:"#666", textLight:"#999",
+  border:"#DDD", bg:"#F0F5F5", white:"#FFF", red:"#CC2200",
+};
+
+const GUIDE_SECTIONS = [
+  {id:"first",   icon:"📖", label:"初めてご利用のお客様"},
+  {id:"payment", icon:"💴", label:"お支払い方法について"},
+  {id:"shipping",icon:"🚚", label:"配送について"},
+  {id:"warranty",icon:"🛡️", label:"保証について"},
+  {id:"defect",  icon:"⚡", label:"初期不良について"},
+  {id:"faq",     icon:"❓", label:"よくあるご質問", path:"/faq"},
+  {id:"products",icon:"💻", label:"掲載商品について"},
+  {id:"privacy", icon:"🔒", label:"プライバシーポリシーについて"},
+];
+
+function Section({id,title,children}:{id:string,title:string,children:any}) {
+  return (
+    <div id={id} style={{marginBottom:28,scrollMarginTop:20}}>
+      <div style={{background:C.primary,color:"#fff",padding:"8px 14px",fontSize:14,fontWeight:700,borderRadius:"2px 2px 0 0"}}>{title}</div>
+      <div style={{background:C.white,border:`1px solid ${C.border}`,borderTop:"none",padding:16,borderRadius:"0 0 2px 2px",fontSize:13,lineHeight:1.9,color:C.text}}>{children}</div>
+    </div>
+  );
+}
+
+function Row({label,value}:{label:string,value:any}) {
+  return (
+    <div style={{display:"flex",borderBottom:`1px solid #EEF6F6`,padding:"9px 0"}}>
+      <div style={{width:180,fontWeight:700,color:C.textSub,flexShrink:0}}>{label}</div>
+      <div style={{flex:1}}>{value}</div>
+    </div>
+  );
+}
+
+export default function GuideClient({categories}:{categories:any[]}) {
+  const router = useRouter();
+  const handleNav = (s:typeof GUIDE_SECTIONS[0]) => {
+    if(s.path){ router.push(s.path); return; }
+    document.getElementById(s.id)?.scrollIntoView({behavior:"smooth"});
+  };
+
+  return (
+    <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
+      <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
+        <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",cursor:"pointer"}} onClick={()=>router.push("/")}>
+          <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
+        </div>
+      </div>
+      <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
+        <div style={{maxWidth:1100,margin:"0 auto",padding:"7px 10px",fontSize:11,color:"#fff",display:"flex",gap:6}}>
+          <span style={{cursor:"pointer"}} onClick={()=>router.push("/")}>ホーム</span>
+          <span>›</span><span style={{fontWeight:700}}>ショッピングガイド</span>
+        </div>
+      </div>
+
+      <div style={{maxWidth:1100,margin:"10px auto",padding:"0 10px 40px"}}>
+        <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+          <Sidebar categories={categories}/>
+          <div style={{flex:1,minWidth:0}}>
+            <h1 style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>📋 ショッピングガイド</h1>
+
+            {/* Card nav */}
+            <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,padding:16,marginBottom:24}}>
+              <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>ショッピングガイド</div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
+                {GUIDE_SECTIONS.map(s=>(
+                  <div key={s.id} onClick={()=>handleNav(s)}
+                    style={{border:`1px solid ${C.border}`,borderRadius:2,padding:"14px 10px",textAlign:"center",cursor:"pointer",background:C.white,transition:"all 0.15s"}}
+                    onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor=C.primary;(e.currentTarget as HTMLElement).style.background=C.primaryBg;}}
+                    onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=C.border;(e.currentTarget as HTMLElement).style.background=C.white;}}>
+                    <div style={{fontSize:28,marginBottom:6}}>{s.icon}</div>
+                    <div style={{fontSize:11,color:C.text,lineHeight:1.4}}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Section id="first" title="📖 初めてご利用のお客様">
+              <p>デジマルショップへようこそ！当ショップでの商品のご購入方法をご説明いたします。</p><br/>
+              <p style={{fontWeight:700}}>【ご注文の流れ】</p>
+              <ol style={{paddingLeft:20,marginTop:8}}>
+                <li style={{marginBottom:6}}>商品ページの「カートに入れる」をクリック</li>
+                <li style={{marginBottom:6}}>カートページで数量を確認し「ご注文手続きへ」をクリック</li>
+                <li style={{marginBottom:6}}>お客様情報・お届け先・お支払い方法を入力</li>
+                <li style={{marginBottom:6}}>内容を確認して「注文を確定する」をクリック</li>
+                <li style={{marginBottom:6}}>ご注文確認メールが届きましたら完了です</li>
+              </ol>
+            </Section>
+
+            <Section id="payment" title="💴 お支払い方法について">
+              <Row label="銀行振込" value="ご注文後、振込先口座をメールにてご連絡いたします。振込手数料はお客様負担です。"/>
+              <Row label="代金引換" value="商品受け取り時に配送員へお支払いください。代引手数料は330円〜です（現金のみ）。"/>
+              <Row label="クレジットカード" value="VISA・MasterCard・JCB・AMEX対応。"/>
+              <br/><div style={{padding:10,background:"#FFF8E8",border:"1px solid #F0D080",borderRadius:2,fontSize:12,color:"#886600"}}>※30万円以上の場合、代金引換はご利用いただけません。</div>
+            </Section>
+
+            <Section id="shipping" title="🚚 配送について">
+              <Row label="送料" value="全国一律無料（沖縄・離島を除く）"/>
+              <Row label="配送業者" value="ヤマト運輸・佐川急便（商品により異なります）"/>
+              <Row label="出荷日" value="平日14時までのご注文は当日出荷（土日祝除く）"/>
+              <Row label="お届け日数" value="出荷翌日〜3営業日程度"/>
+              <Row label="時間指定" value="午前中・14〜16時・16〜18時・18〜20時・19〜21時"/>
+            </Section>
+
+            <Section id="warranty" title="🛡️ 保証について">
+              <Row label="保証期間" value="商品到着後30日間（初期不良対応）"/>
+              <Row label="保証内容" value="通常使用における故障・初期不良の場合、交換または返金対応"/>
+              <Row label="対象外" value="お客様の過失による破損・水没・改造等"/>
+            </Section>
+
+            <Section id="defect" title="⚡ 初期不良について">
+              <p>万が一初期不良があった場合の対応です。</p><br/>
+              <ol style={{paddingLeft:20}}>
+                <li style={{marginBottom:6}}>商品到着後5日以内にご連絡ください</li>
+                <li style={{marginBottom:6}}>当ショップにて状況を確認いたします</li>
+                <li style={{marginBottom:6}}>代替品の発送またはご返金にて対応いたします</li>
+              </ol>
+            </Section>
+
+            <Section id="products" title="💻 掲載商品について">
+              <Row label="グレードS" value="未使用品または新品同様。傷・汚れなし"/>
+              <Row label="グレードA" value="使用感がほとんどなく美品"/>
+              <Row label="グレードB" value="軽微な傷・使用感あり。動作に問題なし"/>
+              <Row label="グレードC" value="傷・汚れがあるが動作に問題なし"/>
+            </Section>
+
+            <Section id="privacy" title="🔒 プライバシーポリシーについて">
+              <Row label="収集する情報" value="氏名・住所・電話番号・メールアドレス・購入履歴など"/>
+              <Row label="利用目的" value="商品の発送・お問い合わせへの対応・サービス向上のため"/>
+              <Row label="第三者提供" value="法令に基づく場合を除き、第三者への提供は行いません"/>
+            </Section>
+
+            <div style={{textAlign:"center",marginTop:16}}>
+              <button onClick={()=>router.push("/")} style={{background:C.primary,color:"#fff",border:"none",padding:"10px 24px",borderRadius:2,fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>← トップページへ戻る</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -127,7 +127,7 @@ export default function SearchClient({initialProducts,brands,categories,query,br
     const q=search.toLowerCase();
     const matchQ=!q||p.name?.toLowerCase().includes(q)||p.brand_id?.name?.toLowerCase().includes(q)||p.short_description?.toLowerCase().includes(q);
     const matchG=!grade||p.grade===grade;
-    const matchB=!brandFilter||p.brand_id?.slug===brandFilter;
+    const matchB=!brandFilter||p.brand_id?.slug===brandFilter||p.brand_id?.name?.toLowerCase()===brandFilter.toLowerCase();
     return matchQ&&matchG&&matchB;
   }).sort((a,b)=>{
     if(sort==="price-asc") return a.price-b.price;
@@ -138,7 +138,6 @@ export default function SearchClient({initialProducts,brands,categories,query,br
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
 
-      {/* Header */}
       <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
         <div style={{maxWidth:1100,margin:"0 auto",padding:"10px"}}>
           <div style={{display:"flex",alignItems:"center",gap:12}}>
@@ -164,10 +163,16 @@ export default function SearchClient({initialProducts,brands,categories,query,br
         </div>
       </div>
 
-      {/* Nav */}
       <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
         <div style={{maxWidth:1100,margin:"0 auto",display:"flex"}}>
-          {[{label:"🏠 ホーム",path:"/"},{label:"📋 ショッピングガイド",path:"/"},{label:"🚚 送料・配送について",path:"/"},{label:"❓ よくあるご質問",path:"/"},{label:"🏢 会社概要",path:"/"},{label:"📞 お問い合わせ",path:"/"}].map((item,i)=>(
+          {[
+            {label:"🏠 ホーム",path:"/"},
+            {label:"📋 ショッピングガイド",path:"/guide"},
+            {label:"🚚 送料・配送について",path:"/guide"},
+            {label:"❓ よくあるご質問",path:"/faq"},
+            {label:"🏢 会社概要",path:"/company"},
+            {label:"📞 お問い合わせ",path:"/contact"},
+          ].map((item,i)=>(
             <div key={i} onClick={()=>router.push(item.path)} style={{padding:"7px 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap"}}
               onMouseEnter={e=>(e.currentTarget.style.background=C.primaryDark)}
               onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>{item.label}</div>
@@ -175,7 +180,6 @@ export default function SearchClient({initialProducts,brands,categories,query,br
         </div>
       </div>
 
-      {/* Breadcrumb */}
       <div style={{maxWidth:1100,margin:"8px auto",padding:"0 10px",fontSize:11,color:C.textSub}}>
         <span style={{cursor:"pointer",color:C.primary}} onClick={()=>router.push("/")}>ホーム</span>
         <span style={{margin:"0 6px"}}>›</span>
@@ -184,20 +188,12 @@ export default function SearchClient({initialProducts,brands,categories,query,br
 
       <div style={{maxWidth:1100,margin:"0 auto",padding:"0 10px 20px"}}>
         <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-
-          {/* Sidebar */}
           <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats}/>
-
-          {/* Main */}
           <div style={{flex:1,minWidth:0}}>
-
-            {/* Page title */}
             <div style={{background:C.primary,color:"#fff",padding:"6px 12px",fontSize:14,fontWeight:700,marginBottom:10,display:"flex",alignItems:"center",gap:8}}>
               <span>📦</span> {pageTitle||`「${query}」の検索結果`}
               <span style={{fontSize:11,fontWeight:400,marginLeft:4,opacity:0.8}}>{filtered.length}件</span>
             </div>
-
-            {/* Filters */}
             <div style={{background:C.white,border:`1px solid ${C.border}`,padding:"8px 12px",marginBottom:10,display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
               <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>グレード：</span>
               {["","S","A","B","C"].map(g=>(
@@ -216,8 +212,6 @@ export default function SearchClient({initialProducts,brands,categories,query,br
                 </select>
               </div>
             </div>
-
-            {/* Products */}
             {filtered.length>0?(
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:8}}>
                 {filtered.map((p:any)=><ProductCard key={p.id} product={p}/>)}
@@ -233,7 +227,6 @@ export default function SearchClient({initialProducts,brands,categories,query,br
         </div>
       </div>
 
-      {/* Footer */}
       <div style={{background:"#2A4A4A",color:"#AACCCC",padding:"16px 10px"}}>
         <div style={{maxWidth:1100,margin:"0 auto"}}>
           <div style={{fontSize:20,fontWeight:900,color:C.primary,fontFamily:"Arial Black,sans-serif",marginBottom:8,cursor:"pointer"}} onClick={()=>router.push("/")}>デジマルショップ</div>

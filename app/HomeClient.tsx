@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getImageUrl } from "@/lib/directus";
 import Header from "@/app/components/Header";
@@ -23,6 +23,63 @@ const ICONS: Record<string,string> = {
   pc:"💻",laptop:"💻",desktop:"🖥️",smartphones:"📱",
   tablets:"📱",peripherals:"🖥️",parts:"🔧",accessories:"🎧",
 };
+
+const GRID_ADS = [
+  {bg:"#FF6600",text:"期間限定セール",url:"/search"},
+  {bg:"#0055AA",text:"MacBook特集",url:"/category/laptops-used-mac"},
+  {bg:"#007A76",text:"iPhone中古",url:"/category/smartphones-iphone-used"},
+  {bg:"#884400",text:"ゲーミングPC",url:"/category/desktops-gaming"},
+  {bg:"#550055",text:"タブレット特集",url:"/category/tablets"},
+  {bg:"#AA0000",text:"タイムセール",url:"/search"},
+  {bg:"#004400",text:"SSD大特集",url:"/category/storage-ssd-internal"},
+  {bg:"#003366",text:"ビジネスPC",url:"/category/laptops-used-business"},
+  {bg:"#663300",text:"Android中古",url:"/category/smartphones-android-used"},
+  {bg:"#2A4A4A",text:"周辺機器特集",url:"/category/peripherals"},
+];
+
+function GridBanner() {
+  const router = useRouter();
+  const doubled = [...GRID_ADS, ...GRID_ADS];
+  const MarqueeRow = ({reversed}: {reversed:boolean}) => (
+    <div style={{overflow:"hidden",height:155,marginBottom:4}}>
+      <div style={{
+        display:"flex",
+        height:"100%",
+        animation:`${reversed?"marqueeReverse":"marqueeForward"} 60s linear infinite`,
+        width:"max-content",
+      }}>
+        {doubled.map((ad,i)=>(
+          <div key={i} onClick={()=>router.push(ad.url)}
+            style={{
+              width:200,height:155,marginRight:4,flexShrink:0,
+              background:ad.bg,display:"flex",alignItems:"center",
+              justifyContent:"center",cursor:"pointer",borderRadius:2,
+            }}
+            onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
+            onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
+            <div style={{fontSize:13,fontWeight:700,color:"#fff",textAlign:"center",padding:"0 8px"}}>{ad.text}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+  return (
+    <>
+      <style>{`
+        @keyframes marqueeForward {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        @keyframes marqueeReverse {
+          from { transform: translateX(-50%); }
+          to { transform: translateX(0); }
+        }
+      `}</style>
+      <MarqueeRow reversed={false}/>
+      <MarqueeRow reversed={true}/>
+    </>
+  );
+}
 
 function GradeBadge({grade}: {grade:string|null}) {
   if(!grade) return null;
@@ -118,6 +175,38 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
   );
 }
 
+const LEFT_ADS = [
+  {bg:"#FF6600",text:"期間限定\nセール",url:"/search"},
+  {bg:"#0055AA",text:"MacBook\n特集",url:"/category/laptops-used-mac"},
+  {bg:"#007A76",text:"iPhone\n中古",url:"/category/smartphones-iphone-used"},
+  {bg:"#884400",text:"ゲーミング\nPC",url:"/category/desktops-gaming"},
+  {bg:"#550055",text:"タブレット\n特集",url:"/category/tablets"},
+];
+
+const RIGHT_ADS = [
+  {bg:"#AA0000",text:"本日限定\nタイムセール",url:"/search"},
+  {bg:"#004400",text:"SSD\n大特集",url:"/category/storage-ssd-internal"},
+  {bg:"#003366",text:"ビジネス\nPC",url:"/category/laptops-used-business"},
+  {bg:"#663300",text:"Android\n中古",url:"/category/smartphones-android-used"},
+  {bg:"#2A4A4A",text:"周辺機器\n特集",url:"/category/peripherals"},
+];
+
+function AdColumn({ads}: {ads:typeof LEFT_ADS}) {
+  const router = useRouter();
+  return (
+    <div style={{width:100,flexShrink:0,display:"flex",flexDirection:"column",gap:4}}>
+      {ads.map((ad,i)=>(
+        <div key={i} onClick={()=>router.push(ad.url)}
+          style={{background:ad.bg,borderRadius:2,height:120,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",padding:4,transition:"opacity 0.15s"}}
+          onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
+          onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
+          <div style={{fontSize:10,fontWeight:700,color:"#fff",textAlign:"center",lineHeight:1.5,whiteSpace:"pre-line"}}>{ad.text}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function SectionHeader({icon,title,en,color}:{icon:string,title:string,en:string,color?:string}) {
   return (
     <div style={{background:color||C.primary,color:"#fff",padding:"6px 10px",fontSize:13,fontWeight:700,display:"flex",alignItems:"center",gap:6,marginBottom:8}}>
@@ -136,11 +225,20 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
 
       <Header/>
+      <div style={{maxWidth:1100,margin:"4px auto",padding:"0 10px",overflow:"hidden"}}>
+  <GridBanner/>
+</div>
 
       <div style={{maxWidth:1100,margin:"10px auto",padding:"0 10px"}}>
-        <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+        <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
+
+          {/* 左广告位 */}
+          <AdColumn ads={LEFT_ADS}/>
+
           <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats}/>
+
           <div style={{flex:1,minWidth:0}}>
+
 
             <div style={{background:`linear-gradient(135deg,${C.primaryBg},#C8EEEC)`,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"14px 18px",marginBottom:10,display:"flex",alignItems:"center",gap:16}}>
               <div style={{fontSize:44}}>🖥️</div>
@@ -204,6 +302,10 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
               </div>
             </div>
           </div>
+
+          {/* 右广告位 */}
+          <AdColumn ads={RIGHT_ADS}/>
+
         </div>
       </div>
 

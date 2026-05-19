@@ -81,7 +81,7 @@ export default function AddressPage() {
   const F = ({label,value,onChange,placeholder,required=false}:{label:string,value:string,onChange:(v:string)=>void,placeholder?:string,required?:boolean}) => (
     <div>
       <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>{label}{required&&<span style={{color:C.red,fontSize:10,marginLeft:4}}>※</span>}</div>
-      <input value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder}
+      <input value={value} onChange={e=>onChange(e.target.value)} onCompositionEnd={e=>onChange((e.target as HTMLInputElement).value)}
         style={{width:"100%",border:`1px solid ${C.border}`,borderRadius:2,padding:"8px 12px",fontSize:13,outline:"none",fontFamily:"inherit",boxSizing:"border-box" as any}}/>
     </div>
   );

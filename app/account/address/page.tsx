@@ -42,20 +42,66 @@ export default function AddressPage() {
   useEffect(()=>{ setMounted(true); },[]);
   useEffect(()=>{ if(mounted&&!user) router.push("/login"); else if(mounted&&user) fetchData(); },[mounted,user]);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const cusRes = await fetch(`${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(user!.email)}&fields=id&limit=1`,{headers:{Authorization:`Bearer ${TOKEN}`}});
-      const cusData = await cusRes.json();
-      const cus = cusData.data?.[0];
-      if (!cus) { setLoading(false); return; }
-      setCustomerId(cus.id);
-      const addrRes = await fetch(`${DIRECTUS}/items/addresses?filter[customer_id][_eq]=${cus.id}&sort=-is_default,created_at`,{headers:{Authorization:`Bearer ${TOKEN}`}});
-      const addrData = await addrRes.json();
-      setAddresses(addrData.data||[]);
-    } catch(e){ console.error(e); }
-    setLoading(false);
-  };
+const fetchData = async () => {
+  setLoading(true);
+
+  try {
+    const cusRes = await fetch(
+      `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(user!.email)}&fields=id&limit=1`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${TOKEN}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!cusRes.ok) {
+      console.error("Customer fetch failed:", await cusRes.text());
+      setLoading(false);
+      return;
+    }
+
+    const cusData = await cusRes.json();
+    const cus = cusData?.data?.[0];
+
+    if (!cus) {
+      setLoading(false);
+      return;
+    }
+
+    setCustomerId(cus.id);
+
+    const addrRes = await fetch(
+      `${DIRECTUS}/items/addresses?filter[customer_id][_eq]=${cus.id}&sort=-is_default,created_at`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${TOKEN}`,
+        },
+        cache: "no-store",
+      }
+    );
+
+    if (!addrRes.ok) {
+      console.error("Address fetch failed:", await addrRes.text());
+      setLoading(false);
+      return;
+    }
+
+    const addrData = await addrRes.json();
+
+    setAddresses(addrData?.data || []);
+
+  } catch (e) {
+    console.error("Fetch Error:", e);
+  }
+
+  setLoading(false);
+};
 
   const getFormValues = () => ({
     name_last: refs.name_last.current?.value||"",

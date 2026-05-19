@@ -140,25 +140,63 @@ const fetchData = async () => {
     }
     setSaving(true); setError("");
     try {
-      const body = {...values, customer_id: customerId};
-      let res;
-      if (editId) {
-        res = await fetch(`${DIRECTUS}/items/addresses/${editId}`,{method:"PATCH",headers:{"Content-Type":"application/json",Authorization:`Bearer ${TOKEN}`},body:JSON.stringify(body)});
-      } else {
-        res = await fetch(`${DIRECTUS}/items/addresses`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${TOKEN}`},body:JSON.stringify(body)});
-      }
-      if(!res.ok) throw new Error("保存に失敗しました");
-      setShowForm(false); clearForm(); setEditId(null);
-      await fetchData();
-    } catch(e:any){ setError(e.message||"保存に失敗しました"); }
-    setSaving(false);
-  };
+  const body = { ...values, customer_id: customerId };
 
-  const handleDelete = async (id:number) => {
-    if(!confirm("この住所を削除しますか？")) return;
-    await fetch(`${DIRECTUS}/items/addresses/${id}`,{method:"DELETE",headers:{Authorization:`Bearer ${TOKEN}`}});
+  let res;
+
+  if (editId) {
+    res = await fetch(`/api/address/${editId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  } else {
+    res = await fetch(`/api/address`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  }
+
+  if (!res.ok) {
+    throw new Error("保存に失敗しました");
+  }
+
+  setShowForm(false);
+  clearForm();
+  setEditId(null);
+
+  await fetchData();
+
+} catch (e:any) {
+  setError(e.message || "保存に失敗しました");
+}
+
+setSaving(false);
+};
+
+const handleDelete = async (id:number) => {
+  if (!confirm("この住所を削除しますか？")) return;
+
+  try {
+    const res = await fetch(`/api/address/${id}`, {
+      method: "DELETE"
+    });
+
+    if (!res.ok) {
+      throw new Error("削除失敗");
+    }
+
     await fetchData();
-  };
+
+  } catch(e:any){
+    setError(e.message || "削除失敗");
+  }
+};
 
   const handleEdit = (addr:any) => {
     setEditId(addr.id);

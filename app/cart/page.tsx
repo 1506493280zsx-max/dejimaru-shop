@@ -107,7 +107,7 @@ export default function CartPage() {
               </div>
 
               {user?(
-                <button style={{width:"100%",background:"#FF6600",color:"#fff",border:"none",borderRadius:2,padding:"12px",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",marginBottom:8}}>
+                <button onClick={()=>router.push("/checkout")} style={{width:"100%",background:"#FF6600",color:"#fff",border:"none",borderRadius:2,padding:"12px",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",marginBottom:8}}>
                   ご注文手続きへ →
                 </button>
               ):(
@@ -115,7 +115,7 @@ export default function CartPage() {
                   <button onClick={()=>router.push("/login")} style={{width:"100%",background:C.primary,color:"#fff",border:"none",borderRadius:2,padding:"12px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit",marginBottom:8}}>
                     ログインして注文する
                   </button>
-                  <button style={{width:"100%",background:"#FF6600",color:"#fff",border:"none",borderRadius:2,padding:"12px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+                  <button onClick={()=>router.push("/checkout")} style={{width:"100%",background:"#FF6600",color:"#fff",border:"none",borderRadius:2,padding:"12px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
                     ゲストとして注文する
                   </button>
                 </>

@@ -5,7 +5,13 @@ const TOKEN = process.env.ADMIN_TOKEN;
 
 export async function POST(req: NextRequest) {
   try {
+
+    console.log("DIRECTUS:", DIRECTUS);
+    console.log("TOKEN exists:", !!TOKEN);
+
     const body = await req.json();
+
+    console.log("BODY:", body);
 
     const res = await fetch(
       `${DIRECTUS}/items/addresses`,
@@ -19,16 +25,33 @@ export async function POST(req: NextRequest) {
       }
     );
 
-    const data = await res.json();
+    const text = await res.text();
 
-    return NextResponse.json(data, {
-      status: res.status
-    });
+    console.log("DIRECTUS STATUS:", res.status);
+    console.log("DIRECTUS RESPONSE:", text);
+
+    return NextResponse.json(
+      {
+        status: res.status,
+        response: text
+      },
+      {
+        status: res.status
+      }
+    );
 
   } catch (e:any) {
+
+    console.error("SERVER ERROR:", e);
+
     return NextResponse.json(
-      { error: e.message },
-      { status: 500 }
+      {
+        error: e.message
+      },
+      {
+        status:500
+      }
     );
+
   }
 }

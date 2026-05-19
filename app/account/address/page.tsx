@@ -138,6 +138,9 @@ const fetchData = async () => {
     if(!values.name_last||!values.name_first||!values.postal_code||!values.city||!values.address1){
       setError("必須項目を入力してください"); return;
     }
+    if(!customerId){
+      setError("お客様情報が取得できませんでした。ページを再読み込みしてください。"); return;
+    }
     setSaving(true); setError("");
     try {
   const body = { ...values, customer_id: customerId };

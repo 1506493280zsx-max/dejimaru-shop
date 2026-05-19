@@ -1,5 +1,5 @@
-const DIRECTUS_URL = "https://directus-production-2cfe.up.railway.app";
-const ADMIN_TOKEN = "a5RnKIXFibE5JV_50ir42Hk84JnMZVMb";
+const DIRECTUS_URL = process.env.DIRECTUS_URL ?? "https://directus-production-2cfe.up.railway.app";
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
 
 const adminHeaders = {
   "Content-Type": "application/json",

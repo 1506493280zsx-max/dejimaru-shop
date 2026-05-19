@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-const DIRECTUS_URL = "https://directus-production-2cfe.up.railway.app";
-const ADMIN_TOKEN = "a5RnKIXFibE5JV_50ir42Hk84JnMZVMb";
+const DIRECTUS_URL = process.env.DIRECTUS_URL!;
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN!;
 
 export async function POST(req: NextRequest) {
   try {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     // customersテーブルにも同時作成
-    await fetch(`${DIRECTUS_URL}/items/customers`, {
+    const cusRes = await fetch(`${DIRECTUS_URL}/items/customers`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,6 +39,13 @@ export async function POST(req: NextRequest) {
         name_first: firstName,
       }),
     });
+    if (!cusRes.ok) {
+      const cusError = await cusRes.json().catch(() => ({}));
+      return NextResponse.json(
+        { error: cusError.errors?.[0]?.message || "顧客情報の作成に失敗しました" },
+        { status: 400 }
+      );
+    }
 
     // 登録後ログイン
     const loginRes = await fetch(`${DIRECTUS_URL}/auth/login`, {

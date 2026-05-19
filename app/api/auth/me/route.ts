@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const DIRECTUS_URL = "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS_URL = process.env.DIRECTUS_URL!;
 
 export async function GET(req: NextRequest) {
   try {

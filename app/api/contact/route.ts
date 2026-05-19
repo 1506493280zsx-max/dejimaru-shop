@@ -17,25 +17,30 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "必須項目が未入力です" }, { status: 400 });
     }
 
-    // 管理者への通知メール（replyToを客のメールに設定）
+    const replySubject = encodeURIComponent(`Re: 【デジマルショップ】${type}`);
+    const replyBody = encodeURIComponent(`${name} 様\n\nお問い合わせありがとうございます。\n\n---\n元のメッセージ:\n${message}`);
+    const mailtoLink = `mailto:${email}?subject=${replySubject}&body=${replyBody}`;
+
+    // 管理者への通知メール
     await transporter.sendMail({
       from: `"デジマルショップ" <aiacrossshop@gmail.com>`,
       to: "aiacrossshop@gmail.com",
       replyTo: `"${name}" <${email}>`,
-      subject: `【デジマルショップ】お問い合わせ：${type}`,
+      subject: `【お問い合わせ】${name}様 - ${type}`,
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
           <h2 style="color:#0ABAB5;border-bottom:2px solid #0ABAB5;padding-bottom:8px;">
-            デジマルショップ お問い合わせ
+            新しいお問い合わせが届きました
           </h2>
-          <table style="width:100%;border-collapse:collapse;">
+
+          <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
             <tr>
               <td style="padding:10px;background:#E8F8F8;font-weight:bold;width:30%;border:1px solid #ddd;">お名前</td>
               <td style="padding:10px;border:1px solid #ddd;">${name}</td>
             </tr>
             <tr>
               <td style="padding:10px;background:#E8F8F8;font-weight:bold;border:1px solid #ddd;">メールアドレス</td>
-              <td style="padding:10px;border:1px solid #ddd;"><a href="mailto:${email}">${email}</a></td>
+              <td style="padding:10px;border:1px solid #ddd;">${email}</td>
             </tr>
             <tr>
               <td style="padding:10px;background:#E8F8F8;font-weight:bold;border:1px solid #ddd;">種別</td>
@@ -46,14 +51,22 @@ export async function POST(req: NextRequest) {
               <td style="padding:10px;border:1px solid #ddd;white-space:pre-wrap;">${message}</td>
             </tr>
           </table>
-          <p style="color:#0ABAB5;font-size:13px;margin-top:16px;font-weight:bold;">
-            ※このメールに返信すると ${name} 様（${email}）へ直接返信されます。
+
+          <div style="text-align:center;margin:24px 0;">
+            <a href="${mailtoLink}"
+              style="display:inline-block;background:#0ABAB5;color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:4px;font-size:16px;font-weight:bold;">
+              ✉️ ${name}様へ返信する
+            </a>
+          </div>
+
+          <p style="color:#999;font-size:11px;text-align:center;">
+            上のボタンをクリックすると、${name}様（${email}）への返信メールが自動で作成されます。
           </p>
         </div>
       `,
     });
 
-    // 自動返信メール
+    // 自動返信メール（客户）
     await transporter.sendMail({
       from: `"デジマルショップ" <aiacrossshop@gmail.com>`,
       to: email,
@@ -80,7 +93,7 @@ export async function POST(req: NextRequest) {
           </table>
           <p style="color:#999;font-size:12px;margin-top:20px;">
             ※このメールは自動送信です。<br>
-            ご返信は aiacrossshop@gmail.com までお願いします。<br>
+            ご不明な点は aiacrossshop@gmail.com までお問い合わせください。<br>
             デジマルショップ
           </p>
         </div>

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-
 const DIRECTUS_URL = "https://directus-production-2cfe.up.railway.app";
 const ADMIN_TOKEN = "a5RnKIXFibE5JV_50ir42Hk84JnMZVMb";
 
@@ -7,7 +6,7 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password, firstName, lastName } = await req.json();
 
-    // ユーザー作成
+    // directus_usersにユーザー作成
     const createRes = await fetch(`${DIRECTUS_URL}/users`, {
       method: "POST",
       headers: {
@@ -26,6 +25,20 @@ export async function POST(req: NextRequest) {
     if (!createRes.ok) {
       return NextResponse.json({ error: createData.errors?.[0]?.message || "登録失敗" }, { status: 400 });
     }
+
+    // customersテーブルにも同時作成
+    await fetch(`${DIRECTUS_URL}/items/customers`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${ADMIN_TOKEN}`,
+      },
+      body: JSON.stringify({
+        email,
+        name_last: lastName,
+        name_first: firstName,
+      }),
+    });
 
     // 登録後ログイン
     const loginRes = await fetch(`${DIRECTUS_URL}/auth/login`, {

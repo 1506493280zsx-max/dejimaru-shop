@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryBg:"#E8F8F8",
@@ -14,8 +14,6 @@ const TOKEN = "a5RnKIXFibE5JV_50ir42Hk84JnMZVMb";
 
 const PREFS = ["北海道","青森県","岩手県","宮城県","秋田県","山形県","福島県","茨城県","栃木県","群馬県","埼玉県","千葉県","東京都","神奈川県","新潟県","富山県","石川県","福井県","山梨県","長野県","岐阜県","静岡県","愛知県","三重県","滋賀県","京都府","大阪府","兵庫県","奈良県","和歌山県","鳥取県","島根県","岡山県","広島県","山口県","徳島県","香川県","愛媛県","高知県","福岡県","佐賀県","長崎県","熊本県","大分県","宮崎県","鹿児島県","沖縄県"];
 
-const emptyForm = {name_last:"",name_first:"",postal_code:"",prefecture:"東京都",city:"",address1:"",address2:"",phone:"",is_default:false};
-
 export default function AddressPage() {
   const router = useRouter();
   const { user } = useAuthStore();
@@ -24,10 +22,22 @@ export default function AddressPage() {
   const [customerId, setCustomerId] = useState<string|null>(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(emptyForm);
   const [editId, setEditId] = useState<number|null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [isDefault, setIsDefault] = useState(false);
+
+  // useRefでinput値を管理（再レンダリングでフォーカスが外れない）
+  const refs = {
+    name_last: useRef<HTMLInputElement>(null),
+    name_first: useRef<HTMLInputElement>(null),
+    postal_code: useRef<HTMLInputElement>(null),
+    prefecture: useRef<HTMLSelectElement>(null),
+    city: useRef<HTMLInputElement>(null),
+    address1: useRef<HTMLInputElement>(null),
+    address2: useRef<HTMLInputElement>(null),
+    phone: useRef<HTMLInputElement>(null),
+  };
 
   useEffect(()=>{ setMounted(true); },[]);
   useEffect(()=>{ if(mounted&&!user) router.push("/login"); else if(mounted&&user) fetchData(); },[mounted,user]);
@@ -47,13 +57,44 @@ export default function AddressPage() {
     setLoading(false);
   };
 
+  const getFormValues = () => ({
+    name_last: refs.name_last.current?.value||"",
+    name_first: refs.name_first.current?.value||"",
+    postal_code: refs.postal_code.current?.value||"",
+    prefecture: refs.prefecture.current?.value||"東京都",
+    city: refs.city.current?.value||"",
+    address1: refs.address1.current?.value||"",
+    address2: refs.address2.current?.value||"",
+    phone: refs.phone.current?.value||"",
+    is_default: isDefault,
+  });
+
+  const setFormValues = (addr: any) => {
+    if(refs.name_last.current) refs.name_last.current.value = addr.name_last||"";
+    if(refs.name_first.current) refs.name_first.current.value = addr.name_first||"";
+    if(refs.postal_code.current) refs.postal_code.current.value = addr.postal_code||"";
+    if(refs.prefecture.current) refs.prefecture.current.value = addr.prefecture||"東京都";
+    if(refs.city.current) refs.city.current.value = addr.city||"";
+    if(refs.address1.current) refs.address1.current.value = addr.address1||"";
+    if(refs.address2.current) refs.address2.current.value = addr.address2||"";
+    if(refs.phone.current) refs.phone.current.value = addr.phone||"";
+    setIsDefault(addr.is_default||false);
+  };
+
+  const clearForm = () => {
+    Object.values(refs).forEach(r=>{ if(r.current && r.current.tagName==="INPUT") (r.current as HTMLInputElement).value=""; });
+    if(refs.prefecture.current) refs.prefecture.current.value="東京都";
+    setIsDefault(false);
+  };
+
   const handleSave = async () => {
-    if(!form.name_last||!form.name_first||!form.postal_code||!form.prefecture||!form.city||!form.address1){
+    const values = getFormValues();
+    if(!values.name_last||!values.name_first||!values.postal_code||!values.city||!values.address1){
       setError("必須項目を入力してください"); return;
     }
     setSaving(true); setError("");
     try {
-      const body = {...form, customer_id: customerId};
+      const body = {...values, customer_id: customerId};
       let res;
       if (editId) {
         res = await fetch(`${DIRECTUS}/items/addresses/${editId}`,{method:"PATCH",headers:{"Content-Type":"application/json",Authorization:`Bearer ${TOKEN}`},body:JSON.stringify(body)});
@@ -61,7 +102,7 @@ export default function AddressPage() {
         res = await fetch(`${DIRECTUS}/items/addresses`,{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${TOKEN}`},body:JSON.stringify(body)});
       }
       if(!res.ok) throw new Error("保存に失敗しました");
-      setShowForm(false); setForm(emptyForm); setEditId(null);
+      setShowForm(false); clearForm(); setEditId(null);
       await fetchData();
     } catch(e:any){ setError(e.message||"保存に失敗しました"); }
     setSaving(false);
@@ -74,17 +115,12 @@ export default function AddressPage() {
   };
 
   const handleEdit = (addr:any) => {
-    setForm({name_last:addr.name_last||"",name_first:addr.name_first||"",postal_code:addr.postal_code||"",prefecture:addr.prefecture||"東京都",city:addr.city||"",address1:addr.address1||"",address2:addr.address2||"",phone:addr.phone||"",is_default:addr.is_default||false});
-    setEditId(addr.id); setShowForm(true);
+    setEditId(addr.id);
+    setShowForm(true);
+    setTimeout(()=>setFormValues(addr), 50);
   };
 
-  const F = ({label,value,onChange,placeholder,required=false}:{label:string,value:string,onChange:(v:string)=>void,placeholder?:string,required?:boolean}) => (
-    <div>
-      <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>{label}{required&&<span style={{color:C.red,fontSize:10,marginLeft:4}}>※</span>}</div>
-      <input value={value} onChange={e=>onChange(e.target.value)} onCompositionEnd={e=>onChange((e.target as HTMLInputElement).value)}
-        style={{width:"100%",border:`1px solid ${C.border}`,borderRadius:2,padding:"8px 12px",fontSize:13,outline:"none",fontFamily:"inherit",boxSizing:"border-box" as any}}/>
-    </div>
-  );
+  const inputStyle = {width:"100%",border:`1px solid ${C.border}`,borderRadius:2,padding:"8px 12px",fontSize:13,outline:"none",fontFamily:"inherit",boxSizing:"border-box" as any};
 
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
@@ -107,7 +143,7 @@ export default function AddressPage() {
       <div style={{maxWidth:800,margin:"16px auto",padding:"0 10px 40px"}}>
         <div style={{display:"flex",alignItems:"center",marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>
           <h1 style={{fontSize:18,fontWeight:700,color:C.text,margin:0}}>📍 お届け先の管理</h1>
-          <button onClick={()=>{setShowForm(true);setEditId(null);setForm(emptyForm);}}
+          <button onClick={()=>{clearForm();setEditId(null);setShowForm(true);}}
             style={{marginLeft:"auto",background:C.primary,color:"#fff",border:"none",padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
             ＋ 新しい住所を追加
           </button>
@@ -115,7 +151,6 @@ export default function AddressPage() {
 
         {error&&<div style={{background:"#FFF0F0",border:"1px solid #FFAAAA",borderRadius:2,padding:"10px 14px",fontSize:12,color:C.red,marginBottom:14}}>{error}</div>}
 
-        {/* 新規/編集フォーム */}
         {showForm&&(
           <div style={{background:C.white,border:`2px solid ${C.primary}`,borderRadius:2,padding:20,marginBottom:16}}>
             <div style={{fontSize:14,fontWeight:700,color:C.primary,marginBottom:14,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>
@@ -123,26 +158,47 @@ export default function AddressPage() {
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                <F label="姓" value={form.name_last} onChange={v=>setForm(p=>({...p,name_last:v}))} placeholder="山田" required/>
-                <F label="名" value={form.name_first} onChange={v=>setForm(p=>({...p,name_first:v}))} placeholder="太郎" required/>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>姓<span style={{color:C.red,fontSize:10,marginLeft:4}}>※</span></div>
+                  <input ref={refs.name_last} defaultValue="" placeholder="山田" style={inputStyle}/>
+                </div>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>名<span style={{color:C.red,fontSize:10,marginLeft:4}}>※</span></div>
+                  <input ref={refs.name_first} defaultValue="" placeholder="太郎" style={inputStyle}/>
+                </div>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 2fr",gap:10}}>
-                <F label="郵便番号" value={form.postal_code} onChange={v=>setForm(p=>({...p,postal_code:v}))} placeholder="123-4567" required/>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>郵便番号<span style={{color:C.red,fontSize:10,marginLeft:4}}>※</span></div>
+                  <input ref={refs.postal_code} defaultValue="" placeholder="123-4567" style={inputStyle}/>
+                </div>
                 <div>
                   <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>都道府県<span style={{color:C.red,fontSize:10,marginLeft:4}}>※</span></div>
-                  <select value={form.prefecture} onChange={e=>setForm(p=>({...p,prefecture:e.target.value}))}
+                  <select ref={refs.prefecture} defaultValue="東京都"
                     style={{width:"100%",border:`1px solid ${C.border}`,borderRadius:2,padding:"8px 12px",fontSize:13,outline:"none",fontFamily:"inherit",boxSizing:"border-box" as any,background:C.white}}>
                     {PREFS.map(p=><option key={p}>{p}</option>)}
                   </select>
                 </div>
               </div>
-              <F label="市区町村" value={form.city} onChange={v=>setForm(p=>({...p,city:v}))} placeholder="渋谷区" required/>
-              <F label="番地・建物名" value={form.address1} onChange={v=>setForm(p=>({...p,address1:v}))} placeholder="渋谷1-1-1" required/>
-              <F label="マンション名・部屋番号（任意）" value={form.address2} onChange={v=>setForm(p=>({...p,address2:v}))} placeholder="渋谷マンション101"/>
-              <F label="電話番号" value={form.phone} onChange={v=>setForm(p=>({...p,phone:v}))} placeholder="090-1234-5678"/>
-              <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setForm(p=>({...p,is_default:!p.is_default}))}>
-                <div style={{width:18,height:18,border:`2px solid ${form.is_default?C.primary:C.border}`,borderRadius:2,background:form.is_default?C.primary:"#fff",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                  {form.is_default&&<span style={{color:"#fff",fontSize:12}}>✓</span>}
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>市区町村<span style={{color:C.red,fontSize:10,marginLeft:4}}>※</span></div>
+                <input ref={refs.city} defaultValue="" placeholder="渋谷区" style={inputStyle}/>
+              </div>
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>番地・建物名<span style={{color:C.red,fontSize:10,marginLeft:4}}>※</span></div>
+                <input ref={refs.address1} defaultValue="" placeholder="渋谷1-1-1" style={inputStyle}/>
+              </div>
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>マンション名・部屋番号（任意）</div>
+                <input ref={refs.address2} defaultValue="" placeholder="渋谷マンション101" style={inputStyle}/>
+              </div>
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:C.textSub,marginBottom:4}}>電話番号</div>
+                <input ref={refs.phone} defaultValue="" placeholder="090-1234-5678" style={inputStyle}/>
+              </div>
+              <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setIsDefault(p=>!p)}>
+                <div style={{width:18,height:18,border:`2px solid ${isDefault?C.primary:C.border}`,borderRadius:2,background:isDefault?C.primary:"#fff",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  {isDefault&&<span style={{color:"#fff",fontSize:12}}>✓</span>}
                 </div>
                 <span style={{fontSize:12,color:C.text}}>デフォルトの配送先として設定する</span>
               </div>
@@ -151,7 +207,7 @@ export default function AddressPage() {
                   style={{flex:1,background:saving?"#AAA":C.primary,color:"#fff",border:"none",borderRadius:2,padding:"10px",fontSize:13,fontWeight:700,cursor:saving?"not-allowed":"pointer",fontFamily:"inherit"}}>
                   {saving?"保存中...":"保存する"}
                 </button>
-                <button onClick={()=>{setShowForm(false);setEditId(null);setForm(emptyForm);setError("");}}
+                <button onClick={()=>{setShowForm(false);setEditId(null);clearForm();setError("");}}
                   style={{background:"#fff",color:C.textSub,border:`1px solid ${C.border}`,borderRadius:2,padding:"10px 20px",fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>
                   キャンセル
                 </button>
@@ -160,7 +216,6 @@ export default function AddressPage() {
           </div>
         )}
 
-        {/* 住所リスト */}
         {loading?(
           <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,padding:"30px",textAlign:"center",color:C.textSub}}>読み込み中...</div>
         ):addresses.length===0?(

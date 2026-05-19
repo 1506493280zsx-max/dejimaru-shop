@@ -17,9 +17,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "必須項目が未入力です" }, { status: 400 });
     }
 
+    // 管理者への通知メール（replyToを客のメールに設定）
     await transporter.sendMail({
-      from: "aiacrossshop@gmail.com",
+      from: `"デジマルショップ" <aiacrossshop@gmail.com>`,
       to: "aiacrossshop@gmail.com",
+      replyTo: `"${name}" <${email}>`,
       subject: `【デジマルショップ】お問い合わせ：${type}`,
       html: `
         <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
@@ -33,7 +35,7 @@ export async function POST(req: NextRequest) {
             </tr>
             <tr>
               <td style="padding:10px;background:#E8F8F8;font-weight:bold;border:1px solid #ddd;">メールアドレス</td>
-              <td style="padding:10px;border:1px solid #ddd;">${email}</td>
+              <td style="padding:10px;border:1px solid #ddd;"><a href="mailto:${email}">${email}</a></td>
             </tr>
             <tr>
               <td style="padding:10px;background:#E8F8F8;font-weight:bold;border:1px solid #ddd;">種別</td>
@@ -44,8 +46,8 @@ export async function POST(req: NextRequest) {
               <td style="padding:10px;border:1px solid #ddd;white-space:pre-wrap;">${message}</td>
             </tr>
           </table>
-          <p style="color:#999;font-size:12px;margin-top:20px;">
-            このメールはデジマルショップのお問い合わせフォームから送信されました。
+          <p style="color:#0ABAB5;font-size:13px;margin-top:16px;font-weight:bold;">
+            ※このメールに返信すると ${name} 様（${email}）へ直接返信されます。
           </p>
         </div>
       `,
@@ -53,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     // 自動返信メール
     await transporter.sendMail({
-      from: "aiacrossshop@gmail.com",
+      from: `"デジマルショップ" <aiacrossshop@gmail.com>`,
       to: email,
       subject: "【デジマルショップ】お問い合わせを受け付けました",
       html: `
@@ -77,8 +79,9 @@ export async function POST(req: NextRequest) {
             </tr>
           </table>
           <p style="color:#999;font-size:12px;margin-top:20px;">
-            ※このメールは自動送信です。返信はできません。<br>
-            デジマルショップ | aiacrossshop@gmail.com
+            ※このメールは自動送信です。<br>
+            ご返信は aiacrossshop@gmail.com までお願いします。<br>
+            デジマルショップ
           </p>
         </div>
       `,

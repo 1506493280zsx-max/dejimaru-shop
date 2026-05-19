@@ -1,0 +1,349 @@
+"use client";
+import { useRouter } from "next/navigation";
+import { FaFacebook, FaInstagram, FaYoutube, FaLine, FaWhatsapp } from "react-icons/fa";
+import { FaXTwitter } from "react-icons/fa6";
+
+// ─── colour tokens ────────────────────────────────────────────────────────────
+const FC = {
+  deep:    "#0A1A1A",
+  dark:    "#112525",
+  base:    "#1A3535",
+  border:  "#2A4848",
+  sub:     "#243E3E",
+  textSub: "#7AACAC",
+  heading: "#CCEEEE",
+  primary: "#0ABAB5",
+};
+
+// ─── payment cards ────────────────────────────────────────────────────────────
+
+function CardWrap({ children, bg = "#fff", border = true }: { children: React.ReactNode; bg?: string; border?: boolean }) {
+  return (
+    <div style={{
+      background: bg,
+      border: border ? "1px solid #dde" : "none",
+      borderRadius: 5,
+      height: 52,
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 2,
+      overflow: "hidden",
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function VisaCard() {
+  return (
+    <CardWrap>
+      <span style={{ fontSize: 18, fontWeight: 900, color: "#1A1F71", fontStyle: "italic", letterSpacing: -1, fontFamily: "Arial Black,sans-serif", lineHeight: 1 }}>VISA</span>
+    </CardWrap>
+  );
+}
+
+function MastercardCard() {
+  return (
+    <CardWrap>
+      <div style={{ position: "relative", width: 34, height: 20 }}>
+        <div style={{ position: "absolute", left: 0, top: 0, width: 20, height: 20, borderRadius: "50%", background: "#EB001B" }} />
+        <div style={{ position: "absolute", right: 0, top: 0, width: 20, height: 20, borderRadius: "50%", background: "#FF5F00", opacity: 0.88 }} />
+      </div>
+      <span style={{ fontSize: 7, fontWeight: 700, color: "#333", letterSpacing: 0.4 }}>Mastercard</span>
+    </CardWrap>
+  );
+}
+
+function JcbCard() {
+  return (
+    <CardWrap>
+      <div style={{ display: "flex", gap: 1 }}>
+        <span style={{ fontSize: 17, fontWeight: 900, color: "#003087", fontFamily: "Arial Black,sans-serif", lineHeight: 1 }}>J</span>
+        <span style={{ fontSize: 17, fontWeight: 900, color: "#CC0000", fontFamily: "Arial Black,sans-serif", lineHeight: 1 }}>C</span>
+        <span style={{ fontSize: 17, fontWeight: 900, color: "#009A44", fontFamily: "Arial Black,sans-serif", lineHeight: 1 }}>B</span>
+      </div>
+    </CardWrap>
+  );
+}
+
+function AmexCard() {
+  return (
+    <CardWrap bg="#016FD0" border={false}>
+      <span style={{ fontSize: 7, fontWeight: 800, color: "#fff", letterSpacing: 1.2, lineHeight: 1.5, textAlign: "center" }}>AMERICAN{"\n"}EXPRESS</span>
+    </CardWrap>
+  );
+}
+
+function DiscoverCard() {
+  return (
+    <CardWrap>
+      <span style={{ fontSize: 9, fontWeight: 900, color: "#F76520", letterSpacing: 0.6 }}>DISCOVER</span>
+      <div style={{ width: 18, height: 18, borderRadius: "50%", background: "linear-gradient(135deg,#F76520 40%,#FFB347)" }} />
+    </CardWrap>
+  );
+}
+
+function DinersCard() {
+  return (
+    <CardWrap>
+      <span style={{ fontSize: 9, fontWeight: 700, color: "#4B6070", lineHeight: 1.5, textAlign: "center" }}>Diners{"\n"}Club</span>
+    </CardWrap>
+  );
+}
+
+function GooglePayCard() {
+  return (
+    <CardWrap>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 1 }}>
+        <span style={{ fontSize: 13, fontWeight: 900 }}>
+          <span style={{ color: "#4285F4" }}>G</span>
+          <span style={{ color: "#EA4335" }}>o</span>
+          <span style={{ color: "#FBBC05" }}>o</span>
+          <span style={{ color: "#4285F4" }}>g</span>
+          <span style={{ color: "#34A853" }}>l</span>
+          <span style={{ color: "#EA4335" }}>e</span>
+        </span>
+        <span style={{ fontSize: 10, fontWeight: 700, color: "#333" }}>Pay</span>
+      </div>
+    </CardWrap>
+  );
+}
+
+function ApplePayCard() {
+  return (
+    <CardWrap bg="#000" border={false}>
+      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <span style={{ fontSize: 16, color: "#fff", lineHeight: 1 }}>&#63743;</span>
+        <span style={{ fontSize: 10, fontWeight: 700, color: "#fff" }}>Pay</span>
+      </div>
+    </CardWrap>
+  );
+}
+
+function SolidCard({ top, bottom, bg, color }: { top: string; bottom?: string; bg: string; color: string }) {
+  return (
+    <CardWrap bg={bg} border={false}>
+      <span style={{ fontSize: bottom ? 11 : 12, fontWeight: 900, color, lineHeight: 1.25, textAlign: "center" }}>{top}</span>
+      {bottom && <span style={{ fontSize: 10, fontWeight: 900, color, lineHeight: 1 }}>{bottom}</span>}
+    </CardWrap>
+  );
+}
+
+function BankCard() {
+  return (
+    <CardWrap>
+      <span style={{ fontSize: 13 }}>🏦</span>
+      <span style={{ fontSize: 9, fontWeight: 700, color: "#1E5A3A", letterSpacing: 0.3 }}>銀行振込</span>
+    </CardWrap>
+  );
+}
+
+const CARDS = [
+  { k: "visa",       el: <VisaCard /> },
+  { k: "mc",         el: <MastercardCard /> },
+  { k: "jcb",        el: <JcbCard /> },
+  { k: "amex",       el: <AmexCard /> },
+  { k: "discover",   el: <DiscoverCard /> },
+  { k: "diners",     el: <DinersCard /> },
+  { k: "paypay",     el: <SolidCard top="Pay" bottom="Pay" bg="#FF0033" color="#fff" /> },
+  { k: "rakuten",    el: <SolidCard top="楽天" bottom="ペイ" bg="#BF0000" color="#fff" /> },
+  { k: "aupay",      el: <SolidCard top="au" bottom="PAY" bg="#EA6100" color="#fff" /> },
+  { k: "googlepay",  el: <GooglePayCard /> },
+  { k: "applepay",   el: <ApplePayCard /> },
+  { k: "shoppay",    el: <SolidCard top="Shop" bottom="Pay" bg="#5A31F4" color="#fff" /> },
+  { k: "bank",       el: <BankCard /> },
+];
+
+// ─── navigation ───────────────────────────────────────────────────────────────
+
+const NAV = [
+  {
+    title: "サポート", en: "Support",
+    links: [
+      { label: "ショッピングガイド",    href: "/support" },
+      { label: "よくある質問（FAQ）",   href: "/faq" },
+      { label: "配送について",          href: "/shipping" },
+      { label: "お問い合わせ",          href: "/contact" },
+    ],
+  },
+  {
+    title: "会社情報", en: "Company",
+    links: [
+      { label: "AI Acrossについて",  href: "/company" },
+      { label: "会社概要",            href: "/corporate" },
+      { label: "採用情報",            href: "/careers" },
+      { label: "センター一覧",        href: "/corporate#centers" },
+    ],
+  },
+  {
+    title: "サービス", en: "Services",
+    links: [
+      { label: "法人・卸販売",          href: "/wholesale" },
+      { label: "買取サービス",          href: "/buyback" },
+      { label: "修理サービス",          href: "/repair" },
+      { label: "PODカスタムサービス",   href: "/pod-service" },
+    ],
+  },
+  {
+    title: "法的情報", en: "Legal",
+    links: [
+      { label: "プライバシーポリシー",        href: "/privacy" },
+      { label: "利用規約",                    href: "/terms" },
+      { label: "返品・交換ポリシー",          href: "/returns" },
+      { label: "特定商取引法に基づく表記",    href: "/tokushoho" },
+    ],
+  },
+];
+
+// ─── social ───────────────────────────────────────────────────────────────────
+
+const SOCIALS = [
+  { name: "X",         Icon: FaXTwitter,  href: "#", bg: "#000000" },
+  { name: "Facebook",  Icon: FaFacebook,  href: "#", bg: "#1877F2" },
+  { name: "Instagram", Icon: FaInstagram, href: "#", bg: "#E1306C" },
+  { name: "YouTube",   Icon: FaYoutube,   href: "#", bg: "#FF0000" },
+  { name: "LINE",      Icon: FaLine,      href: "#", bg: "#00B900" },
+  { name: "WhatsApp",  Icon: FaWhatsapp,  href: "#", bg: "#25D366" },
+];
+
+// ─── component ────────────────────────────────────────────────────────────────
+
+export default function Footer() {
+  const router = useRouter();
+
+  return (
+    <footer style={{ fontFamily: "'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif" }}>
+      <style>{`
+        .fp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+        .fn-flex{display:flex;flex-wrap:wrap}
+        .fn-col{flex:1;min-width:195px;padding-right:16px;margin-bottom:16px}
+        .fs-flex{display:flex;gap:10px;flex-wrap:wrap}
+        .fi-flex{display:flex;gap:40px;flex-wrap:wrap}
+        @media(max-width:900px){.fp-grid{grid-template-columns:repeat(4,1fr)}}
+        @media(max-width:600px){
+          .fp-grid{grid-template-columns:repeat(3,1fr)}
+          .fn-col{min-width:46%}
+          .fi-flex{flex-direction:column;gap:16px}
+        }
+        @media(max-width:400px){.fn-col{min-width:100%}}
+      `}</style>
+
+      {/* ① Payment Methods */}
+      <div style={{ background: FC.sub, padding: "20px 16px", borderTop: `2px solid ${FC.primary}` }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ fontSize: 10, color: FC.textSub, fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>
+            安心のお支払い方法&ensp;/&ensp;PAYMENT METHODS
+          </div>
+          <div className="fp-grid">
+            {CARDS.map(({ k, el }) => <div key={k}>{el}</div>)}
+          </div>
+        </div>
+      </div>
+
+      {/* ② Navigation */}
+      <div style={{ background: FC.base, padding: "28px 16px 12px" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div className="fn-flex">
+            {NAV.map((col) => (
+              <div key={col.title} className="fn-col">
+                <div style={{ fontSize: 12, fontWeight: 700, color: FC.heading, marginBottom: 10, paddingBottom: 6, borderBottom: `1px solid ${FC.border}` }}>
+                  {col.title}&nbsp;
+                  <span style={{ fontSize: 9, color: "#5A8A8A", fontWeight: 400 }}>{col.en}</span>
+                </div>
+                {col.links.map((link) => (
+                  <div
+                    key={link.label}
+                    onClick={() => router.push(link.href)}
+                    style={{ fontSize: 12, color: FC.textSub, cursor: "pointer", marginBottom: 7, display: "flex", alignItems: "center", gap: 4 }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = FC.primary; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = FC.textSub; }}
+                  >
+                    <span style={{ fontSize: 8, color: "#3A6A6A" }}>›</span>
+                    {link.label}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ③ Social Media */}
+      <div style={{ background: "#162F2F", padding: "18px 16px", borderTop: `1px solid ${FC.border}` }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div style={{ fontSize: 10, color: FC.textSub, fontWeight: 700, letterSpacing: 1.5, marginBottom: 10 }}>
+            SNSでフォローしてください&ensp;/&ensp;FOLLOW US
+          </div>
+          <div className="fs-flex">
+            {SOCIALS.map(({ name, Icon, href, bg }) => (
+              <a key={name} href={href} style={{ textDecoration: "none" }}>
+                <div
+                  style={{
+                    width: 52, height: 52, borderRadius: 10,
+                    background: bg, color: "#fff",
+                    display: "flex", flexDirection: "column",
+                    alignItems: "center", justifyContent: "center",
+                    gap: 3, cursor: "pointer",
+                    border: "1px solid rgba(255,255,255,0.12)",
+                    transition: "opacity .15s, transform .15s",
+                  }}
+                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.opacity = "0.78"; el.style.transform = "scale(1.06)"; }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.opacity = "1"; el.style.transform = "scale(1)"; }}
+                >
+                  <Icon size={20} />
+                  <span style={{ fontSize: 8, lineHeight: 1 }}>{name}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ④ Company Information */}
+      <div style={{ background: FC.dark, padding: "22px 16px", borderTop: `1px solid ${FC.base}` }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <div
+            style={{ fontSize: 15, fontWeight: 900, color: FC.primary, fontFamily: "Arial Black,sans-serif", marginBottom: 16, cursor: "pointer" }}
+            onClick={() => router.push("/corporate")}
+          >
+            AI Across合同会社
+          </div>
+          <div className="fi-flex">
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ 本社</div>
+              <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9 }}>
+                〒306-0052<br />茨城県古河市大山1331-2
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ 関東センター</div>
+              <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9 }}>
+                〒336-0026<br />埼玉県さいたま市南区辻8丁目3-5
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ 電話番号</div>
+              <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9 }}>
+                050-3091-0226<br />048-816-3967
+              </div>
+            </div>
+            <div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ メール</div>
+              <div style={{ fontSize: 11, color: FC.textSub }}>info@aiacross.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ⑤ Copyright */}
+      <div style={{ background: FC.deep, padding: "10px 16px", borderTop: "1px solid #1A2E2E" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
+          <span style={{ fontSize: 10, color: "#3A6A6A" }}>© 2024 AI Across合同会社. All Rights Reserved.</span>
+          <span style={{ fontSize: 10, color: "#3A6A6A" }}>Operated by デジマルショップ</span>
+        </div>
+      </div>
+    </footer>
+  );
+}

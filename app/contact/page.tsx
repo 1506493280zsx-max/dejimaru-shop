@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Footer from "@/components/Footer";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryBg:"#E8F8F8",
@@ -171,14 +172,7 @@ export default function ContactPage() {
         )}
       </div>
 
-      <div style={{background:"#2A4A4A",color:"#AACCCC",padding:"16px 10px"}}>
-        <div style={{maxWidth:1100,margin:"0 auto"}}>
-          <div style={{fontSize:20,fontWeight:900,color:C.primary,fontFamily:"Arial Black,sans-serif",marginBottom:8,cursor:"pointer"}} onClick={()=>router.push("/")}>デジマルショップ</div>
-          <div style={{fontSize:10,color:"#5A8A8A",borderTop:"1px solid #3A6A6A",paddingTop:10,marginTop:8}}>
-            © 2024 デジマルショップ. All Rights Reserved.
-          </div>
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 }

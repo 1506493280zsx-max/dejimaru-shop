@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getImageUrl } from "@/lib/directus";
 import Header from "@/app/components/Header";
+import Footer from "@/components/Footer";
 import { useWishlistStore } from "@/lib/wishlist-store";
 
 const C = {
@@ -307,19 +308,7 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
         </div>
       </div>
 
-      <div style={{background:"#2A4A4A",color:"#AACCCC",padding:"16px 10px",marginTop:10}}>
-        <div style={{maxWidth:1100,margin:"0 auto"}}>
-          <div style={{fontSize:20,fontWeight:900,color:C.primary,fontFamily:"Arial Black,sans-serif",marginBottom:8,cursor:"pointer"}} onClick={()=>router.push("/")}>{"\u30C7\u30B8\u30DE\u30EB\u30B7\u30E7\u30C3\u30D7"}</div>
-          <div style={{display:"flex",gap:20,marginBottom:10,flexWrap:"wrap"}}>
-            {["\u4F1A\u793E\u6982\u8981","\u7279\u5B9A\u5546\u53D6\u5F15\u6CD5\u306B\u57FA\u3065\u304F\u8868\u8A18","\u30D7\u30E9\u30A4\u30D0\u30B7\u30FC\u30DD\u30EA\u30B7\u30FC","\u30B7\u30E7\u30C3\u30D4\u30F3\u30B0\u30AC\u30A4\u30C9","\u304A\u554F\u3044\u5408\u308F\u305B"].map(l=>(
-              <span key={l} style={{fontSize:11,cursor:"pointer",color:"#7AACAC"}}>{l}</span>
-            ))}
-          </div>
-          <div style={{fontSize:10,color:"#5A8A8A",borderTop:"1px solid #3A6A6A",paddingTop:10}}>
-            &copy; 2024 {"\u30C7\u30B8\u30DE\u30EB\u30B7\u30E7\u30C3\u30D7"}. All Rights Reserved.
-          </div>
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 }

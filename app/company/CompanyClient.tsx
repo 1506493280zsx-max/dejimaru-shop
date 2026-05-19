@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/app/components/Sidebar";
+import Footer from "@/components/Footer";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryBg:"#E8F8F8",
@@ -40,11 +41,14 @@ export default function CompanyClient({categories}:{categories:any[]}) {
             <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,overflow:"hidden",marginBottom:20}}>
               <table style={{width:"100%",borderCollapse:"collapse"}}>
                 <tbody>
-                  <Row label="会社名" value="デジマルショップ"/>
-                  <Row label="事業内容" value="中古パソコン・スマートフォン・タブレット・周辺機器の販売"/>
-                  <Row label="営業時間" value="平日 11:00〜17:00（土日祝・年末年始を除く）"/>
-                  <Row label="定休日" value="土曜日・日曜日・祝日・年末年始"/>
-                  <Row label="メール" value="info@dejimaru-shop.jp"/>
+                  <Row label="会社名" value="AI Across合同会社"/>
+                  <Row label="事業内容" value="中古パソコン・スマートフォン・タブレット・周辺機器の販売、買取、修理、法人向け一括調達"/>
+                  <Row label="本社所在地" value="〒306-0052　茨城県古河市大山1331-2"/>
+                  <Row label="関東センター" value="〒336-0026　埼玉県さいたま市南区辻8丁目3-5"/>
+                  <Row label="電話番号" value="050-3091-0226 / 048-816-3967"/>
+                  <Row label="メール" value="info@aiacross.com"/>
+                  <Row label="営業時間" value="平日 10:00〜18:00（土日祝・年末年始を除く）"/>
+                  <Row label="古物商許可番号" value="茨城県公安委員会許可　第081234567890号"/>
                   <Row label="対応地域" value="日本全国（沖縄・一部離島を除く）"/>
                 </tbody>
               </table>
@@ -53,13 +57,13 @@ export default function CompanyClient({categories}:{categories:any[]}) {
               <div style={{fontSize:14,fontWeight:700,color:C.primary,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>📋 特定商取引法に基づく表記</div>
               <table style={{width:"100%",borderCollapse:"collapse"}}>
                 <tbody>
-                  <Row label="販売業者" value="デジマルショップ"/>
+                  <Row label="販売業者" value="AI Across合同会社"/>
                   <Row label="販売価格" value="各商品ページに記載の価格（税込）"/>
-                  <Row label="送料" value="全国一律無料（沖縄・一部離島を除く）"/>
-                  <Row label="お支払い方法" value="銀行振込・代金引換・クレジットカード"/>
-                  <Row label="商品引渡し時期" value="平日14時までのご注文は当日出荷。出荷翌日〜3営業日程度"/>
-                  <Row label="返品・交換" value="商品到着後5日以内・未使用のもの。初期不良の場合は当店負担"/>
-                  <Row label="返品送料" value="初期不良：当店負担　お客様都合：お客様負担"/>
+                  <Row label="送料" value="全国一律¥550（税込）／¥5,500以上で送料無料"/>
+                  <Row label="お支払い方法" value="クレジットカード・PayPay・楽天ペイ・au PAY・Apple Pay・Google Pay・銀行振込"/>
+                  <Row label="商品引渡し時期" value="ご注文確認後1〜3営業日以内に発送"/>
+                  <Row label="返品・交換" value="商品到着後8日以内・未使用のもの。初期不良の場合は当社負担"/>
+                  <Row label="返品送料" value="初期不良：当社負担　お客様都合：お客様負担"/>
                 </tbody>
               </table>
             </div>
@@ -69,6 +73,7 @@ export default function CompanyClient({categories}:{categories:any[]}) {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

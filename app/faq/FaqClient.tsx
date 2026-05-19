@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/app/components/Sidebar";
+import Footer from "@/components/Footer";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryBg:"#E8F8F8",
@@ -84,6 +85,7 @@ export default function FaqClient({categories}:{categories:any[]}) {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

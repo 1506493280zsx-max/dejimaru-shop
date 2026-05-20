@@ -70,7 +70,7 @@ export default function FaqClient({categories}:{categories:any[]}) {
         <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
           <Sidebar categories={categories}/>
           <div style={{flex:1,minWidth:0}}>
-            <h1 style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>❓ よくあるご質問</h1>
+            <h1 style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>よくあるご質問</h1>
             {FAQS.map((cat,i)=>(
               <div key={i} style={{marginBottom:20}}>
                 <div style={{background:C.primary,color:"#fff",padding:"8px 14px",fontSize:14,fontWeight:700,borderRadius:"2px 2px 0 0"}}>{cat.cat}</div>

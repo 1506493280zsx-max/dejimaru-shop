@@ -9,10 +9,10 @@ const C = {
   border:"#DDD", bg:"#F0F5F5", white:"#FFF",
 };
 
-function SH({ icon, title }: { icon: string; title: string }) {
+function SH({ title }: { title: string }) {
   return (
-    <div style={{ background: C.primary, color: "#fff", padding: "8px 14px", fontSize: 14, fontWeight: 700, borderRadius: "2px 2px 0 0", display: "flex", alignItems: "center", gap: 8, marginTop: 24 }}>
-      <span>{icon}</span>{title}
+    <div style={{ background: C.primary, color: "#fff", padding: "8px 14px", fontSize: 14, fontWeight: 700, borderRadius: "2px 2px 0 0", display: "flex", alignItems: "center", marginTop: 24 }}>
+      {title}
     </div>
   );
 }
@@ -57,13 +57,13 @@ export default function CareersPage() {
       </div>
 
       <div style={{ maxWidth: 960, margin: "20px auto", padding: "0 10px 60px" }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>👥 採用情報</h1>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>採用情報</h1>
 
         <div style={{ background: `linear-gradient(135deg,${C.primaryBg},#C8EEEC)`, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: "16px 20px", marginBottom: 8, lineHeight: 1.9, color: C.textSub }}>
           AI Across合同会社では、リユース・中古デジタル機器市場の拡大を共に担う仲間を募集しています。「モノを大切に、循環する社会へ」というビジョンのもと、EC運営・修理技術・法人営業など幅広いポジションで活躍できる環境です。
         </div>
 
-        <SH icon="💼" title="募集職種" />
+        <SH title="募集職種" />
         <div style={{ background: C.white, border: `1px solid ${C.border}`, borderTop: "none", borderRadius: "0 0 2px 2px", padding: 16 }}>
           <JobCard
             title="ECサイト運営スタッフ"
@@ -91,16 +91,15 @@ export default function CareersPage() {
           />
         </div>
 
-        <SH icon="🏢" title="会社の魅力" />
+        <SH title="会社の魅力" />
         <PL>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10 }}>
             {[
-              { icon: "🌱", t: "成長市場で働く",   d: "中古デジタル機器市場は年率10%以上で拡大中。成長フェーズの事業に参加できます。" },
-              { icon: "🔧", t: "技術が身につく",   d: "修理・EC・物流・法人営業と幅広いスキルを実務で習得できます。" },
-              { icon: "🕐", t: "柔軟な働き方",     d: "リモートワーク・時差出勤・副業OKなど、ライフスタイルに合わせて選べます。" },
+              { t: "成長市場で働く",   d: "中古デジタル機器市場は年率10%以上で拡大中。成長フェーズの事業に参加できます。" },
+              { t: "技術が身につく",   d: "修理・EC・物流・法人営業と幅広いスキルを実務で習得できます。" },
+              { t: "柔軟な働き方",     d: "リモートワーク・時差出勤・副業OKなど、ライフスタイルに合わせて選べます。" },
             ].map((item, i) => (
               <div key={i} style={{ background: C.primaryBg, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 12 }}>
-                <div style={{ fontSize: 24, marginBottom: 6 }}>{item.icon}</div>
                 <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>{item.t}</div>
                 <p style={{ fontSize: 12, color: C.textSub, margin: 0 }}>{item.d}</p>
               </div>
@@ -108,7 +107,7 @@ export default function CareersPage() {
           </div>
         </PL>
 
-        <SH icon="📊" title="待遇・福利厚生" />
+        <SH title="待遇・福利厚生" />
         <PL>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
             {[

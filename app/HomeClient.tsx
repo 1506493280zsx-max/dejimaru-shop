@@ -21,22 +21,17 @@ const GRADE_STYLE: Record<string,{color:string,bg:string,border:string}> = {
   JUNK:{color:"#999",bg:"#F0F0F0",border:"#CCC"},
 };
 
-const ICONS: Record<string,string> = {
-  pc:"\uD83D\uDCBB",laptop:"\uD83D\uDCBB",desktop:"\uD83D\uDDA5\uFE0F",smartphones:"\uD83D\uDCF1",
-  tablets:"\uD83D\uDCF1",peripherals:"\uD83D\uDDA5\uFE0F",parts:"\uD83D\uDD27",accessories:"\uD83C\uDFA7",
-};
-
 const GRID_ADS = [
-  {text:"\u671F\u9593\u9650\u5B9A\u30BB\u30FC\u30EB",url:"/search"},
-  {text:"MacBook\u7279\u96C6",url:"/category/laptops-used-mac"},
-  {text:"iPhone\u4E2D\u53E4",url:"/category/smartphones-iphone-used"},
-  {text:"\u30B2\u30FC\u30DF\u30F3\u30B0PC",url:"/category/desktops-gaming"},
-  {text:"\u30BF\u30D6\u30EC\u30C3\u30C8\u7279\u96C6",url:"/category/tablets"},
-  {text:"\u30BF\u30A4\u30E0\u30BB\u30FC\u30EB",url:"/search"},
-  {text:"SSD\u5927\u7279\u96C6",url:"/category/storage-ssd-internal"},
-  {text:"\u30D3\u30B8\u30CD\u30B9PC",url:"/category/laptops-used-business"},
-  {text:"Android\u4E2D\u53E4",url:"/category/smartphones-android-used"},
-  {text:"\u5468\u8FBA\u6A5F\u5668\u7279\u96C6",url:"/category/peripherals"},
+  {text:"期間限定セール",url:"/search"},
+  {text:"MacBook特集",url:"/category/laptops-used-mac"},
+  {text:"iPhone中古",url:"/category/smartphones-iphone-used"},
+  {text:"ゲーミングPC",url:"/category/desktops-gaming"},
+  {text:"タブレット特集",url:"/category/tablets"},
+  {text:"タイムセール",url:"/search"},
+  {text:"SSD大特集",url:"/category/storage-ssd-internal"},
+  {text:"ビジネスPC",url:"/category/laptops-used-business"},
+  {text:"Android中古",url:"/category/smartphones-android-used"},
+  {text:"周辺機器特集",url:"/category/peripherals"},
 ];
 
 function GridBanner() {
@@ -75,7 +70,7 @@ function GridBanner() {
 function GradeBadge({grade}: {grade:string|null}) {
   if(!grade) return null;
   const s = GRADE_STYLE[grade]||GRADE_STYLE.C;
-  return <span style={{display:"inline-block",background:s.bg,color:s.color,border:`1px solid ${s.border}`,borderRadius:2,fontSize:10,fontWeight:700,padding:"1px 5px",marginRight:4}}>{"\u30B0\u30EC\u30FC\u30C9"}{grade}</span>;
+  return <span style={{display:"inline-block",background:s.bg,color:s.color,border:`1px solid ${s.border}`,borderRadius:2,fontSize:10,fontWeight:700,padding:"1px 5px",marginRight:4}}>{"グレード"}{grade}</span>;
 }
 
 function ProductCard({product, size="normal"}: {product:any, size?:string}) {
@@ -94,11 +89,14 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
       style={{background:C.white,border:`1px solid ${hov?C.primary:C.border}`,borderRadius:2,padding:size==="small"?8:10,cursor:"pointer",transition:"border-color 0.15s",display:"flex",flexDirection:"column",gap:4}}>
       <div onClick={()=>router.push(`/products/${product.slug}`)}
         style={{background:"#F5FAFA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",aspectRatio:"4/3",position:"relative",border:`1px solid ${C.primaryBorder}`,marginBottom:6,overflow:"hidden"}}>
-        {imgUrl?<img src={imgUrl} alt={product.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:size==="small"?36:48}}>{"\uD83D\uDCBB"}</span>}
+        {imgUrl
+          ? <img src={imgUrl} alt={product.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+          : <span style={{fontSize:size==="small"?10:11,color:C.textLight}}>NO IMAGE</span>
+        }
         {disc>=10&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
         <div onClick={e=>{e.stopPropagation();toggle({id:String(product.id),slug:product.slug,name:product.name,price:product.price,imageUrl:imgUrl,brand:product.brand_id?.name||"",grade:product.grade});}}
           style={{position:"absolute",top:6,left:6,width:26,height:26,background:"rgba(255,255,255,0.9)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:14,boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>
-          {liked?"\u2764\uFE0F":"\uD83E\uDD0D"}
+          {liked?"❤️":"🤍"}
         </div>
       </div>
       <div onClick={()=>router.push(`/products/${product.slug}`)}>
@@ -106,13 +104,13 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
         <div style={{fontSize:size==="small"?11:12,color:hov?C.primary:C.text,lineHeight:1.5,display:"-webkit-box" as any,WebkitLineClamp:3,WebkitBoxOrient:"vertical" as any,overflow:"hidden"}}>{product.name}</div>
         {product.grade&&<div style={{marginTop:2}}><GradeBadge grade={product.grade}/></div>}
         <div style={{marginTop:4}}>
-          {product.compare_at_price&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>{"\u5B9A\u4FA1"} &yen;{product.compare_at_price.toLocaleString()}</div>}
-          <div style={{fontSize:size==="small"?14:16,fontWeight:700,color:C.red}}>&yen;{product.price.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>{"\uFF08\u7A0E\u8FBC\uFF09"}</span></div>
+          {product.compare_at_price&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>{"定価"} &yen;{product.compare_at_price.toLocaleString()}</div>}
+          <div style={{fontSize:size==="small"?14:16,fontWeight:700,color:C.red}}>&yen;{product.price.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>{"（税込）"}</span></div>
         </div>
       </div>
       <button onClick={()=>router.push(`/products/${product.slug}`)}
         style={{marginTop:"auto",background:hov?C.primaryDark:C.primary,color:"#fff",border:"none",borderRadius:2,padding:"6px 8px",fontSize:11,fontWeight:700,cursor:"pointer",width:"100%",fontFamily:"inherit"}}>
-        {"\u8A73\u7D30\u3092\u898B\u308B"} &rarr;
+        {"詳細を見る"} &rarr;
       </button>
     </div>
   );
@@ -127,7 +125,7 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
   return (
     <div style={{width:185,flexShrink:0}}>
       <div style={{background:C.primary,color:"#fff",padding:"7px 10px",fontSize:12,fontWeight:700,borderBottom:`1px solid ${C.primaryDark}`,display:"flex",alignItems:"center",gap:6}}>
-        <span>&#9632;</span> {"\u30AB\u30C6\u30B4\u30EA"} <span style={{fontSize:9,fontWeight:400,marginLeft:2,opacity:0.8}}>category</span>
+        <span>&#9632;</span> {"カテゴリ"} <span style={{fontSize:9,fontWeight:400,marginLeft:2,opacity:0.8}}>category</span>
       </div>
       {roots.map(cat=>{
         const children=getChildren(String(cat.id));
@@ -135,7 +133,6 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
         return (
           <div key={cat.id}>
             <div onClick={()=>toggle(String(cat.id))} style={{padding:"8px 10px",background:isOpen?C.primaryBg:"#F9F9F9",borderBottom:"1px solid #D8ECEC",cursor:"pointer",display:"flex",alignItems:"center",gap:6,borderLeft:`3px solid ${isOpen?C.primary:"transparent"}`}}>
-              <span style={{fontSize:14}}>{ICONS[cat.slug]||"\uD83D\uDCE6"}</span>
               <div style={{flex:1}}><div style={{fontSize:12,fontWeight:700,color:C.text}}>{cat.name}</div></div>
               <span style={{fontSize:10,color:C.primary,fontWeight:700}}>{isOpen?"▲":"▶"}</span>
             </div>
@@ -155,7 +152,7 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
                   onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
                   onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
                   <span style={{color:C.primary,fontSize:9}}>▶</span>
-                  <span>{"\u3059\u3079\u3066\u898B\u308B"}</span>
+                  <span>{"すべて見る"}</span>
                 </div>
               </div>
             )}
@@ -164,12 +161,12 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
       })}
       <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
         {[
-          {icon:"\uD83D\uDE9A",title:"\u9001\u6599\u306B\u3064\u3044\u3066",sub:"\u5168\u56FD\u4E00\u5F8B\u9001\u6599"},
-          {icon:"\uD83D\uDEE1\uFE0F",title:"30\u65E5\u9593\u4FDD\u8A3C",sub:"\u5168\u5546\u54C1\u4FDD\u8A3C\u4ED8\u304D"},
-          {icon:"\uD83D\uDCDE",title:"\u304A\u554F\u3044\u5408\u308F\u305B",sub:"03-0000-0000"},
+          {title:"送料について",sub:"全国一律送料"},
+          {title:"30日間保証",sub:"全商品保証付き"},
+          {title:"お問い合わせ",sub:"03-0000-0000"},
         ].map((item,i)=>(
           <div key={i} style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>
-            <div style={{fontSize:12,fontWeight:700,color:C.text,display:"flex",alignItems:"center",gap:5}}><span>{item.icon}</span>{item.title}</div>
+            <div style={{fontSize:12,fontWeight:700,color:C.text}}>{item.title}</div>
             <div style={{fontSize:10,color:C.textLight,marginTop:2}}>{item.sub}</div>
           </div>
         ))}
@@ -179,19 +176,19 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
 }
 
 const LEFT_ADS = [
-  {text:"\u671F\u9593\u9650\u5B9A\n\u30BB\u30FC\u30EB",url:"/search"},
-  {text:"MacBook\n\u7279\u96C6",url:"/category/laptops-used-mac"},
-  {text:"iPhone\n\u4E2D\u53E4",url:"/category/smartphones-iphone-used"},
-  {text:"\u30B2\u30FC\u30DF\u30F3\u30B0\nPC",url:"/category/desktops-gaming"},
-  {text:"\u30BF\u30D6\u30EC\u30C3\u30C8\n\u7279\u96C6",url:"/category/tablets"},
+  {text:"期間限定\nセール",url:"/search"},
+  {text:"MacBook\n特集",url:"/category/laptops-used-mac"},
+  {text:"iPhone\n中古",url:"/category/smartphones-iphone-used"},
+  {text:"ゲーミング\nPC",url:"/category/desktops-gaming"},
+  {text:"タブレット\n特集",url:"/category/tablets"},
 ];
 
 const RIGHT_ADS = [
-  {text:"\u672C\u65E5\u9650\u5B9A\n\u30BF\u30A4\u30E0\u30BB\u30FC\u30EB",url:"/search"},
-  {text:"SSD\n\u5927\u7279\u96C6",url:"/category/storage-ssd-internal"},
-  {text:"\u30D3\u30B8\u30CD\u30B9\nPC",url:"/category/laptops-used-business"},
-  {text:"Android\n\u4E2D\u53E4",url:"/category/smartphones-android-used"},
-  {text:"\u5468\u8FBA\u6A5F\u5668\n\u7279\u96C6",url:"/category/peripherals"},
+  {text:"本日限定\nタイムセール",url:"/search"},
+  {text:"SSD\n大特集",url:"/category/storage-ssd-internal"},
+  {text:"ビジネス\nPC",url:"/category/laptops-used-business"},
+  {text:"Android\n中古",url:"/category/smartphones-android-used"},
+  {text:"周辺機器\n特集",url:"/category/peripherals"},
 ];
 
 function AdColumn({ads}: {ads:{text:string,url:string}[]}) {
@@ -210,11 +207,11 @@ function AdColumn({ads}: {ads:{text:string,url:string}[]}) {
   );
 }
 
-function SectionHeader({icon,title,en,color}:{icon:string,title:string,en:string,color?:string}) {
+function SectionHeader({title,en,color}:{title:string,en:string,color?:string}) {
   return (
-    <div style={{background:color||C.primary,color:"#fff",padding:"6px 10px",fontSize:13,fontWeight:700,display:"flex",alignItems:"center",gap:6,marginBottom:8}}>
-      <span>{icon}</span> {title}
-      <span style={{fontSize:10,fontWeight:400,marginLeft:4,opacity:0.8}}>{en}</span>
+    <div style={{background:color||C.primary,color:"#fff",padding:"6px 10px",fontSize:13,fontWeight:700,display:"flex",alignItems:"center",marginBottom:8}}>
+      {title}
+      <span style={{fontSize:10,fontWeight:400,marginLeft:6,opacity:0.8}}>{en}</span>
     </div>
   );
 }
@@ -225,7 +222,7 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
   const [openCats,setOpenCats]=useState(roots.length>0?[String(roots[0]?.id)]:["1"]);
 
   return (
-    <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','\uFF2D\uFF33 \uFF30\u30B4\u30B7\u30C3\u30AF','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
+    <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
 
       <Header/>
       <div style={{maxWidth:1100,margin:"4px auto",padding:"0 10px",overflow:"hidden"}}>
@@ -241,19 +238,18 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
           <div style={{flex:1,minWidth:0}}>
 
             <div style={{background:`linear-gradient(135deg,${C.primaryBg},#C8EEEC)`,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"14px 18px",marginBottom:10,display:"flex",alignItems:"center",gap:16}}>
-              <div style={{fontSize:44}}>{"\uD83D\uDDA5\uFE0F"}</div>
               <div>
-                <div style={{fontSize:18,fontWeight:900,color:C.primaryDeep}}>{"\u4E2D\u53E4PC\u30FB\u30B9\u30DE\u30FC\u30C8\u30D5\u30A9\u30F3\u304C\u8C4A\u5BCC\uFF01"}</div>
-                <div style={{fontSize:12,color:C.textSub,marginTop:4}}>{"\u5168\u5546\u54C130\u65E5\u9593\u52D5\u4F5C\u4FDD\u8A3C\u4ED8\u304D\u30FB\u5373\u65E5\u767A\u9001\u5BFE\u5FDC"}</div>
+                <div style={{fontSize:18,fontWeight:900,color:C.primaryDeep}}>{"中古PC・スマートフォンが豊富！"}</div>
+                <div style={{fontSize:12,color:C.textSub,marginTop:4}}>{"全商品30日間動作保証付き・即日発送対応"}</div>
               </div>
               <div style={{marginLeft:"auto"}}>
-                <button onClick={()=>router.push("/search")} style={{background:C.primary,color:"#fff",border:"none",padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>{"\u5546\u54C1\u4E00\u89A7\u3092\u898B\u308B"} &rarr;</button>
+                <button onClick={()=>router.push("/search")} style={{background:C.primary,color:"#fff",border:"none",padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>{"商品一覧を見る"} &rarr;</button>
               </div>
             </div>
 
             <div style={{background:C.white,border:`1px solid ${C.border}`,padding:"6px 10px",marginBottom:10,display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
-              <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>{"\u30B0\u30EC\u30FC\u30C9\u30AC\u30A4\u30C9\uFF1A"}</span>
-              {[{g:"S",l:"\u672A\u4F7F\u7528\u54C1"},{g:"A",l:"\u7F8E\u54C1"},{g:"B",l:"\u4E2D\u53E4\u826F\u54C1"},{g:"C",l:"\u4E2D\u53E4\u54C1"}].map(({g,l})=>(
+              <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>{"グレードガイド："}</span>
+              {[{g:"S",l:"未使用品"},{g:"A",l:"美品"},{g:"B",l:"中古良品"},{g:"C",l:"中古品"}].map(({g,l})=>(
                 <span key={g} style={{display:"flex",alignItems:"center",gap:4}}>
                   <GradeBadge grade={g}/><span style={{fontSize:10,color:C.textSub}}>{l}</span>
                 </span>
@@ -261,14 +257,14 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
             </div>
 
             <div style={{marginBottom:14}}>
-              <SectionHeader icon="★" title={"\u6CE8\u76EE\u5546\u54C1\u4E00\u89A7"} en="FEATURED ITEMS"/>
+              <SectionHeader title={"注目商品一覧"} en="FEATURED ITEMS"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
                 {featured.map((p:any)=><ProductCard key={p.id} product={p}/>)}
               </div>
             </div>
 
             <div style={{marginBottom:14}}>
-              <SectionHeader icon="🆕" title={"\u65B0\u7740\u5546\u54C1"} en="NEW ARRIVALS" color={C.primaryDeep}/>
+              <SectionHeader title={"新着商品"} en="NEW ARRIVALS" color={C.primaryDeep}/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
                 {newArrivals.map((p:any)=><ProductCard key={p.id} product={p} size="small"/>)}
               </div>
@@ -276,21 +272,19 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
 
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
               {[
-                {icon:"\uD83D\uDEE1\uFE0F",title:"30\u65E5\u9593\u52D5\u4F5C\u4FDD\u8A3C",body:"\u5168\u5546\u54C1\u306B\u52D5\u4F5C\u4FDD\u8A3C\u3092\u4ED8\u3051\u3066\u304A\u5C4A\u3051\u3057\u307E\u3059\u3002\u4E07\u304C\u4E00\u306E\u969B\u306F\u4EA4\u63DB\u30FB\u8FD4\u91D1\u5BFE\u5FDC\u3044\u305F\u3057\u307E\u3059\u3002"},
-                {icon:"\uD83D\uDE9A",title:"\u5373\u65E5\u30FB\u7FCC\u65E5\u767A\u9001",body:"\u5E73\u65E514\u6642\u307E\u3067\u306E\u3054\u6CE8\u6587\u306F\u5F53\u65E5\u767A\u9001\u3002\u6700\u77ED\u7FCC\u65E5\u304A\u5C4A\u3051\u304C\u53EF\u80FD\u3067\u3059\uFF08\u4E00\u90E8\u5730\u57DF\u9664\u304F\uFF09\u3002"},
-                {icon:"\uD83D\uDCDE",title:"\u5C02\u9580\u30B9\u30BF\u30C3\u30D5\u304C\u5BFE\u5FDC",body:"\u5546\u54C1\u9078\u3073\u306E\u3054\u76F8\u8AC7\u306F\u96FB\u8A71\u30FB\u30E1\u30FC\u30EB\u3067\u627F\u3063\u3066\u304A\u308A\u307E\u3059\u3002\u304A\u6C17\u8EFD\u306B\u304A\u554F\u3044\u5408\u308F\u305B\u304F\u3060\u3055\u3044\u3002"},
+                {title:"30日間動作保証",body:"全商品に動作保証を付けてお届けします。万が一の際は交換・返金対応いたします。"},
+                {title:"即日・翌日発送",body:"平日14時までのご注文は当日発送。最短翌日お届けが可能です（一部地域除く）。"},
+                {title:"専門スタッフが対応",body:"商品選びのご相談は電話・メールで承っております。お気軽にお問い合わせください。"},
               ].map((item,i)=>(
                 <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,padding:10,borderRadius:"0 0 2px 2px"}}>
-                  <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:6,display:"flex",alignItems:"center",gap:6}}>
-                    <span style={{fontSize:20}}>{item.icon}</span>{item.title}
-                  </div>
+                  <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:6}}>{item.title}</div>
                   <div style={{fontSize:11,color:C.textSub,lineHeight:1.7}}>{item.body}</div>
                 </div>
               ))}
             </div>
 
             <div style={{marginBottom:14}}>
-              <SectionHeader icon="🏷️" title={"\u30D6\u30E9\u30F3\u30C9\u304B\u3089\u63A2\u3059"} en="BRANDS" color="#555"/>
+              <SectionHeader title={"ブランドから探す"} en="BRANDS" color="#555"/>
               <div style={{display:"flex",flexWrap:"wrap",gap:6,background:C.white,border:`1px solid ${C.border}`,padding:10}}>
                 {brands.map((b:any)=>(
                   <div key={b.id} onClick={()=>router.push(`/search?brand=${b.slug}`)}

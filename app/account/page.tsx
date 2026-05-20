@@ -24,7 +24,6 @@ export default function AccountPage() {
     router.push("/");
   };
 
-  // 未ログインの場合
   if (mounted && !user) {
     return (
       <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13}}>
@@ -34,7 +33,6 @@ export default function AccountPage() {
           </div>
         </div>
         <div style={{maxWidth:500,margin:"60px auto",padding:"0 10px",textAlign:"center"}}>
-          <div style={{fontSize:48,marginBottom:16}}>👤</div>
           <div style={{fontSize:16,fontWeight:700,color:C.text,marginBottom:8}}>ログインが必要です</div>
           <div style={{fontSize:12,color:C.textSub,marginBottom:20}}>マイページをご利用いただくにはログインが必要です</div>
           <button onClick={()=>router.push("/login")} style={{background:C.primary,color:"#fff",border:"none",padding:"12px 32px",borderRadius:2,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
@@ -46,31 +44,29 @@ export default function AccountPage() {
   }
 
   const MENU_ITEMS = [
-    {icon:"📦",title:"注文履歴",sub:"過去のご注文を確認できます",path:"/account/orders",badge:null},
-    {icon:"❤️",title:"お気に入りリスト",sub:"気になる商品をチェック",path:"/account/wishlist",badge:mounted?wishCount():null},
-    {icon:"🛒",title:"カート",sub:"現在のカートを確認",path:"/cart",badge:mounted?cartCount():null},
-    {icon:"👤",title:"会員情報の変更",sub:"お名前・メールアドレスの変更",path:"/account/profile",badge:null},
-    {icon:"🔒",title:"パスワードの変更",sub:"パスワードを変更する",path:"/account/password",badge:null},
-    {icon:"📍",title:"お届け先の管理",sub:"配送先住所を登録・変更",path:"/account/address",badge:null},
+    {title:"注文履歴",sub:"過去のご注文を確認できます",path:"/account/orders",badge:null},
+    {title:"お気に入りリスト",sub:"気になる商品をチェック",path:"/account/wishlist",badge:mounted?wishCount():null},
+    {title:"カート",sub:"現在のカートを確認",path:"/cart",badge:mounted?cartCount():null},
+    {title:"会員情報の変更",sub:"お名前・メールアドレスの変更",path:"/account/profile",badge:null},
+    {title:"パスワードの変更",sub:"パスワードを変更する",path:"/account/password",badge:null},
+    {title:"お届け先の管理",sub:"配送先住所を登録・変更",path:"/account/address",badge:null},
   ];
 
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
 
-      {/* Header */}
       <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
         <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",display:"flex",alignItems:"center"}}>
           <div style={{cursor:"pointer"}} onClick={()=>router.push("/")}>
             <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
           </div>
           <div style={{display:"flex",gap:6,marginLeft:"auto"}}>
-            <button onClick={()=>router.push("/")} style={{background:C.primary,color:"#fff",border:"none",padding:"6px 14px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>🏠 ホーム</button>
-            <button onClick={()=>router.push("/cart")} style={{background:C.red,color:"#fff",border:"none",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>🛒 カート</button>
+            <button onClick={()=>router.push("/")} style={{background:C.primary,color:"#fff",border:"none",padding:"6px 14px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>ホーム</button>
+            <button onClick={()=>router.push("/cart")} style={{background:C.red,color:"#fff",border:"none",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>カート</button>
           </div>
         </div>
       </div>
 
-      {/* Nav */}
       <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
         <div style={{maxWidth:1100,margin:"0 auto",padding:"6px 10px",fontSize:11,color:"#fff",display:"flex",gap:6}}>
           <span style={{cursor:"pointer"}} onClick={()=>router.push("/")}>ホーム</span>
@@ -81,10 +77,9 @@ export default function AccountPage() {
 
       <div style={{maxWidth:900,margin:"16px auto",padding:"0 10px 40px"}}>
 
-        {/* ユーザー情報カード */}
         <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,padding:20,marginBottom:16,display:"flex",alignItems:"center",gap:16}}>
           <div style={{width:60,height:60,borderRadius:"50%",background:C.primary,color:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:24,fontWeight:700,flexShrink:0}}>
-            {user?.last_name?.[0]||user?.first_name?.[0]||"👤"}
+            {user?.last_name?.[0]||user?.first_name?.[0]||"？"}
           </div>
           <div style={{flex:1}}>
             <div style={{fontSize:18,fontWeight:700,color:C.text}}>{user?.last_name} {user?.first_name} 様</div>
@@ -97,25 +92,22 @@ export default function AccountPage() {
           </button>
         </div>
 
-        {/* クイックサマリー */}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
           {[
-            {icon:"🛒",label:"カート",value:mounted?cartCount():0,unit:"点",path:"/cart",color:C.red},
-            {icon:"❤️",label:"お気に入り",value:mounted?wishCount():0,unit:"件",path:"/account/wishlist",color:C.red},
-            {icon:"📦",label:"注文履歴",value:"—",unit:"",path:"/account/orders",color:C.primary},
+            {label:"カート",value:mounted?cartCount():0,unit:"点",path:"/cart",color:C.red},
+            {label:"お気に入り",value:mounted?wishCount():0,unit:"件",path:"/account/wishlist",color:C.red},
+            {label:"注文履歴",value:"—",unit:"",path:"/account/orders",color:C.primary},
           ].map((s,i)=>(
             <div key={i} onClick={()=>router.push(s.path)}
               style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${s.color}`,borderRadius:"0 0 2px 2px",padding:16,textAlign:"center",cursor:"pointer"}}
               onMouseEnter={e=>(e.currentTarget.style.borderColor=s.color)}
               onMouseLeave={e=>(e.currentTarget.style.borderColor=C.border)}>
-              <div style={{fontSize:28,marginBottom:6}}>{s.icon}</div>
               <div style={{fontSize:22,fontWeight:900,color:s.color}}>{s.value}<span style={{fontSize:12}}>{s.unit}</span></div>
               <div style={{fontSize:11,color:C.textSub,marginTop:4}}>{s.label}</div>
             </div>
           ))}
         </div>
 
-        {/* メニュー */}
         <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,overflow:"hidden",marginBottom:16}}>
           <div style={{background:C.primary,color:"#fff",padding:"8px 16px",fontSize:13,fontWeight:700}}>
             マイメニュー
@@ -125,7 +117,6 @@ export default function AccountPage() {
               style={{padding:"14px 16px",borderBottom:i<MENU_ITEMS.length-1?`1px solid ${C.border}`:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:12}}
               onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
               onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
-              <span style={{fontSize:22,flexShrink:0}}>{item.icon}</span>
               <div style={{flex:1}}>
                 <div style={{fontSize:13,fontWeight:700,color:C.text,display:"flex",alignItems:"center",gap:8}}>
                   {item.title}
@@ -140,10 +131,9 @@ export default function AccountPage() {
           ))}
         </div>
 
-        {/* お知らせ */}
         <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,overflow:"hidden"}}>
           <div style={{background:"#555",color:"#fff",padding:"8px 16px",fontSize:13,fontWeight:700}}>
-            📢 お知らせ
+            お知らせ
           </div>
           <div style={{padding:16}}>
             {[
@@ -162,7 +152,6 @@ export default function AccountPage() {
         </div>
       </div>
 
-      {/* Footer */}
       <div style={{background:"#2A4A4A",color:"#AACCCC",padding:"16px 10px"}}>
         <div style={{maxWidth:1100,margin:"0 auto"}}>
           <div style={{fontSize:20,fontWeight:900,color:C.primary,fontFamily:"Arial Black,sans-serif",marginBottom:8,cursor:"pointer"}} onClick={()=>router.push("/")}>デジマルショップ</div>

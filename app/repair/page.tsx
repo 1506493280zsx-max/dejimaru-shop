@@ -10,10 +10,10 @@ const C = {
   border:"#DDD", bg:"#F0F5F5", white:"#FFF",
 };
 
-function SH({ icon, title }: { icon: string; title: string }) {
+function SH({ title }: { title: string }) {
   return (
-    <div style={{ background: C.primary, color: "#fff", padding: "8px 14px", fontSize: 14, fontWeight: 700, borderRadius: "2px 2px 0 0", display: "flex", alignItems: "center", gap: 8, marginTop: 24 }}>
-      <span>{icon}</span>{title}
+    <div style={{ background: C.primary, color: "#fff", padding: "8px 14px", fontSize: 14, fontWeight: 700, borderRadius: "2px 2px 0 0", display: "flex", alignItems: "center", marginTop: 24 }}>
+      {title}
     </div>
   );
 }
@@ -24,12 +24,10 @@ function PL({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-function ServiceCard({ icon, title, body }: { icon: string; title: string; body: string }) {
+function ServiceCard({ title, body }: { title: string; body: string }) {
   return (
     <div style={{ background: C.primaryBg, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 12 }}>
-      <div style={{ fontWeight: 700, color: C.text, marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
-        <span style={{ fontSize: 18 }}>{icon}</span>{title}
-      </div>
+      <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>{title}</div>
       <p style={{ fontSize: 12, color: C.textSub, margin: 0 }}>{body}</p>
     </div>
   );
@@ -62,24 +60,24 @@ export default function RepairPage() {
       </div>
 
       <div style={{ maxWidth: 960, margin: "20px auto", padding: "0 10px 60px" }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>🔧 修理サービス</h1>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>修理サービス</h1>
         <p style={{ lineHeight: 1.9, color: C.textSub, marginBottom: 4 }}>
           PC・スマートフォン・タブレットの修理を承ります。画面割れ・バッテリー交換・水没対応など、熟練スタッフが迅速・丁寧に対応。<strong>診断・見積もり無料</strong>です。
         </p>
 
-        <SH icon="🛠️" title="対応修理メニュー" />
+        <SH title="対応修理メニュー" />
         <PL>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 10 }}>
-            <ServiceCard icon="📱" title="スマートフォン画面修理"   body="iPhone・Androidの画面割れ・タッチ不良・液晶にじみを修理します。" />
-            <ServiceCard icon="🔋" title="バッテリー交換"           body="充電持ちの低下・膨張したバッテリーを純正同等品に交換します。" />
-            <ServiceCard icon="💻" title="ノートPC修理"             body="起動不良・キーボード破損・ヒンジ折れ・液晶不良に対応します。" />
-            <ServiceCard icon="💧" title="水没・液体浸入対応"       body="水没端末の洗浄・乾燥・基板修復を行います（要診断）。" />
-            <ServiceCard icon="🔌" title="充電ポート・コネクタ修理" body="USBポートの緩み・破損・認識不良の修理・交換を行います。" />
-            <ServiceCard icon="📷" title="カメラ・スピーカー修理"   body="カメラ映り・スピーカー音質の不具合を部品交換で改善します。" />
+            <ServiceCard title="スマートフォン画面修理"   body="iPhone・Androidの画面割れ・タッチ不良・液晶にじみを修理します。" />
+            <ServiceCard title="バッテリー交換"           body="充電持ちの低下・膨張したバッテリーを純正同等品に交換します。" />
+            <ServiceCard title="ノートPC修理"             body="起動不良・キーボード破損・ヒンジ折れ・液晶不良に対応します。" />
+            <ServiceCard title="水没・液体浸入対応"       body="水没端末の洗浄・乾燥・基板修復を行います（要診断）。" />
+            <ServiceCard title="充電ポート・コネクタ修理" body="USBポートの緩み・破損・認識不良の修理・交換を行います。" />
+            <ServiceCard title="カメラ・スピーカー修理"   body="カメラ映り・スピーカー音質の不具合を部品交換で改善します。" />
           </div>
         </PL>
 
-        <SH icon="💰" title="修理料金の目安" />
+        <SH title="修理料金の目安" />
         <div style={{ background: C.white, border: `1px solid ${C.border}`, borderTop: "none", borderRadius: "0 0 2px 2px", overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
@@ -111,10 +109,10 @@ export default function RepairPage() {
           </div>
         </div>
 
-        <SH icon="📋" title="修理の流れ" />
+        <SH title="修理の流れ" />
         <PL>{STEPS.map((s) => <FlowStep key={s.n} {...s} />)}</PL>
 
-        <SH icon="📝" title="修理前のご注意" />
+        <SH title="修理前のご注意" />
         <PL>
           <ul style={{ paddingLeft: 18 }}>
             <li>大切なデータは事前にバックアップをお取りください。修理中にデータが消える可能性があります。</li>

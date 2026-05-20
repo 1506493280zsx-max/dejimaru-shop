@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 52">
+  <rect width="80" height="52" rx="5" fill="#fff" stroke="#dde" stroke-width="1.5"/>
+  <rect x="0" y="0" width="80" height="26" rx="5" fill="#003087"/>
+  <rect x="0" y="18" width="80" height="8" fill="#003087"/>
+  <rect x="0" y="26" width="80" height="26" rx="5" fill="#E8002D"/>
+  <rect x="0" y="26" width="80" height="8" fill="#E8002D"/>
+  <text x="40" y="19" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="9" fill="#fff" letter-spacing="0.3">MINI</text>
+  <text x="40" y="40" text-anchor="middle" font-family="Arial Black,sans-serif" font-weight="900" font-size="9" fill="#fff" letter-spacing="0.3">STOP</text>
+</svg>

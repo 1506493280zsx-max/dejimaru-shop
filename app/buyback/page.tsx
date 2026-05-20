@@ -10,10 +10,10 @@ const C = {
   border:"#DDD", bg:"#F0F5F5", white:"#FFF",
 };
 
-function SH({ icon, title }: { icon: string; title: string }) {
+function SH({ title }: { title: string }) {
   return (
-    <div style={{ background: C.primary, color: "#fff", padding: "8px 14px", fontSize: 14, fontWeight: 700, borderRadius: "2px 2px 0 0", display: "flex", alignItems: "center", gap: 8, marginTop: 24 }}>
-      <span>{icon}</span>{title}
+    <div style={{ background: C.primary, color: "#fff", padding: "8px 14px", fontSize: 14, fontWeight: 700, borderRadius: "2px 2px 0 0", display: "flex", alignItems: "center", marginTop: 24 }}>
+      {title}
     </div>
   );
 }
@@ -24,10 +24,9 @@ function PL({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-function ReasonCard({ icon, title, body }: { icon: string; title: string; body: string }) {
+function ReasonCard({ title, body }: { title: string; body: string }) {
   return (
     <div style={{ background: C.white, border: `1px solid ${C.border}`, borderTop: `3px solid ${C.primary}`, padding: 12, borderRadius: "0 0 2px 2px" }}>
-      <div style={{ fontSize: 22, marginBottom: 6 }}>{icon}</div>
       <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>{title}</div>
       <p style={{ fontSize: 12, color: C.textSub, margin: 0 }}>{body}</p>
     </div>
@@ -35,12 +34,12 @@ function ReasonCard({ icon, title, body }: { icon: string; title: string; body: 
 }
 
 const ITEMS = [
-  "💻 ノートパソコン（Windows / Mac）",
-  "🖥️ デスクトップPC",
-  "📱 スマートフォン（iPhone / Android）",
-  "📲 タブレット（iPad / Android）",
-  "🎮 ゲーム機",
-  "🖨️ 周辺機器・その他",
+  "ノートパソコン（Windows / Mac）",
+  "デスクトップPC",
+  "スマートフォン（iPhone / Android）",
+  "タブレット（iPad / Android）",
+  "ゲーム機",
+  "周辺機器・その他",
 ];
 
 const STEPS = [
@@ -70,12 +69,12 @@ export default function BuybackPage() {
       </div>
 
       <div style={{ maxWidth: 960, margin: "20px auto", padding: "0 10px 60px" }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>♻️ 買取サービス</h1>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>買取サービス</h1>
         <p style={{ lineHeight: 1.9, color: C.textSub, marginBottom: 4 }}>
           使わなくなったPC・スマートフォン・タブレットを高価買取いたします。個人・法人どちらも歓迎。全国郵送対応、<strong>査定・キャンセルはすべて無料</strong>です。
         </p>
 
-        <SH icon="📦" title="買取対象品目" />
+        <SH title="買取対象品目" />
         <PL>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
             {ITEMS.map((label, i) => (
@@ -87,19 +86,19 @@ export default function BuybackPage() {
           </p>
         </PL>
 
-        <SH icon="⭐" title="選ばれる3つの理由" />
+        <SH title="選ばれる3つの理由" />
         <PL>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10 }}>
-            <ReasonCard icon="💰" title="相場を上回る高価買取"  body="独自の流通ネットワークにより、市場相場を上回る買取価格をご提示できます。" />
-            <ReasonCard icon="📮" title="全国対応・着払い発送"  body="郵送での買取に対応。着払いで発送いただくため、お客様の送料負担はありません。" />
-            <ReasonCard icon="⚡" title="最短3営業日でご入金"   body="査定完了・ご承諾後、最短3営業日以内に指定口座へ振込対応します。" />
+            <ReasonCard title="相場を上回る高価買取"  body="独自の流通ネットワークにより、市場相場を上回る買取価格をご提示できます。" />
+            <ReasonCard title="全国対応・着払い発送"  body="郵送での買取に対応。着払いで発送いただくため、お客様の送料負担はありません。" />
+            <ReasonCard title="最短3営業日でご入金"   body="査定完了・ご承諾後、最短3営業日以内に指定口座へ振込対応します。" />
           </div>
         </PL>
 
-        <SH icon="📋" title="買取の流れ" />
+        <SH title="買取の流れ" />
         <PL>{STEPS.map((s) => <FlowStep key={s.n} {...s} />)}</PL>
 
-        <SH icon="📝" title="お送りいただく前の確認事項" />
+        <SH title="お送りいただく前の確認事項" />
         <PL>
           <ul style={{ paddingLeft: 18 }}>
             <li>スマートフォン・タブレットはパスコード・Apple ID・Googleアカウントを必ず解除してください。</li>

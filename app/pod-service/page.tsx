@@ -10,10 +10,10 @@ const C = {
   border:"#DDD", bg:"#F0F5F5", white:"#FFF",
 };
 
-function SH({ icon, title }: { icon: string; title: string }) {
+function SH({ title }: { title: string }) {
   return (
-    <div style={{ background: C.primary, color: "#fff", padding: "8px 14px", fontSize: 14, fontWeight: 700, borderRadius: "2px 2px 0 0", display: "flex", alignItems: "center", gap: 8, marginTop: 24 }}>
-      <span>{icon}</span>{title}
+    <div style={{ background: C.primary, color: "#fff", padding: "8px 14px", fontSize: 14, fontWeight: 700, borderRadius: "2px 2px 0 0", display: "flex", alignItems: "center", marginTop: 24 }}>
+      {title}
     </div>
   );
 }
@@ -24,10 +24,9 @@ function PL({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-function FeatureCard({ icon, title, body }: { icon: string; title: string; body: string }) {
+function FeatureCard({ title, body }: { title: string; body: string }) {
   return (
     <div style={{ background: C.primaryBg, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 14 }}>
-      <div style={{ fontSize: 24, marginBottom: 6 }}>{icon}</div>
       <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>{title}</div>
       <p style={{ fontSize: 12, color: C.textSub, margin: 0 }}>{body}</p>
     </div>
@@ -40,6 +39,13 @@ const STEPS = [
   { n: 3, t: "印刷・加工",               d: "承認後、専用設備にてプリント・貼付け・加工作業を行います。" },
   { n: 4, t: "品質検査",                 d: "全数検品を実施し、色ずれ・剥がれ・傷がないか確認します。" },
   { n: 5, t: "納品",                     d: "個別梱包の上、指定住所へ発送。法人は複数拠点への分散納品にも対応。" },
+];
+
+const PRODUCTS = [
+  { t: "ノートPC（外装・天板）",       d: "天板へのロゴプリント・ステッカー貼付・シート加工に対応します。" },
+  { t: "スマートフォン（背面）",       d: "背面パネルへのフルカラー印刷・資産管理番号の刻印が可能です。" },
+  { t: "タブレット（背面・画面枠）",   d: "背面へのブランドロゴ印刷・バーコードラベル貼付に対応します。" },
+  { t: "ノベルティ・ギフトセット",     d: "化粧箱・リボン梱包でノベルティ・贈答品としての仕上げも可能です。" },
 ];
 
 export default function PodServicePage() {
@@ -61,40 +67,33 @@ export default function PodServicePage() {
       </div>
 
       <div style={{ maxWidth: 960, margin: "20px auto", padding: "0 10px 60px" }}>
-        <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>🎨 PODカスタムサービス</h1>
+        <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>PODカスタムサービス</h1>
         <p style={{ lineHeight: 1.9, color: C.textSub, marginBottom: 4 }}>
           Print On Demand（POD）技術を活用し、中古PC・スマートフォン・タブレットにオリジナルデザインをプリント・刻印します。ノベルティ制作・社内ブランディング・ギフト用途に対応。<strong>1台から注文可能</strong>です。
         </p>
 
-        <SH icon="✨" title="サービスの特徴" />
+        <SH title="サービスの特徴" />
         <PL>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10 }}>
-            <FeatureCard icon="🖨️" title="高精細プリント"       body="UV印刷技術で鮮明なフルカラーデザインを実現。細かいロゴや文字も再現します。" />
-            <FeatureCard icon="🔢" title="1台から対応"         body="小ロット・単品から受付。大量注文はボリューム割引があります。" />
-            <FeatureCard icon="🏷️" title="レーザー刻印"       body="金属・プラスチック筐体へのレーザー刻印で半永久的な印字が可能です。" />
+            <FeatureCard title="高精細プリント" body="UV印刷技術で鮮明なフルカラーデザインを実現。細かいロゴや文字も再現します。" />
+            <FeatureCard title="1台から対応"   body="小ロット・単品から受付。大量注文はボリューム割引があります。" />
+            <FeatureCard title="レーザー刻印"  body="金属・プラスチック筐体へのレーザー刻印で半永久的な印字が可能です。" />
           </div>
         </PL>
 
-        <SH icon="📦" title="対応製品・カスタム内容" />
+        <SH title="対応製品・カスタム内容" />
         <PL>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            {[
-              { icon: "💻", t: "ノートPC（外装・天板）",       d: "天板へのロゴプリント・ステッカー貼付・シート加工に対応します。" },
-              { icon: "📱", t: "スマートフォン（背面）",       d: "背面パネルへのフルカラー印刷・資産管理番号の刻印が可能です。" },
-              { icon: "📲", t: "タブレット（背面・画面枠）",   d: "背面へのブランドロゴ印刷・バーコードラベル貼付に対応します。" },
-              { icon: "🎁", t: "ノベルティ・ギフトセット",     d: "化粧箱・リボン梱包でノベルティ・贈答品としての仕上げも可能です。" },
-            ].map((item, i) => (
+            {PRODUCTS.map((item, i) => (
               <div key={i} style={{ background: C.primaryBg, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 12 }}>
-                <div style={{ fontWeight: 700, color: C.text, marginBottom: 4, display: "flex", alignItems: "center", gap: 6 }}>
-                  <span style={{ fontSize: 16 }}>{item.icon}</span>{item.t}
-                </div>
+                <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>{item.t}</div>
                 <p style={{ fontSize: 12, color: C.textSub, margin: 0 }}>{item.d}</p>
               </div>
             ))}
           </div>
         </PL>
 
-        <SH icon="💰" title="料金プラン" />
+        <SH title="料金プラン" />
         <div style={{ background: C.white, border: `1px solid ${C.border}`, borderTop: "none", borderRadius: "0 0 2px 2px", overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
@@ -107,9 +106,9 @@ export default function PodServicePage() {
             </thead>
             <tbody>
               {[
-                { plan: "スモール",      qty: "1〜9台",   price: "¥2,200〜",   note: "初回デザイン確認費含む" },
-                { plan: "スタンダード",  qty: "10〜49台", price: "¥1,500〜",   note: "複数デザイン対応" },
-                { plan: "バルク",        qty: "50台以上", price: "¥1,000〜",   note: "専任担当・個別梱包" },
+                { plan: "スモール",      qty: "1〜9台",   price: "¥2,200〜", note: "初回デザイン確認費含む" },
+                { plan: "スタンダード",  qty: "10〜49台", price: "¥1,500〜", note: "複数デザイン対応" },
+                { plan: "バルク",        qty: "50台以上", price: "¥1,000〜", note: "専任担当・個別梱包" },
               ].map((r, i) => (
                 <tr key={i} style={{ borderBottom: "1px solid #EEF6F6" }}>
                   <td style={{ padding: "10px 14px", fontWeight: 700, color: C.primary }}>{r.plan}</td>
@@ -125,10 +124,10 @@ export default function PodServicePage() {
           </div>
         </div>
 
-        <SH icon="📋" title="ご利用の流れ" />
+        <SH title="ご利用の流れ" />
         <PL>{STEPS.map((s) => <FlowStep key={s.n} {...s} />)}</PL>
 
-        <SH icon="📐" title="入稿データの規格" />
+        <SH title="入稿データの規格" />
         <PL>
           <ul style={{ paddingLeft: 18 }}>
             <li>対応フォーマット：AI（Adobe Illustrator）・PDF・PNG（300dpi以上推奨）</li>

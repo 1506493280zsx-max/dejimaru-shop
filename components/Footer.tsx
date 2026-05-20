@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { FaFacebook, FaInstagram, FaYoutube, FaLine, FaWhatsapp } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
+import PaymentMethods from "./PaymentMethods";
 
 // ─── colour tokens ────────────────────────────────────────────────────────────
 const FC = {
@@ -15,154 +16,13 @@ const FC = {
   primary: "#0ABAB5",
 };
 
-// ─── payment cards ────────────────────────────────────────────────────────────
-
-function CardWrap({ children, bg = "#fff", border = true }: { children: React.ReactNode; bg?: string; border?: boolean }) {
-  return (
-    <div style={{
-      background: bg,
-      border: border ? "1px solid #dde" : "none",
-      borderRadius: 5,
-      height: 52,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 2,
-      overflow: "hidden",
-    }}>
-      {children}
-    </div>
-  );
-}
-
-function VisaCard() {
-  return (
-    <CardWrap>
-      <span style={{ fontSize: 18, fontWeight: 900, color: "#1A1F71", fontStyle: "italic", letterSpacing: -1, fontFamily: "Arial Black,sans-serif", lineHeight: 1 }}>VISA</span>
-    </CardWrap>
-  );
-}
-
-function MastercardCard() {
-  return (
-    <CardWrap>
-      <div style={{ position: "relative", width: 34, height: 20 }}>
-        <div style={{ position: "absolute", left: 0, top: 0, width: 20, height: 20, borderRadius: "50%", background: "#EB001B" }} />
-        <div style={{ position: "absolute", right: 0, top: 0, width: 20, height: 20, borderRadius: "50%", background: "#FF5F00", opacity: 0.88 }} />
-      </div>
-      <span style={{ fontSize: 7, fontWeight: 700, color: "#333", letterSpacing: 0.4 }}>Mastercard</span>
-    </CardWrap>
-  );
-}
-
-function JcbCard() {
-  return (
-    <CardWrap>
-      <div style={{ display: "flex", gap: 1 }}>
-        <span style={{ fontSize: 17, fontWeight: 900, color: "#003087", fontFamily: "Arial Black,sans-serif", lineHeight: 1 }}>J</span>
-        <span style={{ fontSize: 17, fontWeight: 900, color: "#CC0000", fontFamily: "Arial Black,sans-serif", lineHeight: 1 }}>C</span>
-        <span style={{ fontSize: 17, fontWeight: 900, color: "#009A44", fontFamily: "Arial Black,sans-serif", lineHeight: 1 }}>B</span>
-      </div>
-    </CardWrap>
-  );
-}
-
-function AmexCard() {
-  return (
-    <CardWrap bg="#016FD0" border={false}>
-      <span style={{ fontSize: 7, fontWeight: 800, color: "#fff", letterSpacing: 1.2, lineHeight: 1.5, textAlign: "center" }}>AMERICAN{"\n"}EXPRESS</span>
-    </CardWrap>
-  );
-}
-
-function DiscoverCard() {
-  return (
-    <CardWrap>
-      <span style={{ fontSize: 9, fontWeight: 900, color: "#F76520", letterSpacing: 0.6 }}>DISCOVER</span>
-      <div style={{ width: 18, height: 18, borderRadius: "50%", background: "linear-gradient(135deg,#F76520 40%,#FFB347)" }} />
-    </CardWrap>
-  );
-}
-
-function DinersCard() {
-  return (
-    <CardWrap>
-      <span style={{ fontSize: 9, fontWeight: 700, color: "#4B6070", lineHeight: 1.5, textAlign: "center" }}>Diners{"\n"}Club</span>
-    </CardWrap>
-  );
-}
-
-function GooglePayCard() {
-  return (
-    <CardWrap>
-      <div style={{ display: "flex", alignItems: "baseline", gap: 1 }}>
-        <span style={{ fontSize: 13, fontWeight: 900 }}>
-          <span style={{ color: "#4285F4" }}>G</span>
-          <span style={{ color: "#EA4335" }}>o</span>
-          <span style={{ color: "#FBBC05" }}>o</span>
-          <span style={{ color: "#4285F4" }}>g</span>
-          <span style={{ color: "#34A853" }}>l</span>
-          <span style={{ color: "#EA4335" }}>e</span>
-        </span>
-        <span style={{ fontSize: 10, fontWeight: 700, color: "#333" }}>Pay</span>
-      </div>
-    </CardWrap>
-  );
-}
-
-function ApplePayCard() {
-  return (
-    <CardWrap bg="#000" border={false}>
-      <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-        <span style={{ fontSize: 16, color: "#fff", lineHeight: 1 }}>&#63743;</span>
-        <span style={{ fontSize: 10, fontWeight: 700, color: "#fff" }}>Pay</span>
-      </div>
-    </CardWrap>
-  );
-}
-
-function SolidCard({ top, bottom, bg, color }: { top: string; bottom?: string; bg: string; color: string }) {
-  return (
-    <CardWrap bg={bg} border={false}>
-      <span style={{ fontSize: bottom ? 11 : 12, fontWeight: 900, color, lineHeight: 1.25, textAlign: "center" }}>{top}</span>
-      {bottom && <span style={{ fontSize: 10, fontWeight: 900, color, lineHeight: 1 }}>{bottom}</span>}
-    </CardWrap>
-  );
-}
-
-function BankCard() {
-  return (
-    <CardWrap>
-      <span style={{ fontSize: 13 }}>🏦</span>
-      <span style={{ fontSize: 9, fontWeight: 700, color: "#1E5A3A", letterSpacing: 0.3 }}>銀行振込</span>
-    </CardWrap>
-  );
-}
-
-const CARDS = [
-  { k: "visa",       el: <VisaCard /> },
-  { k: "mc",         el: <MastercardCard /> },
-  { k: "jcb",        el: <JcbCard /> },
-  { k: "amex",       el: <AmexCard /> },
-  { k: "discover",   el: <DiscoverCard /> },
-  { k: "diners",     el: <DinersCard /> },
-  { k: "paypay",     el: <SolidCard top="Pay" bottom="Pay" bg="#FF0033" color="#fff" /> },
-  { k: "rakuten",    el: <SolidCard top="楽天" bottom="ペイ" bg="#BF0000" color="#fff" /> },
-  { k: "aupay",      el: <SolidCard top="au" bottom="PAY" bg="#EA6100" color="#fff" /> },
-  { k: "googlepay",  el: <GooglePayCard /> },
-  { k: "applepay",   el: <ApplePayCard /> },
-  { k: "shoppay",    el: <SolidCard top="Shop" bottom="Pay" bg="#5A31F4" color="#fff" /> },
-  { k: "bank",       el: <BankCard /> },
-];
-
 // ─── navigation ───────────────────────────────────────────────────────────────
 
 const NAV = [
   {
     title: "サポート", en: "Support",
     links: [
-      { label: "ショッピングガイド",    href: "/support" },
+      { label: "ショッピングガイド",    href: "/guide" },
       { label: "よくある質問（FAQ）",   href: "/faq" },
       { label: "配送について",          href: "/shipping" },
       { label: "お問い合わせ",          href: "/contact" },
@@ -216,33 +76,22 @@ export default function Footer() {
   return (
     <footer style={{ fontFamily: "'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif" }}>
       <style>{`
-        .fp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
         .fn-flex{display:flex;flex-wrap:wrap}
         .fn-col{flex:1;min-width:195px;padding-right:16px;margin-bottom:16px}
         .fs-flex{display:flex;gap:10px;flex-wrap:wrap}
         .fi-flex{display:flex;gap:40px;flex-wrap:wrap}
-        @media(max-width:900px){.fp-grid{grid-template-columns:repeat(4,1fr)}}
+        .fc-wrap{display:flex;gap:32px;flex-wrap:wrap}
+        .fc-left{flex:1;min-width:260px}
+        .fc-right{flex:0 0 auto;min-width:240px}
         @media(max-width:600px){
-          .fp-grid{grid-template-columns:repeat(3,1fr)}
           .fn-col{min-width:46%}
           .fi-flex{flex-direction:column;gap:16px}
+          .fc-right{width:100%}
         }
         @media(max-width:400px){.fn-col{min-width:100%}}
       `}</style>
 
-      {/* ① Payment Methods */}
-      <div style={{ background: FC.sub, padding: "20px 16px", borderTop: `2px solid ${FC.primary}` }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ fontSize: 10, color: FC.textSub, fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>
-            安心のお支払い方法&ensp;/&ensp;PAYMENT METHODS
-          </div>
-          <div className="fp-grid">
-            {CARDS.map(({ k, el }) => <div key={k}>{el}</div>)}
-          </div>
-        </div>
-      </div>
-
-      {/* ② Navigation */}
+      {/* ① Navigation */}
       <div style={{ background: FC.base, padding: "28px 16px 12px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
           <div className="fn-flex">
@@ -304,34 +153,41 @@ export default function Footer() {
       {/* ④ Company Information */}
       <div style={{ background: FC.dark, padding: "22px 16px", borderTop: `1px solid ${FC.base}` }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div
-            style={{ fontSize: 15, fontWeight: 900, color: FC.primary, fontFamily: "Arial Black,sans-serif", marginBottom: 16, cursor: "pointer" }}
-            onClick={() => router.push("/corporate")}
-          >
-            AI Across合同会社
-          </div>
-          <div className="fi-flex">
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ 本社</div>
-              <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9 }}>
-                〒306-0052<br />茨城県古河市大山1331-2
+          <div className="fc-wrap">
+            <div className="fc-left">
+              <div
+                style={{ fontSize: 15, fontWeight: 900, color: FC.primary, fontFamily: "Arial Black,sans-serif", marginBottom: 16, cursor: "pointer" }}
+                onClick={() => router.push("/corporate")}
+              >
+                AI Across合同会社
+              </div>
+              <div className="fi-flex">
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ 本社</div>
+                  <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9 }}>
+                    〒306-0052<br />茨城県古河市大山1331-2
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ 関東センター</div>
+                  <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9 }}>
+                    〒336-0026<br />埼玉県さいたま市南区辻8丁目3-5
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ 電話番号</div>
+                  <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9 }}>
+                    050-3091-0226<br />048-816-3967
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ メール</div>
+                  <div style={{ fontSize: 11, color: FC.textSub }}>info@aiacross.com</div>
+                </div>
               </div>
             </div>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ 関東センター</div>
-              <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9 }}>
-                〒336-0026<br />埼玉県さいたま市南区辻8丁目3-5
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ 電話番号</div>
-              <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9 }}>
-                050-3091-0226<br />048-816-3967
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 10, fontWeight: 700, color: FC.heading, marginBottom: 5 }}>■ メール</div>
-              <div style={{ fontSize: 11, color: FC.textSub }}>info@aiacross.com</div>
+            <div className="fc-right">
+              <PaymentMethods />
             </div>
           </div>
         </div>

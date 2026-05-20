@@ -60,7 +60,7 @@ export default function ContactPage() {
 
       <div style={{maxWidth:800,margin:"16px auto",padding:"0 10px 40px"}}>
         <h1 style={{fontSize:20,fontWeight:700,color:C.text,marginBottom:8,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>
-          📞 お問い合わせ
+          お問い合わせ
         </h1>
 
         <div style={{background:"#FFF8E8",border:"1px solid #F0D080",borderRadius:2,padding:14,marginBottom:20,fontSize:12,lineHeight:1.9}}>
@@ -75,12 +75,12 @@ export default function ContactPage() {
 
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
           {[
-            {icon:"📧",title:"メール",value:"aiacrossshop@gmail.com",sub:"24時間受付（返信は営業時間内）"},
-            {icon:"🕐",title:"営業時間",value:"平日 9:00〜18:00",sub:"土日祝・年末年始を除く"},
+            {title:"メール",value:"aiacrossshop@gmail.com",sub:"24時間受付（返信は営業時間内）"},
+            {title:"営業時間",value:"平日 9:00〜18:00",sub:"土日祝・年末年始を除く"},
           ].map((item,i)=>(
             <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,padding:14,borderRadius:"0 0 2px 2px"}}>
-              <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:6,display:"flex",alignItems:"center",gap:6}}>
-                <span style={{fontSize:20}}>{item.icon}</span>{item.title}
+              <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:6}}>
+                {item.title}
               </div>
               <div style={{fontSize:13,fontWeight:700,color:C.primary}}>{item.value}</div>
               <div style={{fontSize:11,color:C.textLight,marginTop:2}}>{item.sub}</div>
@@ -90,7 +90,6 @@ export default function ContactPage() {
 
         {sent ? (
           <div style={{background:"#F0FFF0",border:"1px solid #44AA44",borderRadius:2,padding:30,textAlign:"center"}}>
-            <div style={{fontSize:32,marginBottom:12}}>✅</div>
             <div style={{fontSize:16,fontWeight:700,color:"#227700",marginBottom:8}}>お問い合わせを受け付けました</div>
             <div style={{fontSize:12,color:C.textSub,lineHeight:1.8}}>
               2営業日以内にご登録のメールアドレスへご返信いたします。<br/>

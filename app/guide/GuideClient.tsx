@@ -9,14 +9,14 @@ const C = {
 };
 
 const GUIDE_SECTIONS = [
-  {id:"first",   icon:"📖", label:"初めてご利用のお客様"},
-  {id:"payment", icon:"💴", label:"お支払い方法について"},
-  {id:"shipping",icon:"🚚", label:"配送について"},
-  {id:"warranty",icon:"🛡️", label:"保証について"},
-  {id:"defect",  icon:"⚡", label:"初期不良について"},
-  {id:"faq",     icon:"❓", label:"よくあるご質問", path:"/faq"},
-  {id:"products",icon:"💻", label:"掲載商品について"},
-  {id:"privacy", icon:"🔒", label:"プライバシーポリシーについて"},
+  {id:"first",   label:"初めてご利用のお客様"},
+  {id:"payment", label:"お支払い方法について"},
+  {id:"shipping",label:"配送について"},
+  {id:"warranty",label:"保証について"},
+  {id:"defect",  label:"初期不良について"},
+  {id:"faq",     label:"よくあるご質問", path:"/faq"},
+  {id:"products",label:"掲載商品について"},
+  {id:"privacy", label:"プライバシーポリシーについて"},
 ];
 
 function Section({id,title,children}:{id:string,title:string,children:any}) {
@@ -62,7 +62,7 @@ export default function GuideClient({categories}:{categories:any[]}) {
         <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
           <Sidebar categories={categories}/>
           <div style={{flex:1,minWidth:0}}>
-            <h1 style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>📋 ショッピングガイド</h1>
+            <h1 style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>ショッピングガイド</h1>
 
             {/* Card nav */}
             <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,padding:16,marginBottom:24}}>
@@ -73,14 +73,13 @@ export default function GuideClient({categories}:{categories:any[]}) {
                     style={{border:`1px solid ${C.border}`,borderRadius:2,padding:"14px 10px",textAlign:"center",cursor:"pointer",background:C.white,transition:"all 0.15s"}}
                     onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.borderColor=C.primary;(e.currentTarget as HTMLElement).style.background=C.primaryBg;}}
                     onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.borderColor=C.border;(e.currentTarget as HTMLElement).style.background=C.white;}}>
-                    <div style={{fontSize:28,marginBottom:6}}>{s.icon}</div>
                     <div style={{fontSize:11,color:C.text,lineHeight:1.4}}>{s.label}</div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <Section id="first" title="📖 初めてご利用のお客様">
+            <Section id="first" title="初めてご利用のお客様">
               <p>デジマルショップへようこそ！当ショップでの商品のご購入方法をご説明いたします。</p><br/>
               <p style={{fontWeight:700}}>【ご注文の流れ】</p>
               <ol style={{paddingLeft:20,marginTop:8}}>
@@ -92,14 +91,14 @@ export default function GuideClient({categories}:{categories:any[]}) {
               </ol>
             </Section>
 
-            <Section id="payment" title="💴 お支払い方法について">
+            <Section id="payment" title="お支払い方法について">
               <Row label="銀行振込" value="ご注文後、振込先口座をメールにてご連絡いたします。振込手数料はお客様負担です。"/>
               <Row label="代金引換" value="商品受け取り時に配送員へお支払いください。代引手数料は330円〜です（現金のみ）。"/>
               <Row label="クレジットカード" value="VISA・MasterCard・JCB・AMEX対応。"/>
               <br/><div style={{padding:10,background:"#FFF8E8",border:"1px solid #F0D080",borderRadius:2,fontSize:12,color:"#886600"}}>※30万円以上の場合、代金引換はご利用いただけません。</div>
             </Section>
 
-            <Section id="shipping" title="🚚 配送について">
+            <Section id="shipping" title="配送について">
               <Row label="送料" value="全国一律無料（沖縄・離島を除く）"/>
               <Row label="配送業者" value="ヤマト運輸・佐川急便（商品により異なります）"/>
               <Row label="出荷日" value="平日14時までのご注文は当日出荷（土日祝除く）"/>
@@ -107,13 +106,13 @@ export default function GuideClient({categories}:{categories:any[]}) {
               <Row label="時間指定" value="午前中・14〜16時・16〜18時・18〜20時・19〜21時"/>
             </Section>
 
-            <Section id="warranty" title="🛡️ 保証について">
+            <Section id="warranty" title="保証について">
               <Row label="保証期間" value="商品到着後30日間（初期不良対応）"/>
               <Row label="保証内容" value="通常使用における故障・初期不良の場合、交換または返金対応"/>
               <Row label="対象外" value="お客様の過失による破損・水没・改造等"/>
             </Section>
 
-            <Section id="defect" title="⚡ 初期不良について">
+            <Section id="defect" title="初期不良について">
               <p>万が一初期不良があった場合の対応です。</p><br/>
               <ol style={{paddingLeft:20}}>
                 <li style={{marginBottom:6}}>商品到着後5日以内にご連絡ください</li>
@@ -122,14 +121,14 @@ export default function GuideClient({categories}:{categories:any[]}) {
               </ol>
             </Section>
 
-            <Section id="products" title="💻 掲載商品について">
+            <Section id="products" title="掲載商品について">
               <Row label="グレードS" value="未使用品または新品同様。傷・汚れなし"/>
               <Row label="グレードA" value="使用感がほとんどなく美品"/>
               <Row label="グレードB" value="軽微な傷・使用感あり。動作に問題なし"/>
               <Row label="グレードC" value="傷・汚れがあるが動作に問題なし"/>
             </Section>
 
-            <Section id="privacy" title="🔒 プライバシーポリシーについて">
+            <Section id="privacy" title="プライバシーポリシーについて">
               <Row label="収集する情報" value="氏名・住所・電話番号・メールアドレス・購入履歴など"/>
               <Row label="利用目的" value="商品の発送・お問い合わせへの対応・サービス向上のため"/>
               <Row label="第三者提供" value="法令に基づく場合を除き、第三者への提供は行いません"/>

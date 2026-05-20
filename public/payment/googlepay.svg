@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 52">
+  <rect width="80" height="52" rx="5" fill="#fff" stroke="#dde" stroke-width="1.5"/>
+  <text x="38" y="30" text-anchor="end" font-family="Arial,sans-serif" font-weight="900" font-size="17" fill="none">
+    <tspan fill="#4285F4">G</tspan><tspan fill="#EA4335">o</tspan><tspan fill="#FBBC05">o</tspan><tspan fill="#4285F4">g</tspan><tspan fill="#34A853">l</tspan><tspan fill="#EA4335">e</tspan>
+  </text>
+  <text x="10" y="30" font-family="Arial,sans-serif" font-weight="900" font-size="16">
+    <tspan fill="#4285F4">G</tspan><tspan fill="#EA4335">o</tspan><tspan fill="#FBBC05">o</tspan><tspan fill="#4285F4">g</tspan><tspan fill="#34A853">l</tspan><tspan fill="#EA4335">e</tspan>
+  </text>
+  <text x="70" y="30" text-anchor="end" font-family="Arial,sans-serif" font-weight="700" font-size="14" fill="#333">Pay</text>
+</svg>

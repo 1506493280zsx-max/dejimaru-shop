@@ -15,7 +15,7 @@ export default function Sidebar({categories}: {categories:any[]}) {
   const getChildren = (pid:string) => categories.filter(c=>String(c.parent_id)===String(pid));
 
   return (
-    <div style={{width:185,flexShrink:0}}>
+    <div style={{width:185,flexShrink:0,position:"sticky",top:20,alignSelf:"flex-start",height:"fit-content"}}>
       <div style={{background:C.primary,color:"#fff",padding:"7px 10px",fontSize:12,fontWeight:700,borderBottom:`1px solid ${C.primaryDark}`,display:"flex",alignItems:"center",gap:6}}>
         <span>■</span> カテゴリ <span style={{fontSize:9,fontWeight:400,marginLeft:2,opacity:0.8}}>category</span>
       </div>

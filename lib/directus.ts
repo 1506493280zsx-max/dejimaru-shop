@@ -31,11 +31,11 @@ export async function getProducts(options: {
 }
 
 export async function getFeaturedProducts() {
-  return getProducts({ limit: 8, filter: { is_published: { _eq: true }, is_featured: { _eq: true } } });
+  return getProducts({ limit: 8, filter: { is_featured: { _eq: true } } });
 }
 
 export async function getNewArrivals() {
-  return getProducts({ limit: 4, filter: { is_published: { _eq: true } }, sort: ["-published_at"] });
+  return getProducts({ limit: 8, sort: ["-published_at"] });
 }
 
 export async function getProductBySlug(slug: string) {

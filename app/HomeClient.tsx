@@ -5,6 +5,8 @@ import { getImageUrl } from "@/lib/directus";
 import Header from "@/app/components/Header";
 import Footer from "@/components/Footer";
 import { useWishlistStore } from "@/lib/wishlist-store";
+import { homepageAds } from "@/lib/homepageAds";
+type HpAd = { id:string; image:string; link:string; title:string; subtitle?:string; active:boolean; sort:number };
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryDeep:"#007A76",
@@ -13,12 +15,12 @@ const C = {
   border:"#DDD", bg:"#F0F5F5", white:"#FFF",
 };
 
-const GRADE_STYLE: Record<string,{color:string,bg:string,border:string}> = {
-  S:{color:"#CC0000",bg:"#FFF0F0",border:"#CC0000"},
-  A:{color:"#007A76",bg:"#E8F8F8",border:"#0ABAB5"},
-  B:{color:"#227700",bg:"#F0FFF0",border:"#44AA44"},
-  C:{color:"#555",bg:"#F5F5F5",border:"#AAA"},
-  JUNK:{color:"#999",bg:"#F0F0F0",border:"#CCC"},
+const GRADE_STYLE: Record<string,{label:string,color:string,bg:string,border:string}> = {
+  NEW:{label:"新品",color:"#CC0000",bg:"#FFF0F0",border:"#CC0000"},
+  S:  {label:"S品", color:"#007A76",bg:"#E8F8F8",border:"#0ABAB5"},
+  A:  {label:"A品", color:"#227700",bg:"#F0FFF0",border:"#44AA44"},
+  B:  {label:"B品", color:"#555",   bg:"#F5F5F5",border:"#AAA"},
+  C:  {label:"C品", color:"#333",   bg:"#EEEEEE",border:"#888"},
 };
 
 const GRID_ADS = [
@@ -70,7 +72,7 @@ function GridBanner() {
 function GradeBadge({grade}: {grade:string|null}) {
   if(!grade) return null;
   const s = GRADE_STYLE[grade]||GRADE_STYLE.C;
-  return <span style={{display:"inline-block",background:s.bg,color:s.color,border:`1px solid ${s.border}`,borderRadius:2,fontSize:10,fontWeight:700,padding:"1px 5px",marginRight:4}}>{"グレード"}{grade}</span>;
+  return <span style={{display:"inline-block",background:s.bg,color:s.color,border:`1px solid ${s.border}`,borderRadius:2,fontSize:10,fontWeight:700,padding:"1px 5px",marginRight:4}}>{s.label}</span>;
 }
 
 function ProductCard({product, size="normal"}: {product:any, size?:string}) {
@@ -123,7 +125,7 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
   const getChildren=(pid:string)=>categories.filter(c=>String(c.parent_id)===String(pid));
 
   return (
-    <div style={{width:185,flexShrink:0}}>
+    <div style={{width:185,flexShrink:0,position:"sticky",top:20,alignSelf:"flex-start",height:"fit-content"}}>
       <div style={{background:C.primary,color:"#fff",padding:"7px 10px",fontSize:12,fontWeight:700,borderBottom:`1px solid ${C.primaryDark}`,display:"flex",alignItems:"center",gap:6}}>
         <span>&#9632;</span> {"カテゴリ"} <span style={{fontSize:9,fontWeight:400,marginLeft:2,opacity:0.8}}>category</span>
       </div>
@@ -191,16 +193,19 @@ const RIGHT_ADS = [
   {text:"周辺機器\n特集",url:"/category/peripherals"},
 ];
 
-function AdColumn({ads}: {ads:{text:string,url:string}[]}) {
+function AdColumn({ads}: {ads:{text:string,url:string,image?:string}[]}) {
   const router = useRouter();
   return (
     <div style={{width:90,flexShrink:0,display:"flex",flexDirection:"column",gap:4}}>
       {ads.map((ad,i)=>(
         <div key={i} onClick={()=>router.push(ad.url)}
-          style={{width:90,height:400,background:"#E8E8E8",border:"1px dashed #AAA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"opacity 0.15s",writingMode:"vertical-rl",textOrientation:"mixed"}}
+          style={{width:90,height:400,background:"#E8E8E8",border:"1px dashed #AAA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"opacity 0.15s",writingMode:"vertical-rl",textOrientation:"mixed",overflow:"hidden",position:"relative"}}
           onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
           onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
-          <div style={{fontSize:11,color:"#999",textAlign:"center",lineHeight:1.8,whiteSpace:"pre-line"}}>{ad.text}</div>
+          {ad.image
+            ? <img src={ad.image} alt={ad.text} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+            : <div style={{fontSize:11,color:"#999",textAlign:"center",lineHeight:1.8,whiteSpace:"pre-line"}}>{ad.text}</div>
+          }
         </div>
       ))}
     </div>
@@ -216,6 +221,100 @@ function SectionHeader({title,en,color}:{title:string,en:string,color?:string}) 
   );
 }
 
+function BannerAd({ad}:{ad:HpAd|undefined}) {
+  const router=useRouter();
+  if(!ad||!ad.active) return null;
+  return (
+    <div onClick={()=>router.push(ad.link)}
+      style={{width:"100%",height:260,minHeight:260,maxHeight:260,borderRadius:2,overflow:"hidden",position:"relative",background:`linear-gradient(135deg,${C.primaryBg},#B8EAE8)`,border:`1px solid ${C.primaryBorder}`,marginBottom:10,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}
+      onMouseEnter={e=>(e.currentTarget.style.opacity="0.9")}
+      onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
+      {ad.image&&(
+        <img src={ad.image} alt={ad.title} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+      )}
+      {ad.image&&<div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.28)"}}/>}
+      <div style={{position:"relative",zIndex:1,textAlign:"center",padding:"0 32px"}}>
+        <div style={{fontSize:22,fontWeight:700,color:ad.image?"#fff":C.primaryDeep,lineHeight:1.4,textShadow:ad.image?"0 1px 4px rgba(0,0,0,0.6)":"none"}}>{ad.title}</div>
+        {ad.subtitle&&<div style={{fontSize:13,marginTop:8,color:ad.image?"rgba(255,255,255,0.9)":C.textSub,textShadow:ad.image?"0 1px 3px rgba(0,0,0,0.5)":"none"}}>{ad.subtitle}</div>}
+      </div>
+    </div>
+  );
+}
+
+function chunkArray<T>(arr:T[],size:number):T[][] {
+  const chunks:T[][]=[];
+  for(let i=0;i<arr.length;i+=size) chunks.push(arr.slice(i,i+size));
+  return chunks;
+}
+
+function AutoSwitchGridCard({ad}:{ad:HpAd}) {
+  const [hov,setHov]=useState(false);
+  const router=useRouter();
+  return (
+    <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      onClick={()=>router.push(ad.link)}
+      style={{position:"relative",height:160,borderRadius:2,overflow:"hidden",cursor:"pointer",background:`linear-gradient(135deg,${C.primaryDeep},#0ABAB5)`,border:`2px solid ${hov?C.primary:C.primaryBorder}`,transition:"border-color 0.15s"}}>
+      {ad.image&&<img src={ad.image} alt={ad.title} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>}
+      <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:hov?"rgba(0,0,0,0.18)":"rgba(0,0,0,0.35)",transition:"background 0.2s"}}/>
+      <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:5,padding:"0 12px",textAlign:"center"}}>
+        <div style={{fontSize:13,fontWeight:700,color:"#fff",lineHeight:1.4,textShadow:"0 1px 3px rgba(0,0,0,0.5)"}}>{ad.title}</div>
+        {ad.subtitle&&<div style={{fontSize:10,color:"rgba(255,255,255,0.88)",textShadow:"0 1px 2px rgba(0,0,0,0.4)"}}>{ad.subtitle}</div>}
+      </div>
+    </div>
+  );
+}
+
+function AdSlider({ads}:{ads:HpAd[]}) {
+  const active=ads.filter(a=>a.active).sort((a,b)=>a.sort-b.sort);
+  const pages=chunkArray(active,4);
+  const [page,setPage]=useState(0);
+  const [paused,setPaused]=useState(false);
+  useEffect(()=>{
+    if(pages.length<=1||paused) return;
+    const t=setInterval(()=>setPage(p=>(p+1)%pages.length),4000);
+    return ()=>clearInterval(t);
+  },[pages.length,paused]);
+  if(pages.length===0) return null;
+  return (
+    <div style={{marginBottom:14}}
+      onMouseEnter={()=>setPaused(true)}
+      onMouseLeave={()=>setPaused(false)}>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
+        {pages[page].map(ad=><AutoSwitchGridCard key={ad.id} ad={ad}/>)}
+      </div>
+      {pages.length>1&&(
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,marginTop:8}}>
+          <button onClick={()=>setPage(p=>(p-1+pages.length)%pages.length)}
+            style={{background:C.primary,color:"#fff",border:"none",borderRadius:2,width:24,height:24,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",padding:0,fontFamily:"inherit"}}>&#8249;</button>
+          {pages.map((_,i)=>(
+            <div key={i} onClick={()=>setPage(i)}
+              style={{width:8,height:8,borderRadius:"50%",background:i===page?C.primary:C.border,cursor:"pointer",transition:"background 0.2s"}}/>
+          ))}
+          <button onClick={()=>setPage(p=>(p+1)%pages.length)}
+            style={{background:C.primary,color:"#fff",border:"none",borderRadius:2,width:24,height:24,cursor:"pointer",fontSize:16,display:"flex",alignItems:"center",justifyContent:"center",padding:0,fontFamily:"inherit"}}>&#8250;</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const APPLE_PRODUCTS = [
+  {id:"ap1",slug:"apple-iphone-14",     name:"Apple iPhone 14 64GB スペースグレイ 中古",                     brand_id:{name:"Apple"},images:[],grade:"A", price:58000,compare_at_price:89800},
+  {id:"ap2",slug:"apple-ipad-10th",     name:"Apple iPad 第10世代 64GB Wi-Fi シルバー 中古",                 brand_id:{name:"Apple"},images:[],grade:"S", price:52000,compare_at_price:68800},
+  {id:"ap3",slug:"apple-macbook-air-m1",name:"Apple MacBook Air M1 8GB/256GB スペースグレイ",               brand_id:{name:"Apple"},images:[],grade:"A", price:78000,compare_at_price:112800},
+  {id:"ap4",slug:"apple-watch-s8",      name:"Apple Watch Series 8 41mm GPS アルミニウム 中古",             brand_id:{name:"Apple"},images:[],grade:"B", price:28000,compare_at_price:54800},
+  {id:"ap5",slug:"apple-airpods-pro2",  name:"Apple AirPods Pro 第2世代 MagSafe充電ケース付き 中古",       brand_id:{name:"Apple"},images:[],grade:"A", price:18000,compare_at_price:39800},
+];
+
+const ACCESSORY_PRODUCTS = [
+  {id:"ac1",slug:"usb-c-charger-65w",      name:"USB-C 急速充電器 65W GaN対応 3ポート コンパクト",                       brand_id:{name:""},images:[],grade:null,price:2980, compare_at_price:4980},
+  {id:"ac2",slug:"wireless-mouse-silent",   name:"ワイヤレスマウス 静音 Bluetooth 充電式 6ボタン",                        brand_id:{name:""},images:[],grade:null,price:1980, compare_at_price:3280},
+  {id:"ac3",slug:"mechanical-keyboard-tkl", name:"メカニカルキーボード テンキーレス 日本語配列 USB",                      brand_id:{name:""},images:[],grade:null,price:4980, compare_at_price:8800},
+  {id:"ac4",slug:"portable-ssd-500gb",     name:"ポータブルSSD 500GB USB3.2 Gen2対応 高速転送",                          brand_id:{name:""},images:[],grade:null,price:5980, compare_at_price:9800},
+  {id:"ac5",slug:"smartphone-case-clear",  name:"スマートフォンケース クリア 耐衝撃 全機種対応",                         brand_id:{name:""},images:[],grade:null,price:980,  compare_at_price:1980},
+  {id:"ac6",slug:"wireless-earphones-anc", name:"ワイヤレスイヤホン Bluetooth5.3 アクティブノイズキャンセリング",        brand_id:{name:""},images:[],grade:null,price:3980, compare_at_price:7980},
+];
+
 export default function HomeClient({featured,newArrivals,categories,brands}: {featured:any[],newArrivals:any[],categories:any[],brands:any[]}) {
   const router=useRouter();
   const roots=categories.filter(c=>!c.parent_id);
@@ -225,11 +324,11 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
 
       <Header/>
-      <div style={{maxWidth:1100,margin:"4px auto",padding:"0 10px",overflow:"hidden"}}>
+      <div style={{maxWidth:1400,margin:"4px auto",padding:"0 10px",overflow:"hidden"}}>
         <GridBanner/>
       </div>
 
-      <div style={{maxWidth:1100,margin:"10px auto",padding:"0 10px"}}>
+      <div style={{maxWidth:1400,margin:"10px auto",padding:"0 10px"}}>
         <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
 
           <AdColumn ads={LEFT_ADS}/>
@@ -249,12 +348,14 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
 
             <div style={{background:C.white,border:`1px solid ${C.border}`,padding:"6px 10px",marginBottom:10,display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
               <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>{"グレードガイド："}</span>
-              {[{g:"S",l:"未使用品"},{g:"A",l:"美品"},{g:"B",l:"中古良品"},{g:"C",l:"中古品"}].map(({g,l})=>(
+              {[{g:"NEW",l:"未開封・未使用"},{g:"S",l:"新品とほぼ同じ状態"},{g:"A",l:"軽微な使用痕跡あり"},{g:"B",l:"使用痕跡が比較的目立つ"},{g:"C",l:"訳あり品"}].map(({g,l})=>(
                 <span key={g} style={{display:"flex",alignItems:"center",gap:4}}>
                   <GradeBadge grade={g}/><span style={{fontSize:10,color:C.textSub}}>{l}</span>
                 </span>
               ))}
             </div>
+
+            <BannerAd ad={homepageAds.gradeBanner[0]}/>
 
             <div style={{marginBottom:14}}>
               <SectionHeader title={"注目商品一覧"} en="FEATURED ITEMS"/>
@@ -263,11 +364,31 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
               </div>
             </div>
 
+            <AdSlider ads={homepageAds.featuredSlider}/>
+
             <div style={{marginBottom:14}}>
               <SectionHeader title={"新着商品"} en="NEW ARRIVALS" color={C.primaryDeep}/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
                 {newArrivals.map((p:any)=><ProductCard key={p.id} product={p} size="small"/>)}
               </div>
+            </div>
+
+            <AdSlider ads={homepageAds.newSlider}/>
+
+            <div style={{marginBottom:14}}>
+              <SectionHeader title={"Appleの商品"} en="APPLE PRODUCTS" color="#555"/>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,marginBottom:8}}>
+                {APPLE_PRODUCTS.map((p:any)=><ProductCard key={p.id} product={p}/>)}
+              </div>
+              <AdSlider ads={homepageAds.appleSlider}/>
+            </div>
+
+            <div style={{marginBottom:14}}>
+              <SectionHeader title={"アクセサリ"} en="ACCESSORIES" color="#555"/>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,marginBottom:8}}>
+                {ACCESSORY_PRODUCTS.map((p:any)=><ProductCard key={p.id} product={p}/>)}
+              </div>
+              <AdSlider ads={homepageAds.accessorySlider}/>
             </div>
 
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
@@ -298,7 +419,6 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
           </div>
 
           <AdColumn ads={RIGHT_ADS}/>
-
         </div>
       </div>
 

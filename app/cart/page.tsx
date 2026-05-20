@@ -8,6 +8,7 @@ const C = {
   red:"#CC2200", text:"#333", textSub:"#666", textLight:"#999",
   border:"#DDD", bg:"#F0F5F5", white:"#FFF",
 };
+const GRADE_LABEL: Record<string,string> = {NEW:"新品",S:"S品",A:"A品",B:"B品",C:"C品"};
 
 export default function CartPage() {
   const router = useRouter();
@@ -69,7 +70,7 @@ export default function CartPage() {
                     <div style={{fontSize:11,color:C.textLight,marginBottom:2}}>{item.brand}</div>
                     <div style={{fontSize:12,fontWeight:600,color:C.text,lineHeight:1.4,cursor:"pointer"}}
                       onClick={()=>router.push(`/products/${item.slug}`)}>{item.name}</div>
-                    {item.grade&&<div style={{fontSize:10,color:"#007A76",marginTop:2}}>グレード{item.grade}</div>}
+                    {item.grade&&<div style={{fontSize:10,color:"#007A76",marginTop:2}}>{GRADE_LABEL[item.grade]||item.grade}</div>}
                     <div style={{fontSize:14,fontWeight:700,color:C.red,marginTop:4}}>¥{item.price.toLocaleString()}</div>
                   </div>
                   <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>

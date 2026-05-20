@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { FaFacebook, FaInstagram, FaYoutube, FaLine, FaWhatsapp } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+import { FaXTwitter, FaTiktok } from "react-icons/fa6";
 import PaymentMethods from "./PaymentMethods";
 
 // ─── colour tokens ────────────────────────────────────────────────────────────
@@ -60,12 +60,13 @@ const NAV = [
 // ─── social ───────────────────────────────────────────────────────────────────
 
 const SOCIALS = [
-  { name: "X",         Icon: FaXTwitter,  href: "#", bg: "#000000" },
-  { name: "Facebook",  Icon: FaFacebook,  href: "#", bg: "#1877F2" },
-  { name: "Instagram", Icon: FaInstagram, href: "#", bg: "#E1306C" },
-  { name: "YouTube",   Icon: FaYoutube,   href: "#", bg: "#FF0000" },
-  { name: "LINE",      Icon: FaLine,      href: "#", bg: "#00B900" },
-  { name: "WhatsApp",  Icon: FaWhatsapp,  href: "#", bg: "#25D366" },
+  { name: "X",         Icon: FaXTwitter,  href: "https://x.com/AiAcrossshop",                                bg: "#000000" },
+  { name: "Facebook",  Icon: FaFacebook,  href: "https://www.facebook.com/profile.php?id=61586262204119",   bg: "#1877F2" },
+  { name: "Instagram", Icon: FaInstagram, href: "https://www.instagram.com/aiacross_shop/",                 bg: "#E1306C" },
+  { name: "YouTube",   Icon: FaYoutube,   href: "https://www.youtube.com/channel/UCQuNgDZhGp47dKZH9rSK-DQ",bg: "#FF0000" },
+  { name: "LINE",      Icon: FaLine,      href: "https://line.me/ti/p/WupEgxNYTQ",                          bg: "#00B900" },
+  { name: "WhatsApp",  Icon: FaWhatsapp,  href: "https://wa.me/817092607341",                               bg: "#25D366" },
+  { name: "TikTok",    Icon: FaTiktok,    href: "https://www.tiktok.com/@aiacrossshop",                     bg: "#010101" },
 ];
 
 // ─── component ────────────────────────────────────────────────────────────────
@@ -127,7 +128,7 @@ export default function Footer() {
           </div>
           <div className="fs-flex">
             {SOCIALS.map(({ name, Icon, href, bg }) => (
-              <a key={name} href={href} style={{ textDecoration: "none" }}>
+              <a key={name} href={href} target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
                 <div
                   style={{
                     width: 52, height: 52, borderRadius: 10,

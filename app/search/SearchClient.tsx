@@ -10,11 +10,12 @@ const C = {
   border:"#DDD", bg:"#F0F5F5", white:"#FFF",
 };
 
-const GRADE_STYLE: Record<string,{color:string,bg:string,border:string}> = {
-  S:{color:"#CC0000",bg:"#FFF0F0",border:"#CC0000"},
-  A:{color:"#007A76",bg:"#E8F8F8",border:"#0ABAB5"},
-  B:{color:"#227700",bg:"#F0FFF0",border:"#44AA44"},
-  C:{color:"#555",bg:"#F5F5F5",border:"#AAA"},
+const GRADE_STYLE: Record<string,{label:string,color:string,bg:string,border:string}> = {
+  NEW:{label:"新品",color:"#CC0000",bg:"#FFF0F0",border:"#CC0000"},
+  S:  {label:"S品", color:"#007A76",bg:"#E8F8F8",border:"#0ABAB5"},
+  A:  {label:"A品", color:"#227700",bg:"#F0FFF0",border:"#44AA44"},
+  B:  {label:"B品", color:"#555",   bg:"#F5F5F5",border:"#AAA"},
+  C:  {label:"C品", color:"#333",   bg:"#EEEEEE",border:"#888"},
 };
 
 const ICONS: Record<string,string> = {
@@ -25,7 +26,7 @@ const ICONS: Record<string,string> = {
 function GradeBadge({grade}: {grade:string|null}) {
   if(!grade) return null;
   const s = GRADE_STYLE[grade]||GRADE_STYLE.C;
-  return <span style={{display:"inline-block",background:s.bg,color:s.color,border:`1px solid ${s.border}`,borderRadius:2,fontSize:10,fontWeight:700,padding:"1px 5px"}}>グレード{grade}</span>;
+  return <span style={{display:"inline-block",background:s.bg,color:s.color,border:`1px solid ${s.border}`,borderRadius:2,fontSize:10,fontWeight:700,padding:"1px 5px"}}>{s.label}</span>;
 }
 
 function ProductCard({product}: {product:any}) {
@@ -62,7 +63,7 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
   const getChildren=(pid:string)=>categories.filter(c=>String(c.parent_id)===String(pid));
 
   return (
-    <div style={{width:185,flexShrink:0}}>
+    <div style={{width:185,flexShrink:0,position:"sticky",top:20,alignSelf:"flex-start",height:"fit-content"}}>
       <div style={{background:C.primary,color:"#fff",padding:"7px 10px",fontSize:12,fontWeight:700,borderBottom:`1px solid ${C.primaryDark}`,display:"flex",alignItems:"center",gap:6}}>
         <span>■</span> カテゴリ <span style={{fontSize:9,fontWeight:400,marginLeft:2,opacity:0.8}}>category</span>
       </div>
@@ -196,12 +197,12 @@ export default function SearchClient({initialProducts,brands,categories,query,br
             </div>
             <div style={{background:C.white,border:`1px solid ${C.border}`,padding:"8px 12px",marginBottom:10,display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
               <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>グレード：</span>
-              {["","S","A","B","C"].map(g=>(
-                <button key={g} onClick={()=>setGrade(g)} style={{padding:"3px 10px",borderRadius:2,fontSize:11,cursor:"pointer",fontFamily:"inherit",
-                  background:grade===g?C.primary:C.white,
-                  color:grade===g?"#fff":C.textSub,
-                  border:`1px solid ${grade===g?C.primary:C.border}`,
-                }}>{g||"すべて"}</button>
+              {[{v:"",l:"すべて"},{v:"NEW",l:"新品"},{v:"S",l:"S品"},{v:"A",l:"A品"},{v:"B",l:"B品"},{v:"C",l:"C品"}].map(({v,l})=>(
+                <button key={v} onClick={()=>setGrade(v)} style={{padding:"3px 10px",borderRadius:2,fontSize:11,cursor:"pointer",fontFamily:"inherit",
+                  background:grade===v?C.primary:C.white,
+                  color:grade===v?"#fff":C.textSub,
+                  border:`1px solid ${grade===v?C.primary:C.border}`,
+                }}>{l}</button>
               ))}
               <div style={{display:"flex",gap:4,alignItems:"center",marginLeft:"auto"}}>
                 <span style={{fontSize:11,color:C.textSub}}>並び替え：</span>

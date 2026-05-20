@@ -122,10 +122,11 @@ export default function GuideClient({categories}:{categories:any[]}) {
             </Section>
 
             <Section id="products" title="掲載商品について">
-              <Row label="グレードS" value="未使用品または新品同様。傷・汚れなし"/>
-              <Row label="グレードA" value="使用感がほとんどなく美品"/>
-              <Row label="グレードB" value="軽微な傷・使用感あり。動作に問題なし"/>
-              <Row label="グレードC" value="傷・汚れがあるが動作に問題なし"/>
+              <Row label="NEW（新品）" value="未開封・未使用"/>
+              <Row label="S（S品）"   value="新品とほぼ同じ状態・目立つ使用痕跡なし"/>
+              <Row label="A（A品）"   value="軽微な使用痕跡あり"/>
+              <Row label="B（B品）"   value="使用痕跡が比較的目立つ"/>
+              <Row label="C（C品）"   value="訳あり品・研究や部品取り向け"/>
             </Section>
 
             <Section id="privacy" title="プライバシーポリシーについて">

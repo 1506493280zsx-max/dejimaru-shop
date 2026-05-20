@@ -9,11 +9,12 @@ const C = {
   border:"#DDD", bg:"#F0F5F5", white:"#FFF",
 };
 
-const GRADE_STYLE: Record<string,{color:string,bg:string,border:string}> = {
-  S:{color:"#CC0000",bg:"#FFF0F0",border:"#CC0000"},
-  A:{color:"#007A76",bg:"#E8F8F8",border:"#0ABAB5"},
-  B:{color:"#227700",bg:"#F0FFF0",border:"#44AA44"},
-  C:{color:"#555",bg:"#F5F5F5",border:"#AAA"},
+const GRADE_STYLE: Record<string,{label:string,color:string,bg:string,border:string}> = {
+  NEW:{label:"新品",color:"#CC0000",bg:"#FFF0F0",border:"#CC0000"},
+  S:  {label:"S品", color:"#007A76",bg:"#E8F8F8",border:"#0ABAB5"},
+  A:  {label:"A品", color:"#227700",bg:"#F0FFF0",border:"#44AA44"},
+  B:  {label:"B品", color:"#555",   bg:"#F5F5F5",border:"#AAA"},
+  C:  {label:"C品", color:"#333",   bg:"#EEEEEE",border:"#888"},
 };
 
 export default function WishlistPage() {
@@ -89,7 +90,7 @@ export default function WishlistPage() {
 
                   {item.grade && (
                     <span style={{display:"inline-block",background:gs.bg,color:gs.color,border:`1px solid ${gs.border}`,borderRadius:2,fontSize:10,fontWeight:700,padding:"1px 5px",alignSelf:"flex-start"}}>
-                      グレード{item.grade}
+                      {gs.label}
                     </span>
                   )}
 

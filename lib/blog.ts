@@ -42,9 +42,8 @@ export type BlogComment = {
 // ─── BLOG POSTS ───────────────────────────────────────────────
 
 const POST_FIELDS = [
-  "id", "status", "type", "title", "slug", "excerpt", "body",
-  "cover_image", "tags", "featured", "date_published", "sort", "date_created", "date_updated",
-  "author.id", "author.first_name", "author.last_name",
+  "id", "status", "sort", "date_created", "date_updated",
+  "title", "slug", "excerpt", "cover_image", "content", "featured",
 ].join(",");
 
 export async function getBlogPosts(
@@ -63,7 +62,7 @@ export async function getBlogPosts(
     });
     params.set("fields", POST_FIELDS);
     params.append("sort", "sort");
-    params.append("sort", "-date_published");
+    params.append("sort", "-date_created");
     if (type) params.set("filter[type][_eq]", type);
     if (featured !== undefined) params.set("filter[featured][_eq]", String(featured));
     const res = await fetch(
@@ -71,7 +70,8 @@ export async function getBlogPosts(
       { headers: adminHeaders, next: { revalidate: 60 } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()).data || [];
+    const data = (await res.json()).data || [];
+    return data.map((p: any) => ({ ...p, body: p.content ?? "" }));
   } catch { return []; }
 }
 
@@ -88,7 +88,8 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
       { headers: adminHeaders, next: { revalidate: 60 } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return (await res.json()).data?.[0] || null;
+    const item = (await res.json()).data?.[0] || null;
+    return item ? { ...item, body: item.content ?? "" } : null;
   } catch { return null; }
 }
 

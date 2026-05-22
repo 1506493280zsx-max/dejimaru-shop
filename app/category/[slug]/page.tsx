@@ -1,6 +1,13 @@
 import { getProducts, getCategories, getBrands } from "@/lib/directus";
 import SearchClient from "@/app/search/SearchClient";
 
+export async function generateStaticParams() {
+  const categories = await getCategories();
+  return categories.map((category: any) => ({
+    slug: category.slug,
+  }));
+}
+
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 

@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getImageUrl } from "@/lib/directus";
 
-import { useWishlistStore } from "@/lib/wishlist-store";
 import { homepageAds } from "@/lib/homepageAds";
-type HpAd = { id:string; image:string; link:string; title:string; subtitle?:string; active:boolean; sort:number };
+import HomeBlogModule from "@/components/HomeBlogModule";
+import { useWishlistStore } from "@/lib/wishlist-store";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryDeep:"#007A76",
@@ -16,14 +16,14 @@ const C = {
 
 const GRADE_STYLE: Record<string,{label:string,color:string,bg:string,border:string}> = {
   NEW:{label:"新品",color:"#CC0000",bg:"#FFF0F0",border:"#CC0000"},
-  S:  {label:"S品", color:"#007A76",bg:"#E8F8F8",border:"#0ABAB5"},
-  A:  {label:"A品", color:"#227700",bg:"#F0FFF0",border:"#44AA44"},
-  B:  {label:"B品", color:"#555",   bg:"#F5F5F5",border:"#AAA"},
-  C:  {label:"C品", color:"#333",   bg:"#EEEEEE",border:"#888"},
+  S:  {label:"S級", color:"#007A76",bg:"#E8F8F8",border:"#0ABAB5"},
+  A:  {label:"A級", color:"#227700",bg:"#F0FFF0",border:"#44AA44"},
+  B:  {label:"B級", color:"#555",   bg:"#F5F5F5",border:"#AAA"},
+  C:  {label:"C級", color:"#333",   bg:"#EEEEEE",border:"#888"},
 };
 
 const GRID_ADS = [
-  {text:"期間限定セール",   url:"/search"},
+  {text:"無期限セール",   url:"/search"},
   {text:"MacBook特集",     url:"/category/laptops-used-mac"},
   {text:"iPhone中古",      url:"/category/smartphones-iphone-used"},
   {text:"ゲーミングPC",    url:"/category/desktops-gaming"},
@@ -40,7 +40,7 @@ const GRID_ADS = [
   {text:"Galaxyスマホ",    url:"/search?brand=samsung"},
   {text:"Apple製品",       url:"/search?brand=apple"},
   {text:"買取サービス",    url:"/buyback"},
-  {text:"法人ご相談",      url:"/corporate"},
+  {text:"法人向け",        url:"/corporate"},
   {text:"修理サービス",    url:"/repair"},
   {text:"Chromebook",     url:"/search?brand=google"},
   {text:"モニター特集",    url:"/category/peripherals"},
@@ -118,16 +118,16 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
         {disc>=10&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
         <div onClick={e=>{e.stopPropagation();toggle({id:String(product.id),slug:product.slug,name:product.name,price:product.price,imageUrl:imgUrl,brand:product.brand_id?.name||"",grade:product.grade});}}
           style={{position:"absolute",top:6,left:6,width:26,height:26,background:"rgba(255,255,255,0.9)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:14,boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>
-          {liked?"❤️":"🤍"}
+          {liked?"♥":"♡"}
         </div>
       </div>
       <div onClick={()=>router.push(`/products/${product.slug}`)}>
-        <div style={{fontSize:10,color:C.textLight}}>{product.brand_id?.name||"—"}</div>
+        <div style={{fontSize:10,color:C.textLight}}>{product.brand_id?.name||"―"}</div>
         <div style={{fontSize:size==="small"?11:12,color:hov?C.primary:C.text,lineHeight:1.5,display:"-webkit-box" as any,WebkitLineClamp:3,WebkitBoxOrient:"vertical" as any,overflow:"hidden"}}>{product.name}</div>
         {product.grade&&<div style={{marginTop:2}}><GradeBadge grade={product.grade}/></div>}
         <div style={{marginTop:4}}>
           {product.compare_at_price&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>{"定価"} &yen;{product.compare_at_price.toLocaleString()}</div>}
-          <div style={{fontSize:size==="small"?14:16,fontWeight:700,color:C.red}}>&yen;{product.price.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>{"（税込）"}</span></div>
+          <div style={{fontSize:size==="small"?14:16,fontWeight:700,color:C.red}}>&yen;{product.price.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>(税込)</span></div>
         </div>
       </div>
       <button onClick={()=>router.push(`/products/${product.slug}`)}
@@ -156,7 +156,7 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
           <div key={cat.id}>
             <div onClick={()=>toggle(String(cat.id))} style={{padding:"8px 10px",background:isOpen?C.primaryBg:"#F9F9F9",borderBottom:"1px solid #D8ECEC",cursor:"pointer",display:"flex",alignItems:"center",gap:6,borderLeft:`3px solid ${isOpen?C.primary:"transparent"}`}}>
               <div style={{flex:1}}><div style={{fontSize:12,fontWeight:700,color:C.text}}>{cat.name}</div></div>
-              <span style={{fontSize:10,color:C.primary,fontWeight:700}}>{isOpen?"▲":"▶"}</span>
+              <span style={{fontSize:10,color:C.primary,fontWeight:700}}>{isOpen?"▲":"▼"}</span>
             </div>
             {isOpen&&(
               <div style={{background:C.white}}>
@@ -211,7 +211,7 @@ const LEFT_ADS = [
   {text:"Apple\n製品",url:"/search?brand=apple"},
   {text:"SSD\n大特集",url:"/category/storage-ssd-internal"},
   {text:"買取\nサービス",url:"/buyback"},
-  {text:"法人\nご相談",url:"/corporate"},
+  {text:"法人\n向け",url:"/corporate"},
 ];
 
 const RIGHT_ADS = [
@@ -223,12 +223,12 @@ const RIGHT_ADS = [
   {text:"モニター\n特集",url:"/category/peripherals"},
   {text:"キーボード\nマウス",url:"/category/peripherals"},
   {text:"修理\nサービス",url:"/repair"},
-  {text:"法人\n一括納品",url:"/wholesale"},
+  {text:"法人\n一括販売",url:"/wholesale"},
   {text:"Chromebook\n特集",url:"/search?brand=google"},
   {text:"タイム\nセール",url:"/search"},
   {text:"POD\nサービス",url:"/pod-service"},
   {text:"スマホ\nケース",url:"/search"},
-  {text:"お問い\n合わせ",url:"/contact"},
+  {text:"お問い合わ\nせ",url:"/contact"},
 ];
 
 function AdColumn({ads}: {ads:{text:string,url:string,image?:string}[]}) {
@@ -259,7 +259,7 @@ function SectionHeader({title,en,color}:{title:string,en:string,color?:string}) 
   );
 }
 
-function BannerAd({ad}:{ad:HpAd|undefined}) {
+function BannerAd({ad}:{ad:any}) {
   const router=useRouter();
   if(!ad||!ad.active) return null;
   return (
@@ -285,7 +285,7 @@ function chunkArray<T>(arr:T[],size:number):T[][] {
   return chunks;
 }
 
-function AutoSwitchGridCard({ad}:{ad:HpAd}) {
+function AutoSwitchGridCard({ad}:{ad:any}) {
   const [hov,setHov]=useState(false);
   const router=useRouter();
   return (
@@ -302,7 +302,7 @@ function AutoSwitchGridCard({ad}:{ad:HpAd}) {
   );
 }
 
-function AdSlider({ads}:{ads:HpAd[]}) {
+function AdSlider({ads}:{ads:any[]}) {
   const active=ads.filter(a=>a.active).sort((a,b)=>a.sort-b.sort);
   const pages=chunkArray(active,4);
   const [page,setPage]=useState(0);
@@ -337,29 +337,29 @@ function AdSlider({ads}:{ads:HpAd[]}) {
 }
 
 const APPLE_PRODUCTS = [
-  {id:"ap1",slug:"apple-iphone-14",     name:"Apple iPhone 14 64GB スペースグレイ 中古",                     brand_id:{name:"Apple"},images:[],grade:"A", price:58000,compare_at_price:89800},
-  {id:"ap2",slug:"apple-ipad-10th",     name:"Apple iPad 第10世代 64GB Wi-Fi シルバー 中古",                 brand_id:{name:"Apple"},images:[],grade:"S", price:52000,compare_at_price:68800},
-  {id:"ap3",slug:"apple-macbook-air-m1",name:"Apple MacBook Air M1 8GB/256GB スペースグレイ",               brand_id:{name:"Apple"},images:[],grade:"A", price:78000,compare_at_price:112800},
-  {id:"ap4",slug:"apple-watch-s8",      name:"Apple Watch Series 8 41mm GPS アルミニウム 中古",             brand_id:{name:"Apple"},images:[],grade:"B", price:28000,compare_at_price:54800},
-  {id:"ap5",slug:"apple-airpods-pro2",  name:"Apple AirPods Pro 第2世代 MagSafe充電ケース付き 中古",       brand_id:{name:"Apple"},images:[],grade:"A", price:18000,compare_at_price:39800},
+  {id:"ap1",slug:"apple-iphone-14",     name:"Apple iPhone 14 64GB スペースグレイ 中古",                  brand_id:{name:"Apple"},images:[],grade:"A", price:58000,compare_at_price:89800},
+  {id:"ap2",slug:"apple-ipad-10th",     name:"Apple iPad 第10世代 64GB Wi-Fi シルバー 中古",             brand_id:{name:"Apple"},images:[],grade:"S", price:52000,compare_at_price:68800},
+  {id:"ap3",slug:"apple-macbook-air-m1",name:"Apple MacBook Air M1 8GB/256GB スペースグレイ",           brand_id:{name:"Apple"},images:[],grade:"A", price:78000,compare_at_price:112800},
+  {id:"ap4",slug:"apple-watch-s8",      name:"Apple Watch Series 8 41mm GPS アルミニウム 中古",         brand_id:{name:"Apple"},images:[],grade:"B", price:28000,compare_at_price:54800},
+  {id:"ap5",slug:"apple-airpods-pro2",  name:"Apple AirPods Pro 第2世代 MagSafe充電ケース付き 中古",    brand_id:{name:"Apple"},images:[],grade:"A", price:18000,compare_at_price:39800},
 ];
 
 const ACCESSORY_PRODUCTS = [
-  {id:"ac1",slug:"usb-c-charger-65w",      name:"USB-C 急速充電器 65W GaN対応 3ポート コンパクト",                       brand_id:{name:""},images:[],grade:null,price:2980, compare_at_price:4980},
-  {id:"ac2",slug:"wireless-mouse-silent",   name:"ワイヤレスマウス 静音 Bluetooth 充電式 6ボタン",                        brand_id:{name:""},images:[],grade:null,price:1980, compare_at_price:3280},
-  {id:"ac3",slug:"mechanical-keyboard-tkl", name:"メカニカルキーボード テンキーレス 日本語配列 USB",                      brand_id:{name:""},images:[],grade:null,price:4980, compare_at_price:8800},
-  {id:"ac4",slug:"portable-ssd-500gb",     name:"ポータブルSSD 500GB USB3.2 Gen2対応 高速転送",                          brand_id:{name:""},images:[],grade:null,price:5980, compare_at_price:9800},
-  {id:"ac5",slug:"smartphone-case-clear",  name:"スマートフォンケース クリア 耐衝撃 全機種対応",                         brand_id:{name:""},images:[],grade:null,price:980,  compare_at_price:1980},
-  {id:"ac6",slug:"wireless-earphones-anc", name:"ワイヤレスイヤホン Bluetooth5.3 アクティブノイズキャンセリング",        brand_id:{name:""},images:[],grade:null,price:3980, compare_at_price:7980},
+  {id:"ac1",slug:"usb-c-charger-65w",      name:"USB-C 急速充電器 65W GaN対応 3ポート コンパクト",                    brand_id:{name:""},images:[],grade:null,price:2980, compare_at_price:4980},
+  {id:"ac2",slug:"wireless-mouse-silent",   name:"ワイヤレスマウス 静音 Bluetooth 充電式 6ボタン",                    brand_id:{name:""},images:[],grade:null,price:1980, compare_at_price:3280},
+  {id:"ac3",slug:"mechanical-keyboard-tkl", name:"メカニカルキーボード テンキーレス 日本語配列 USB",                  brand_id:{name:""},images:[],grade:null,price:4980, compare_at_price:8800},
+  {id:"ac4",slug:"portable-ssd-500gb",     name:"ポータブルSSD 500GB USB3.2 Gen2対応 高速転送",                     brand_id:{name:""},images:[],grade:null,price:5980, compare_at_price:9800},
+  {id:"ac5",slug:"smartphone-case-clear",  name:"スマートフォンケース クリア 耐衝撃 全機種対応",                      brand_id:{name:""},images:[],grade:null,price:980,  compare_at_price:1980},
+  {id:"ac6",slug:"wireless-earphones-anc", name:"ワイヤレスイヤホン Bluetooth5.3 アクティブノイズキャンセリング",    brand_id:{name:""},images:[],grade:null,price:3980, compare_at_price:7980},
 ];
 
-export default function HomeClient({featured,newArrivals,categories,brands}: {featured:any[],newArrivals:any[],categories:any[],brands:any[]}) {
+export default function HomeClient({featured,newArrivals,categories,brands,blogPosts}: {featured:any[],newArrivals:any[],categories:any[],brands:any[],blogPosts:any[]}) {
   const router=useRouter();
   const roots=categories.filter(c=>!c.parent_id);
   const [openCats,setOpenCats]=useState(roots.length>0?[String(roots[0]?.id)]:["1"]);
 
   return (
-    <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
+    <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','游ゴシック','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
 
       <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px"}}>
         <GridBanner/>
@@ -375,8 +375,8 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
 
             <div style={{background:`linear-gradient(135deg,${C.primaryBg},#C8EEEC)`,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"14px 18px",marginBottom:10,display:"flex",alignItems:"center",gap:16}}>
               <div>
-                <div style={{fontSize:18,fontWeight:900,color:C.primaryDeep}}>{"中古PC・スマートフォンが豊富！"}</div>
-                <div style={{fontSize:12,color:C.textSub,marginTop:4}}>{"全商品30日間動作保証付き・即日発送対応"}</div>
+                <div style={{fontSize:18,fontWeight:900,color:C.primaryDeep}}>{"中古PC・スマートフォンが激安！"}</div>
+                <div style={{fontSize:12,color:C.textSub,marginTop:4}}>{"全商品30日間返金保証付き・当日出荷対応"}</div>
               </div>
               <div style={{marginLeft:"auto"}}>
                 <button onClick={()=>router.push("/search")} style={{background:C.primary,color:"#fff",border:"none",padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>{"商品一覧を見る"} &rarr;</button>
@@ -385,7 +385,7 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
 
             <div style={{background:C.white,border:`1px solid ${C.border}`,padding:"6px 10px",marginBottom:10,display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
               <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>{"グレードガイド："}</span>
-              {[{g:"NEW",l:"未開封・未使用"},{g:"S",l:"新品とほぼ同じ状態"},{g:"A",l:"軽微な使用痕跡あり"},{g:"B",l:"使用痕跡が比較的目立つ"},{g:"C",l:"訳あり品"}].map(({g,l})=>(
+              {[{g:"NEW",l:"未開封・未使用"},{g:"S",l:"新品とほぼ同じ状態"},{g:"A",l:"わずかな使用痕あり"},{g:"B",l:"使用痕が比較的目立つ"},{g:"C",l:"傷あり"}].map(({g,l})=>(
                 <span key={g} style={{display:"flex",alignItems:"center",gap:4}}>
                   <GradeBadge grade={g}/><span style={{fontSize:10,color:C.textSub}}>{l}</span>
                 </span>
@@ -430,9 +430,9 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
 
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
               {[
-                {title:"30日間動作保証",body:"全商品に動作保証を付けてお届けします。万が一の際は交換・返金対応いたします。"},
-                {title:"即日・翌日発送",body:"平日14時までのご注文は当日発送。最短翌日お届けが可能です（一部地域除く）。"},
-                {title:"専門スタッフが対応",body:"商品選びのご相談は電話・メールで承っております。お気軽にお問い合わせください。"},
+                {title:"30日間返金保証",body:"全商品に返金保証をつけてお届けします。一点一点の商品の確認・清掃対応いたします。"},
+                {title:"当日・翌日出荷",body:"年中14時までのご注文で当日出荷・翌日出荷。最速翌日お届け可能です（一部離島除く）。"},
+                {title:"専任スタッフが対応",body:"商品選びのお問い合わせは電話・メールで承っております。お気軽にお問い合わせください。"},
               ].map((item,i)=>(
                 <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,padding:10,borderRadius:"0 0 2px 2px"}}>
                   <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:6}}>{item.title}</div>
@@ -453,6 +453,8 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
                 ))}
               </div>
             </div>
+            <HomeBlogModule posts={blogPosts}/>
+            <AdSlider ads={homepageAds.blogSlider}/>
           </div>
 
           <AdColumn ads={RIGHT_ADS}/>

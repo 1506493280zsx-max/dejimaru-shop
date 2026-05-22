@@ -14,6 +14,7 @@ export const homepageAds: {
   newSlider:       HomepageAd[];
   appleSlider:     HomepageAd[];
   accessorySlider: HomepageAd[];
+  blogSlider:      HomepageAd[];
 } = {
   gradeBanner: [
     { id:"gb1", image:"", link:"/search", title:"期間限定セール中！全商品お得にゲット", subtitle:"数量限定・在庫限り", active:true, sort:1 },
@@ -77,5 +78,20 @@ export const homepageAds: {
     { id:"ac10", image:"", link:"/category/peripherals",             title:"スピーカー 特集",           subtitle:"Bluetooth・有線",          active:true, sort:10 },
     { id:"ac11", image:"", link:"/search",                           title:"スマホケース",              subtitle:"全機種対応・耐衝撃",       active:true, sort:11 },
     { id:"ac12", image:"", link:"/search",                           title:"ゲームコントローラー",       subtitle:"PC・スマホ対応",           active:true, sort:12 },
+  ],
+
+  blogSlider: [
+    { id:"bl01", image:"", link:"/blog",                             title:"お役立ち情報",               subtitle:"PCの選び方・活用術",       active:true, sort:1  },
+    { id:"bl02", image:"", link:"/blog",                             title:"中古PCガイド",               subtitle:"初心者向け購入ガイド",     active:true, sort:2  },
+    { id:"bl03", image:"", link:"/blog",                             title:"スマホ活用術",               subtitle:"便利な使い方を紹介",       active:true, sort:3  },
+    { id:"bl04", image:"", link:"/blog",                             title:"最新ニュース",               subtitle:"IT業界の最新情報",         active:true, sort:4  },
+    { id:"bl05", image:"", link:"/blog",                             title:"買取ガイド",                 subtitle:"高く売るコツを解説",       active:true, sort:5  },
+    { id:"bl06", image:"", link:"/blog",                             title:"セキュリティ情報",           subtitle:"安全に使うための知識",     active:true, sort:6  },
+    { id:"bl07", image:"", link:"/blog",                             title:"メンテナンス術",             subtitle:"長く使うための手入れ方法", active:true, sort:7  },
+    { id:"bl08", image:"", link:"/blog",                             title:"おすすめ周辺機器",           subtitle:"快適環境を作る",           active:true, sort:8  },
+    { id:"bl09", image:"", link:"/blog",                             title:"法人向け情報",               subtitle:"業務効率化のヒント",       active:true, sort:9  },
+    { id:"bl10", image:"", link:"/blog",                             title:"修理・サポート",             subtitle:"困ったときの対処法",       active:true, sort:10 },
+    { id:"bl11", image:"", link:"/blog",                             title:"環境・リサイクル",           subtitle:"SDGsへの取り組み",         active:true, sort:11 },
+    { id:"bl12", image:"", link:"/blog",                             title:"キャンペーン情報",           subtitle:"お得な情報をお届け",       active:true, sort:12 },
   ],
 };

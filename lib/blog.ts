@@ -17,6 +17,7 @@ export type BlogPost = {
   body: string;
   cover_image: string | null;
   tags: string[];
+  featured?: boolean;
   author: { id: string; first_name: string; last_name: string } | null;
   date_published: string | null;
   sort: number;
@@ -42,14 +43,15 @@ export type BlogComment = {
 
 const POST_FIELDS = [
   "id", "status", "type", "title", "slug", "excerpt", "body",
-  "cover_image", "tags", "date_published", "sort", "date_created", "date_updated",
+  "cover_image", "tags", "featured", "date_published", "sort", "date_created", "date_updated",
   "author.id", "author.first_name", "author.last_name",
 ].join(",");
 
 export async function getBlogPosts(
   type?: "tips" | "news",
   limit = 20,
-  page = 1
+  page = 1,
+  featured?: boolean
 ): Promise<BlogPost[]> {
   try {
     const DIRECTUS_URL = process.env.DIRECTUS_URL;
@@ -63,6 +65,7 @@ export async function getBlogPosts(
     params.append("sort", "sort");
     params.append("sort", "-date_published");
     if (type) params.set("filter[type][_eq]", type);
+    if (featured !== undefined) params.set("filter[featured][_eq]", String(featured));
     const res = await fetch(
       `${DIRECTUS_URL}/items/blog_posts?${params}`,
       { headers: adminHeaders, next: { revalidate: 60 } }

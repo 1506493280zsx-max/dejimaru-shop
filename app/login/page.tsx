@@ -71,11 +71,6 @@ export default function LoginPage() {
 
   return (
     <div style={{background:"#F0F5F5",minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",display:"flex",flexDirection:"column"}}>
-      <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",cursor:"pointer"}} onClick={()=>router.push("/")}>
-          <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-        </div>
-      </div>
 
       <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:"20px"}}>
         <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:4,width:"100%",maxWidth:420,overflow:"hidden"}}>

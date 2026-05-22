@@ -24,7 +24,7 @@ export async function getProducts(options: {
   });
   if (Object.keys(filter).length > 0) params.append("filter", JSON.stringify(filter));
   try {
-    const res = await fetch(`${DIRECTUS_URL}/items/products?${params}`, { headers: publicHeaders, cache: "no-store" });
+    const res = await fetch(`${DIRECTUS_URL}/items/products?${params}`, { headers: publicHeaders, next: { revalidate: 300 } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()).data || [];
   } catch (e) { console.error("[getProducts]", e); return []; }
@@ -42,7 +42,7 @@ export async function getProductBySlug(slug: string) {
   try {
     const res = await fetch(
       `${DIRECTUS_URL}/items/products?filter[slug][_eq]=${slug}&fields[]=id,slug,name,description,short_description,price,compare_at_price,grade,condition,cpu,os,memory,storage,display_size,brand_id.name,category_id.name,category_id.slug,images.directus_files_id`,
-      { headers: publicHeaders, cache: "no-store" }
+      { headers: publicHeaders, next: { revalidate: 300 } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()).data?.[0] || null;
@@ -51,7 +51,7 @@ export async function getProductBySlug(slug: string) {
 
 export async function getCategories() {
   try {
-    const res = await fetch(`${DIRECTUS_URL}/items/categories?limit=50&sort[]=sort_order&fields[]=id,name,slug,parent_id`, { headers: publicHeaders, cache: "no-store" });
+    const res = await fetch(`${DIRECTUS_URL}/items/categories?limit=50&sort[]=sort_order&fields[]=id,name,slug,parent_id`, { headers: publicHeaders, next: { revalidate: 300 } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()).data || [];
   } catch (e) { console.error("[getCategories]", e); return []; }
@@ -59,7 +59,7 @@ export async function getCategories() {
 
 export async function getBrands() {
   try {
-    const res = await fetch(`${DIRECTUS_URL}/items/brands?limit=50&sort[]=sort_order&fields[]=id,name,slug`, { headers: publicHeaders, cache: "no-store" });
+    const res = await fetch(`${DIRECTUS_URL}/items/brands?limit=50&sort[]=sort_order&fields[]=id,name,slug`, { headers: publicHeaders, next: { revalidate: 300 } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()).data || [];
   } catch (e) { console.error("[getBrands]", e); return []; }
@@ -128,4 +128,45 @@ export async function logoutUser(token: string) {
       headers: { ...publicHeaders, "Authorization": `Bearer ${token}` },
     });
   } catch {}
+}
+
+// ─── REVIEWS ─────────────────────────────────────────────────
+export async function getFeaturedReviews(limit = 10) {
+  try {
+    const res = await fetch(
+      `${DIRECTUS_URL}/items/product_reviews?filter[approved][_eq]=true&filter[rating][_gte]=4&sort[]=-created_at&limit=${limit}&fields[]=id,user_name,rating,body,created_at,product.id,product.name,product.slug,product.images.directus_files_id`,
+      { headers: adminHeaders, cache: "no-store" }
+    );
+    if (!res.ok) return [];
+    return (await res.json()).data || [];
+  } catch { return []; }
+}
+
+export async function getReviews(productId: string | number) {
+  try {
+    const res = await fetch(
+      `${DIRECTUS_URL}/items/product_reviews?filter[product][_eq]=${productId}&filter[approved][_eq]=true&sort[]=-created_at&limit=50&fields[]=id,user_name,rating,title,body,created_at`,
+      { headers: adminHeaders, cache: "no-store" }
+    );
+    if (!res.ok) return [];
+    return (await res.json()).data || [];
+  } catch { return []; }
+}
+
+export async function createReview(data: {
+  product: string | number;
+  user_name: string;
+  rating: number;
+  title?: string;
+  body: string;
+}) {
+  try {
+    const res = await fetch(`${DIRECTUS_URL}/items/product_reviews`, {
+      method: "POST",
+      headers: adminHeaders,
+      body: JSON.stringify({ ...data, approved: false, created_at: new Date().toISOString() }),
+    });
+    if (!res.ok) throw new Error("Failed");
+    return (await res.json()).data;
+  } catch { return null; }
 }

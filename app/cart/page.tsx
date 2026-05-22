@@ -18,26 +18,6 @@ export default function CartPage() {
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
 
-      {/* Header */}
-      <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",display:"flex",alignItems:"center",gap:12}}>
-          <div style={{cursor:"pointer"}} onClick={()=>router.push("/")}>
-            <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-          </div>
-          <div style={{display:"flex",gap:6,marginLeft:"auto"}}>
-            <button onClick={()=>router.push("/")} style={{background:C.primary,color:"#fff",border:"none",padding:"6px 14px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>🏠 ホーム</button>
-          </div>
-        </div>
-      </div>
-
-      {/* Nav */}
-      <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"6px 10px",fontSize:11,color:"#fff"}}>
-          <span style={{cursor:"pointer"}} onClick={()=>router.push("/")}>ホーム</span>
-          <span style={{margin:"0 6px"}}>›</span>
-          <span style={{fontWeight:700}}>ショッピングカート</span>
-        </div>
-      </div>
 
       <div style={{maxWidth:1100,margin:"12px auto",padding:"0 10px"}}>
         <div style={{fontSize:16,fontWeight:700,color:C.text,marginBottom:12,display:"flex",alignItems:"center",gap:8}}>

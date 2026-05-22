@@ -55,21 +55,6 @@ export default function PasswordPage() {
 
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
-      <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",display:"flex",alignItems:"center"}}>
-          <div style={{cursor:"pointer"}} onClick={()=>router.push("/")}>
-            <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-          </div>
-          <button onClick={()=>router.push("/account")} style={{marginLeft:"auto",background:C.primary,color:"#fff",border:"none",padding:"6px 14px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>👤 マイページ</button>
-        </div>
-      </div>
-      <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"6px 10px",fontSize:11,color:"#fff",display:"flex",gap:6}}>
-          <span style={{cursor:"pointer"}} onClick={()=>router.push("/")}>ホーム</span><span>›</span>
-          <span style={{cursor:"pointer"}} onClick={()=>router.push("/account")}>マイページ</span><span>›</span>
-          <span style={{fontWeight:700}}>パスワードの変更</span>
-        </div>
-      </div>
 
       <div style={{maxWidth:500,margin:"16px auto",padding:"0 10px 40px"}}>
         <h1 style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>
@@ -95,9 +80,6 @@ export default function PasswordPage() {
         </div>
       </div>
 
-      <div style={{background:"#2A4A4A",color:"#AACCCC",padding:"16px 10px"}}>
-        <div style={{maxWidth:1100,margin:"0 auto",fontSize:10,color:"#5A8A8A"}}>© 2024 デジマルショップ. All Rights Reserved.</div>
-      </div>
     </div>
   );
 }

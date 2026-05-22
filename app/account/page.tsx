@@ -27,11 +27,6 @@ export default function AccountPage() {
   if (mounted && !user) {
     return (
       <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13}}>
-        <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-          <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",cursor:"pointer"}} onClick={()=>router.push("/")}>
-            <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-          </div>
-        </div>
         <div style={{maxWidth:500,margin:"60px auto",padding:"0 10px",textAlign:"center"}}>
           <div style={{fontSize:16,fontWeight:700,color:C.text,marginBottom:8}}>ログインが必要です</div>
           <div style={{fontSize:12,color:C.textSub,marginBottom:20}}>マイページをご利用いただくにはログインが必要です</div>
@@ -55,25 +50,6 @@ export default function AccountPage() {
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
 
-      <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",display:"flex",alignItems:"center"}}>
-          <div style={{cursor:"pointer"}} onClick={()=>router.push("/")}>
-            <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-          </div>
-          <div style={{display:"flex",gap:6,marginLeft:"auto"}}>
-            <button onClick={()=>router.push("/")} style={{background:C.primary,color:"#fff",border:"none",padding:"6px 14px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>ホーム</button>
-            <button onClick={()=>router.push("/cart")} style={{background:C.red,color:"#fff",border:"none",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>カート</button>
-          </div>
-        </div>
-      </div>
-
-      <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"6px 10px",fontSize:11,color:"#fff",display:"flex",gap:6}}>
-          <span style={{cursor:"pointer"}} onClick={()=>router.push("/")}>ホーム</span>
-          <span>›</span>
-          <span style={{fontWeight:700}}>マイページ</span>
-        </div>
-      </div>
 
       <div style={{maxWidth:900,margin:"16px auto",padding:"0 10px 40px"}}>
 
@@ -152,14 +128,6 @@ export default function AccountPage() {
         </div>
       </div>
 
-      <div style={{background:"#2A4A4A",color:"#AACCCC",padding:"16px 10px"}}>
-        <div style={{maxWidth:1100,margin:"0 auto"}}>
-          <div style={{fontSize:20,fontWeight:900,color:C.primary,fontFamily:"Arial Black,sans-serif",marginBottom:8,cursor:"pointer"}} onClick={()=>router.push("/")}>デジマルショップ</div>
-          <div style={{fontSize:10,color:"#5A8A8A",borderTop:"1px solid #3A6A6A",paddingTop:10,marginTop:8}}>
-            © 2024 デジマルショップ. All Rights Reserved.
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

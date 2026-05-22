@@ -1,6 +1,5 @@
 "use client";
 import { useRouter } from "next/navigation";
-import Footer from "@/components/Footer";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490",
@@ -24,21 +23,8 @@ export default function TermsPage() {
   const router = useRouter();
   return (
     <div style={{ background: C.bg, minHeight: "100vh", fontFamily: "'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif", fontSize: 13, color: C.text }}>
-      <div style={{ background: C.white, borderBottom: `2px solid ${C.primary}` }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "10px", cursor: "pointer" }} onClick={() => router.push("/")}>
-          <div style={{ fontSize: 22, fontWeight: 900, color: C.primary, letterSpacing: "-1px", fontFamily: "Arial Black,sans-serif" }}>デジマルショップ</div>
-          <div style={{ fontSize: 9, color: C.textLight }}>中古PC・スマホならデジマルショップ！</div>
-        </div>
-      </div>
-      <div style={{ background: C.primary, borderBottom: `2px solid ${C.primaryDark}` }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "7px 10px", fontSize: 11, color: "#fff", display: "flex", gap: 6 }}>
-          <span style={{ cursor: "pointer" }} onClick={() => router.push("/")}>ホーム</span>
-          <span>›</span>
-          <span style={{ fontWeight: 700 }}>利用規約</span>
-        </div>
-      </div>
 
-      <div style={{ maxWidth: 860, margin: "20px auto", padding: "0 10px 60px" }}>
+      <div style={{ width: "100%", maxWidth: "1800px", margin: "0 auto", padding: "0 12px 60px" }}>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>利用規約</h1>
         <p style={{ fontSize: 12, color: C.textSub, marginBottom: 20 }}>制定日：2024年4月1日　最終改定：2025年1月15日</p>
 
@@ -96,7 +82,6 @@ export default function TermsPage() {
           </Article>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

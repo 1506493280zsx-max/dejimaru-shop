@@ -32,9 +32,7 @@ const NAV = [
     title: "会社情報", en: "Company",
     links: [
       { label: "AI Acrossについて",  href: "/company" },
-      { label: "会社概要",            href: "/corporate" },
       { label: "採用情報",            href: "/careers" },
-      { label: "センター一覧",        href: "/corporate#centers" },
     ],
   },
   {

@@ -71,12 +71,7 @@ export default function CheckoutPage() {
   if (orderPlaced) {
     return (
       <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text,display:"flex",flexDirection:"column"}}>
-        <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-          <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",cursor:"pointer"}} onClick={()=>router.push("/")}>
-            <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-          </div>
-        </div>
-        <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:40}}>
+          <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:40}}>
           <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,padding:40,textAlign:"center",maxWidth:480,width:"100%"}}>
             <div style={{fontSize:48,marginBottom:16}}>🕐</div>
             <div style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:12}}>ご注文を受け付けました</div>
@@ -98,12 +93,7 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
-        <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-          <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",cursor:"pointer"}} onClick={()=>router.push("/")}>
-            <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-          </div>
-        </div>
-        <div style={{maxWidth:600,margin:"60px auto",textAlign:"center",padding:"0 20px"}}>
+          <div style={{maxWidth:600,margin:"60px auto",textAlign:"center",padding:"0 20px"}}>
           <div style={{fontSize:48,marginBottom:16}}>🛒</div>
           <div style={{fontSize:15,color:C.textSub,marginBottom:20}}>カートに商品がありません</div>
           <button onClick={()=>router.push("/")} style={{background:C.primary,color:"#fff",border:"none",borderRadius:2,padding:"10px 24px",fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
@@ -119,18 +109,6 @@ export default function CheckoutPage() {
 
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
-
-      {/* Header */}
-      <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",display:"flex",alignItems:"center",gap:12}}>
-          <div style={{cursor:"pointer"}} onClick={()=>router.push("/")}>
-            <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-          </div>
-          <button onClick={()=>router.push("/cart")} style={{marginLeft:"auto",background:"none",color:C.primary,border:`1px solid ${C.primary}`,padding:"6px 14px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
-            ← カートに戻る
-          </button>
-        </div>
-      </div>
 
       {/* Breadcrumb */}
       <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>

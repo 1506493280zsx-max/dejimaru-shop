@@ -46,19 +46,8 @@ export default function GuideClient({categories}:{categories:any[]}) {
 
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
-      <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"10px",cursor:"pointer"}} onClick={()=>router.push("/")}>
-          <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-        </div>
-      </div>
-      <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"7px 10px",fontSize:11,color:"#fff",display:"flex",gap:6}}>
-          <span style={{cursor:"pointer"}} onClick={()=>router.push("/")}>ホーム</span>
-          <span>›</span><span style={{fontWeight:700}}>ショッピングガイド</span>
-        </div>
-      </div>
 
-      <div style={{maxWidth:1100,margin:"10px auto",padding:"0 10px 40px"}}>
+      <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px 40px"}}>
         <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
           <Sidebar categories={categories}/>
           <div style={{flex:1,minWidth:0}}>

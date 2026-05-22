@@ -139,47 +139,6 @@ export default function SearchClient({initialProducts,brands,categories,query,br
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
 
-      <div style={{background:C.white,borderBottom:`2px solid ${C.primary}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",padding:"10px"}}>
-          <div style={{display:"flex",alignItems:"center",gap:12}}>
-            <div style={{cursor:"pointer",flexShrink:0}} onClick={()=>router.push("/")}>
-              <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",fontFamily:"Arial Black,sans-serif"}}>デジマルショップ</div>
-              <div style={{fontSize:9,color:C.textLight}}>中古PC・スマホならデジマルショップ！</div>
-            </div>
-            <div style={{flex:1,display:"flex",maxWidth:500}}>
-              <input value={search} onChange={e=>setSearch(e.target.value)}
-                onKeyDown={e=>e.key==="Enter"&&router.push(`/search?q=${encodeURIComponent(search)}`)}
-                placeholder="商品名・型番・キーワードで検索"
-                style={{flex:1,border:`2px solid ${C.primary}`,borderRight:"none",padding:"7px 10px",fontSize:13,outline:"none",borderRadius:"2px 0 0 2px",fontFamily:"inherit"}}/>
-              <button onClick={()=>router.push(`/search?q=${encodeURIComponent(search)}`)}
-                style={{background:C.primary,color:"#fff",border:`2px solid ${C.primary}`,padding:"7px 18px",fontSize:13,fontWeight:700,cursor:"pointer",borderRadius:"0 2px 2px 0",fontFamily:"inherit"}}>検索</button>
-            </div>
-            <div style={{display:"flex",gap:6,marginLeft:"auto",flexShrink:0}}>
-              {[{label:"会員登録",bg:"#4488CC",icon:"👤"},{label:"ログイン",bg:"#44AA44",icon:"🔑"}].map(b=>(
-                <button key={b.label} style={{background:b.bg,color:"#fff",border:"none",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontFamily:"inherit"}}>{b.icon} {b.label}</button>
-              ))}
-              <button style={{background:C.red,color:"#fff",border:"none",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>🛒 カート</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",display:"flex"}}>
-          {[
-            {label:"🏠 ホーム",path:"/"},
-            {label:"📋 ショッピングガイド",path:"/guide"},
-            {label:"🚚 送料・配送について",path:"/guide"},
-            {label:"❓ よくあるご質問",path:"/faq"},
-            {label:"🏢 会社概要",path:"/company"},
-            {label:"📞 お問い合わせ",path:"/contact"},
-          ].map((item,i)=>(
-            <div key={i} onClick={()=>router.push(item.path)} style={{padding:"7px 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap"}}
-              onMouseEnter={e=>(e.currentTarget.style.background=C.primaryDark)}
-              onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>{item.label}</div>
-          ))}
-        </div>
-      </div>
 
       <div style={{maxWidth:1100,margin:"8px auto",padding:"0 10px",fontSize:11,color:C.textSub}}>
         <span style={{cursor:"pointer",color:C.primary}} onClick={()=>router.push("/")}>ホーム</span>
@@ -228,14 +187,6 @@ export default function SearchClient({initialProducts,brands,categories,query,br
         </div>
       </div>
 
-      <div style={{background:"#2A4A4A",color:"#AACCCC",padding:"16px 10px"}}>
-        <div style={{maxWidth:1100,margin:"0 auto"}}>
-          <div style={{fontSize:20,fontWeight:900,color:C.primary,fontFamily:"Arial Black,sans-serif",marginBottom:8,cursor:"pointer"}} onClick={()=>router.push("/")}>デジマルショップ</div>
-          <div style={{fontSize:10,color:"#5A8A8A",borderTop:"1px solid #3A6A6A",paddingTop:10,marginTop:8}}>
-            © 2024 デジマルショップ. All Rights Reserved.
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

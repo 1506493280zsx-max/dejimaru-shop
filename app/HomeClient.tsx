@@ -5,7 +5,6 @@ import { getImageUrl } from "@/lib/directus";
 
 import { useWishlistStore } from "@/lib/wishlist-store";
 import { homepageAds } from "@/lib/homepageAds";
-import HomeReviews from "@/components/HomeReviews";
 type HpAd = { id:string; image:string; link:string; title:string; subtitle?:string; active:boolean; sort:number };
 
 const C = {
@@ -454,8 +453,6 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
                 ))}
               </div>
             </div>
-
-            <HomeReviews />
           </div>
 
           <AdColumn ads={RIGHT_ADS}/>

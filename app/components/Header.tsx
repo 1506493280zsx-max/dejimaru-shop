@@ -116,12 +116,13 @@ export default function Header() {
       <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
         <div style={{maxWidth:1100,margin:"0 auto",display:"flex"}}>
           {[
-            {label:"🏠 ホーム",path:"/"},
-            {label:"📋 ショッピングガイド",path:"/guide"},
-            {label:"🚚 送料・配送について",path:"/guide"},
-            {label:"❓ よくあるご質問",path:"/faq"},
-            {label:"🏢 会社概要",path:"/company"},
-            {label:"📞 お問い合わせ",path:"/contact"},
+            {label:"ホーム",path:"/"},
+            {label:"ショッピングガイド",path:"/guide"},
+            {label:"送料・配送について",path:"/guide"},
+            {label:"よくある質問",path:"/faq"},
+            {label:"法人・学校・官公庁のお客様",path:"/corporate"},
+            {label:"お問い合わせ",path:"/contact"},
+            {label:"BLOG",path:"/blog"},
           ].map((item,i)=>(
             <div key={i} onClick={()=>router.push(item.path)}
               style={{padding:"7px 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap"}}
@@ -130,6 +131,13 @@ export default function Header() {
               {item.label}
             </div>
           ))}
+          <a href="#customer-reviews"
+            onClick={e=>{e.preventDefault();document.getElementById('customer-reviews')?.scrollIntoView({behavior:'smooth'});}}
+            style={{padding:"7px 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap",textDecoration:"none"}}
+            onMouseEnter={e=>(e.currentTarget.style.background=C.primaryDark)}
+            onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>
+            お客様の声
+          </a>
         </div>
       </div>
 

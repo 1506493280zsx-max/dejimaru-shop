@@ -454,6 +454,8 @@ export default function HomeClient({featured,newArrivals,categories,brands}: {fe
                 ))}
               </div>
             </div>
+
+            <HomeReviews />
           </div>
 
           <AdColumn ads={RIGHT_ADS}/>

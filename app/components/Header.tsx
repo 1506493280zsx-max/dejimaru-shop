@@ -131,8 +131,8 @@ export default function Header() {
               {item.label}
             </div>
           ))}
-          <a
-  onClick={() => router.push('/#customer-reviews')}
+          <a href="/#customer-reviews"
+            onClick={e=>{e.preventDefault();if(window.location.pathname==="/")document.getElementById("customer-reviews")?.scrollIntoView({behavior:"smooth"});else window.location.href="/#customer-reviews";}}
             style={{padding:"7px 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap",textDecoration:"none"}}
             onMouseEnter={e=>(e.currentTarget.style.background=C.primaryDark)}
             onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>

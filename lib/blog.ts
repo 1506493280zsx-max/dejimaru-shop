@@ -67,7 +67,7 @@ export async function getBlogPosts(
     if (type) params.set("filter[type][_eq]", type);
     if (featured !== undefined) params.set("filter[featured][_eq]", String(featured));
     const res = await fetch(
-      `${DIRECTUS_URL}/items/blog_posts?${params}`,
+      `${DIRECTUS_URL}/items/Blog_Posts?${params}`,
       { headers: adminHeaders, next: { revalidate: 60 } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -84,7 +84,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     params.set("filter[status][_eq]", "published");
     params.set("fields", POST_FIELDS);
     const res = await fetch(
-      `${DIRECTUS_URL}/items/blog_posts?${params}`,
+      `${DIRECTUS_URL}/items/Blog_Posts?${params}`,
       { headers: adminHeaders, next: { revalidate: 60 } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

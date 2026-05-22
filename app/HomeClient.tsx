@@ -441,6 +441,9 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
               ))}
             </div>
 
+            <HomeBlogModule posts={blogPosts}/>
+            <AdSlider ads={homepageAds.blogSlider}/>
+
             <div style={{marginBottom:14}}>
               <SectionHeader title={"ブランドから探す"} en="BRANDS" color="#555"/>
               <div style={{display:"flex",flexWrap:"wrap",gap:6,background:C.white,border:`1px solid ${C.border}`,padding:10}}>
@@ -453,8 +456,6 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
                 ))}
               </div>
             </div>
-            <HomeBlogModule posts={blogPosts}/>
-            <AdSlider ads={homepageAds.blogSlider}/>
           </div>
 
           <AdColumn ads={RIGHT_ADS}/>

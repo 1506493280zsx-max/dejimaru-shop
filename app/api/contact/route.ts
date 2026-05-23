@@ -1,13 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
-
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: "aiacrossshop@gmail.com",
-    pass: "ymwxjxsfogwykvyy",
-  },
-});
+import { sendContactEmail } from "@/lib/mail";
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,84 +13,11 @@ export async function POST(req: NextRequest) {
     const replyBody = encodeURIComponent(`${name} 様\n\nお問い合わせありがとうございます。\n\n---\n元のメッセージ:\n${message}`);
     const mailtoLink = `mailto:${email}?subject=${replySubject}&body=${replyBody}`;
 
-    // 管理者への通知メール
-    await transporter.sendMail({
-      from: `"デジマルショップ" <aiacrossshop@gmail.com>`,
-      to: "aiacrossshop@gmail.com",
-      replyTo: `"${name}" <${email}>`,
-      subject: `【お問い合わせ】${name}様 - ${type}`,
-      html: `
-        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
-          <h2 style="color:#0ABAB5;border-bottom:2px solid #0ABAB5;padding-bottom:8px;">
-            新しいお問い合わせが届きました
-          </h2>
-
-          <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
-            <tr>
-              <td style="padding:10px;background:#E8F8F8;font-weight:bold;width:30%;border:1px solid #ddd;">お名前</td>
-              <td style="padding:10px;border:1px solid #ddd;">${name}</td>
-            </tr>
-            <tr>
-              <td style="padding:10px;background:#E8F8F8;font-weight:bold;border:1px solid #ddd;">メールアドレス</td>
-              <td style="padding:10px;border:1px solid #ddd;">${email}</td>
-            </tr>
-            <tr>
-              <td style="padding:10px;background:#E8F8F8;font-weight:bold;border:1px solid #ddd;">種別</td>
-              <td style="padding:10px;border:1px solid #ddd;">${type}</td>
-            </tr>
-            <tr>
-              <td style="padding:10px;background:#E8F8F8;font-weight:bold;border:1px solid #ddd;">内容</td>
-              <td style="padding:10px;border:1px solid #ddd;white-space:pre-wrap;">${message}</td>
-            </tr>
-          </table>
-
-          <div style="text-align:center;margin:24px 0;">
-            <a href="${mailtoLink}"
-              style="display:inline-block;background:#0ABAB5;color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:4px;font-size:16px;font-weight:bold;">
-              ✉️ ${name}様へ返信する
-            </a>
-          </div>
-
-          <p style="color:#999;font-size:11px;text-align:center;">
-            上のボタンをクリックすると、${name}様（${email}）への返信メールが自動で作成されます。
-          </p>
-        </div>
-      `,
-    });
-
-    // 自動返信メール（客户）
-    await transporter.sendMail({
-      from: `"デジマルショップ" <aiacrossshop@gmail.com>`,
-      to: email,
-      subject: "【デジマルショップ】お問い合わせを受け付けました",
-      html: `
-        <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
-          <h2 style="color:#0ABAB5;border-bottom:2px solid #0ABAB5;padding-bottom:8px;">
-            お問い合わせありがとうございます
-          </h2>
-          <p>${name} 様</p>
-          <p>お問い合わせを受け付けました。<br>
-          2営業日以内にご返信いたします。しばらくお待ちください。</p>
-          <hr style="border:1px solid #eee;margin:20px 0;">
-          <h3 style="color:#555;">お問い合わせ内容</h3>
-          <table style="width:100%;border-collapse:collapse;">
-            <tr>
-              <td style="padding:10px;background:#E8F8F8;font-weight:bold;width:30%;border:1px solid #ddd;">種別</td>
-              <td style="padding:10px;border:1px solid #ddd;">${type}</td>
-            </tr>
-            <tr>
-              <td style="padding:10px;background:#E8F8F8;font-weight:bold;border:1px solid #ddd;">内容</td>
-              <td style="padding:10px;border:1px solid #ddd;white-space:pre-wrap;">${message}</td>
-            </tr>
-          </table>
-          <p style="color:#999;font-size:12px;margin-top:20px;">
-            ※このメールは自動送信です。<br>
-            ご不明な点は aiacrossshop@gmail.com までお問い合わせください。<br>
-            デジマルショップ
-          </p>
-        </div>
-      `,
-    });
+    const result = await sendContactEmail({ name, email, type, message, mailtoLink });
+    if (result.error) {
+      console.error("[contact] Resend error:", result.error);
+      return NextResponse.json({ error: "送信に失敗しました" }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
   } catch (e: any) {

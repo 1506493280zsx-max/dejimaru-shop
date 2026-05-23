@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useCorporateQuote } from "@/components/CorporateQuoteContext";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryDeep:"#007A76",
@@ -111,6 +112,7 @@ function BulletList({items}:{items:string[]}) {
 
 export default function CorporatePage() {
   const router=useRouter();
+  const { openModal } = useCorporateQuote();
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
 
@@ -135,7 +137,7 @@ export default function CorporatePage() {
             10台以上のまとめ買いから、キッティングや延長保証まで専任担当者がワンストップで対応いたします。
           </p>
           <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:24}}>
-            <button onClick={()=>router.push("/contact")}
+            <button onClick={openModal}
               style={{background:C.red,color:"#fff",border:"none",padding:"14px 40px",borderRadius:2,fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"inherit",letterSpacing:1}}>
               無料見積依頼
             </button>
@@ -247,11 +249,32 @@ export default function CorporatePage() {
         </div>
       </div>
 
-      {/* 3e. POINT 5: full-width emphasis */}
+      {/* 3e. POINT 5: premium plan */}
+      <div style={{background:C.bg,padding:"52px 0"}}>
+        <div style={{maxWidth:960,margin:"0 auto",padding:"0 20px"}}>
+          <PointLabel num={5} title="プレミアムプラン生涯保証" sub="プレミアムプラン加入時は、生涯保証に対応いたします。通常保証期間終了後も長期サポートをご提供します。"/>
+          <div style={{display:"flex",gap:28,alignItems:"center",flexWrap:"wrap"}}>
+            <div style={{flex:"0 0 46%",minWidth:260}}>
+              {/* /public/corporate/points/point5.webp */}
+              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2}}/>
+            </div>
+            <div style={{flex:1,minWidth:220}}>
+              <BulletList items={[
+                "プレミアムプラン加入で生涯保証対応",
+                "故障・不具合時も継続サポート",
+                "予期しないトラブル時もサポート対応",
+                "長期利用時の安心を提供",
+              ]}/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3f. POINT 6: full-width emphasis */}
       <div style={{background:C.primaryDeep,padding:"56px 0"}}>
         <div style={{maxWidth:960,margin:"0 auto",padding:"0 20px"}}>
           <div style={{textAlign:"center",marginBottom:32}}>
-            <div style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.6)",letterSpacing:3,marginBottom:8}}>POINT 5</div>
+            <div style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.6)",letterSpacing:3,marginBottom:8}}>POINT 6</div>
             <div style={{fontSize:22,fontWeight:900,color:"#fff",marginBottom:10,lineHeight:1.3}}>圧倒的なコストパフォーマンス</div>
             <div style={{fontSize:13,color:"rgba(255,255,255,0.8)",maxWidth:500,margin:"0 auto",lineHeight:1.9}}>
               新品同等品をリユース価格で。IT費用を大幅に削減しながら、業務に必要な性能を確保できます。
@@ -269,7 +292,7 @@ export default function CorporatePage() {
               </div>
             ))}
           </div>
-          {/* /public/corporate/points/point5.webp */}
+          {/* /public/corporate/points/point6.webp */}
           <div style={{width:"100%",height:180,background:"rgba(255,255,255,0.07)",borderRadius:2}}/>
         </div>
       </div>
@@ -288,7 +311,7 @@ export default function CorporatePage() {
             <div style={{fontSize:13,color:C.textSub,maxWidth:520,margin:"0 auto 22px",lineHeight:1.8}}>
               台数・スペック・ご予算を教えていただければ、専任担当者が最適なプランをご提案します。
             </div>
-            <button onClick={e=>{e.stopPropagation();router.push("/contact");}}
+            <button onClick={e=>{e.stopPropagation();openModal();}}
               style={{background:C.red,color:"#fff",border:"none",padding:"14px 52px",borderRadius:2,fontSize:15,fontWeight:900,cursor:"pointer",fontFamily:"inherit",letterSpacing:1}}>
               無料見積依頼
             </button>
@@ -329,11 +352,17 @@ export default function CorporatePage() {
               「デジタルをもっと身近に、もっとサステナブルに」をテーマに取り組んでいます。
             </div>
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
+          <style>{`
+            .company-intro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+            @media(max-width:900px){.company-intro-grid{grid-template-columns:repeat(2,1fr);}}
+            @media(max-width:520px){.company-intro-grid{grid-template-columns:1fr;}}
+          `}</style>
+          <div className="company-intro-grid">
             {[
-              {num:"年間10,000台+",label:"販売実績",        body:"全国の法人・個人向けに年間1万台以上の中古デバイスを販売しています。"},
-              {num:"古物商許可取得",label:"許認可・コンプライアンス",body:"茨城県公安委員会より古物商許可を取得。法令に基づいた適正な事業運営をしています。"},
+              {num:"年間150,000台+",label:"販売実績",        body:"全国の法人・個人向けに年間15万台以上の中古デバイスを販売しています。"},
+              {num:"古物商許可取得",label:"許認可・コンプライアンス",body:"埼玉県公安委員会許可。法令に基づいた適正な事業運営を行っています。"},
               {num:"30日間保証",  label:"全商品動作保証",  body:"販売するすべての商品に動作保証を付けてお届けします。"},
+              {num:"プレミアムプラン",label:"永久保証",      body:"プレミアムプラン加入時は、一生保証対応。故障・不具合・予期しないトラブルも含めて幅広くサポートいたします。"},
             ].map(({num,label,body},i)=>(
               <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,borderRadius:"0 0 2px 2px",padding:20,textAlign:"center"}}>
                 {/* achievement image: /public/corporate/company/ach{i+1}.webp */}

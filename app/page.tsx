@@ -1,14 +1,15 @@
-import { getFeaturedProducts, getNewArrivals, getCategories, getBrands } from "@/lib/directus";
+import { getFeaturedProducts, getNewArrivals, getCategories, getBrands, getHomepageAds } from "@/lib/directus";
 import { getBlogPosts } from "@/lib/blog";
 import HomeClient from "./HomeClient";
 
 export default async function Home() {
-  const [featured, newArrivals, categories, brands, blogPosts] = await Promise.all([
+  const [featured, newArrivals, categories, brands, blogPosts, ads] = await Promise.all([
     getFeaturedProducts(),
     getNewArrivals(),
     getCategories(),
     getBrands(),
     getBlogPosts(undefined, 6, 1, true),
+    getHomepageAds(),
   ]);
 
   return (
@@ -18,6 +19,7 @@ export default async function Home() {
       categories={categories}
       brands={brands}
       blogPosts={blogPosts}
+      ads={ads}
     />
   );
 }

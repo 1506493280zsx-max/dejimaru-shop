@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getImageUrl } from "@/lib/directus";
 
-import { homepageAds } from "@/lib/homepageAds";
 import HomeBlogModule from "@/components/HomeBlogModule";
 import CategoryBannerSwiper from "@/components/CategoryBannerSwiper";
 import { useWishlistStore } from "@/lib/wishlist-store";
@@ -22,7 +21,6 @@ const GRADE_STYLE: Record<string,{label:string,color:string,bg:string,border:str
   B:  {label:"B級", color:"#555",   bg:"#F5F5F5",border:"#AAA"},
   C:  {label:"C級", color:"#333",   bg:"#EEEEEE",border:"#888"},
 };
-
 
 function GradeBadge({grade}: {grade:string|null}) {
   if(!grade) return null;
@@ -132,55 +130,24 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
   );
 }
 
-const LEFT_ADS = [
-  {text:"期間限定\nセール",url:"/search"},
-  {text:"MacBook\n特集",url:"/category/laptops-used-mac"},
-  {text:"iPhone\n中古",url:"/category/smartphones-iphone-used"},
-  {text:"ゲーミング\nPC",url:"/category/desktops-gaming"},
-  {text:"タブレット\n特集",url:"/category/tablets"},
-  {text:"Surface\n特集",url:"/search?brand=microsoft"},
-  {text:"ThinkPad\n特集",url:"/search?brand=lenovo"},
-  {text:"iMac\nMac mini",url:"/search?brand=apple"},
-  {text:"デスクトップ\nPC",url:"/category/desktops-used-business"},
-  {text:"Galaxy\nスマホ",url:"/search?brand=samsung"},
-  {text:"Apple\n製品",url:"/search?brand=apple"},
-  {text:"SSD\n大特集",url:"/category/storage-ssd-internal"},
-  {text:"買取\nサービス",url:"/buyback"},
-  {text:"法人\n向け",url:"/corporate"},
-];
-
-const RIGHT_ADS = [
-  {text:"本日限定\nタイムセール",url:"/search"},
-  {text:"SSD\n大特集",url:"/category/storage-ssd-internal"},
-  {text:"ビジネス\nPC",url:"/category/laptops-used-business"},
-  {text:"Android\n中古",url:"/category/smartphones-android-used"},
-  {text:"周辺機器\n特集",url:"/category/peripherals"},
-  {text:"モニター\n特集",url:"/category/peripherals"},
-  {text:"キーボード\nマウス",url:"/category/peripherals"},
-  {text:"修理\nサービス",url:"/repair"},
-  {text:"法人\n一括販売",url:"/wholesale"},
-  {text:"Chromebook\n特集",url:"/search?brand=google"},
-  {text:"タイム\nセール",url:"/search"},
-  {text:"POD\nサービス",url:"/pod-service"},
-  {text:"スマホ\nケース",url:"/search"},
-  {text:"お問い合わ\nせ",url:"/contact"},
-];
-
-function AdColumn({ads}: {ads:{text:string,url:string,image?:string}[]}) {
+function AdColumn({ads}: {ads:any[]}) {
   const router = useRouter();
   return (
     <div style={{width:90,flexShrink:0,display:"flex",flexDirection:"column",gap:4}}>
-      {ads.map((ad,i)=>(
-        <div key={i} onClick={()=>router.push(ad.url)}
-          style={{width:90,height:400,background:"#E8E8E8",border:"1px dashed #AAA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"opacity 0.15s",writingMode:"vertical-rl",textOrientation:"mixed",overflow:"hidden",position:"relative"}}
-          onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
-          onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
-          {ad.image
-            ? <img src={ad.image} alt={ad.text} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>
-            : <div style={{fontSize:11,color:"#999",textAlign:"center",lineHeight:1.8,whiteSpace:"pre-line"}}>{ad.text}</div>
-          }
-        </div>
-      ))}
+      {ads.map((ad,i)=>{
+        const imgUrl = ad.image_desktop ? getImageUrl(ad.image_desktop, 90, 400) : null;
+        return (
+          <div key={ad.id??i} onClick={()=>router.push(ad.link_url||"/")}
+            style={{width:90,height:400,background:"#E8E8E8",border:"1px dashed #AAA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"opacity 0.15s",writingMode:"vertical-rl",textOrientation:"mixed",overflow:"hidden",position:"relative"}}
+            onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
+            onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
+            {imgUrl
+              ? <img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+              : <div style={{fontSize:11,color:"#999",textAlign:"center",lineHeight:1.8,whiteSpace:"pre-line"}}>{ad.title}</div>
+            }
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -196,19 +163,20 @@ function SectionHeader({title,en,color}:{title:string,en:string,color?:string}) 
 
 function BannerAd({ad}:{ad:any}) {
   const router=useRouter();
-  if(!ad||!ad.active) return null;
+  if(!ad||ad.is_active===false) return null;
+  const imgUrl = ad.image_desktop ? getImageUrl(ad.image_desktop, 800, 260) : null;
   return (
-    <div onClick={()=>router.push(ad.link)}
+    <div onClick={()=>router.push(ad.link_url||"/")}
       style={{width:"100%",height:260,minHeight:260,maxHeight:260,borderRadius:2,overflow:"hidden",position:"relative",background:`linear-gradient(135deg,${C.primaryBg},#B8EAE8)`,border:`1px solid ${C.primaryBorder}`,marginBottom:10,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}
       onMouseEnter={e=>(e.currentTarget.style.opacity="0.9")}
       onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
-      {ad.image&&(
-        <img src={ad.image} alt={ad.title} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+      {imgUrl&&(
+        <img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>
       )}
-      {ad.image&&<div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.28)"}}/>}
+      {imgUrl&&<div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.28)"}}/>}
       <div style={{position:"relative",zIndex:1,textAlign:"center",padding:"0 32px"}}>
-        <div style={{fontSize:22,fontWeight:700,color:ad.image?"#fff":C.primaryDeep,lineHeight:1.4,textShadow:ad.image?"0 1px 4px rgba(0,0,0,0.6)":"none"}}>{ad.title}</div>
-        {ad.subtitle&&<div style={{fontSize:13,marginTop:8,color:ad.image?"rgba(255,255,255,0.9)":C.textSub,textShadow:ad.image?"0 1px 3px rgba(0,0,0,0.5)":"none"}}>{ad.subtitle}</div>}
+        <div style={{fontSize:22,fontWeight:700,color:imgUrl?"#fff":C.primaryDeep,lineHeight:1.4,textShadow:imgUrl?"0 1px 4px rgba(0,0,0,0.6)":"none"}}>{ad.title}</div>
+        {ad.subtitle&&<div style={{fontSize:13,marginTop:8,color:imgUrl?"rgba(255,255,255,0.9)":C.textSub,textShadow:imgUrl?"0 1px 3px rgba(0,0,0,0.5)":"none"}}>{ad.subtitle}</div>}
       </div>
     </div>
   );
@@ -223,11 +191,12 @@ function chunkArray<T>(arr:T[],size:number):T[][] {
 function AutoSwitchGridCard({ad}:{ad:any}) {
   const [hov,setHov]=useState(false);
   const router=useRouter();
+  const imgUrl = ad.image_desktop ? getImageUrl(ad.image_desktop, 400, 160) : null;
   return (
     <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      onClick={()=>router.push(ad.link)}
+      onClick={()=>router.push(ad.link_url||"/")}
       style={{position:"relative",height:160,borderRadius:2,overflow:"hidden",cursor:"pointer",background:`linear-gradient(135deg,${C.primaryDeep},#0ABAB5)`,border:`2px solid ${hov?C.primary:C.primaryBorder}`,transition:"border-color 0.15s"}}>
-      {ad.image&&<img src={ad.image} alt={ad.title} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>}
+      {imgUrl&&<img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:hov?"rgba(0,0,0,0.18)":"rgba(0,0,0,0.35)",transition:"background 0.2s"}}/>
       <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:5,padding:"0 12px",textAlign:"center"}}>
         <div style={{fontSize:13,fontWeight:700,color:"#fff",lineHeight:1.4,textShadow:"0 1px 3px rgba(0,0,0,0.5)"}}>{ad.title}</div>
@@ -238,12 +207,12 @@ function AutoSwitchGridCard({ad}:{ad:any}) {
 }
 
 function AdSlider({ads}:{ads:any[]}) {
-  const active=ads.filter(a=>a.active).sort((a,b)=>a.sort-b.sort);
+  const active=(ads??[]).filter(a=>a.is_active!==false).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
   const pages=chunkArray(active,4);
   const [page,setPage]=useState(0);
   const [paused,setPaused]=useState(false);
   useEffect(()=>{
-    if(paused) return;
+    if(paused||pages.length<=1) return;
     const timer=setInterval(()=>setPage(p=>(p+1)%pages.length),4000);
     return ()=>clearInterval(timer);
   },[paused,pages.length]);
@@ -252,7 +221,8 @@ function AdSlider({ads}:{ads:any[]}) {
     <div style={{marginBottom:14}}
       onMouseEnter={()=>setPaused(true)}
       onMouseLeave={()=>setPaused(false)}>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
+      <style>{`.ad-slider-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}@media(max-width:640px){.ad-slider-grid{grid-template-columns:repeat(2,1fr)}}`}</style>
+      <div className="ad-slider-grid">
         {pages[page].map(ad=><AutoSwitchGridCard key={ad.id} ad={ad}/>)}
       </div>
       {pages.length>1&&(
@@ -288,22 +258,25 @@ const ACCESSORY_PRODUCTS = [
   {id:"ac6",slug:"wireless-earphones-anc", name:"ワイヤレスイヤホン Bluetooth5.3 アクティブノイズキャンセリング",    brand_id:{name:""},images:[],grade:null,price:3980, compare_at_price:7980},
 ];
 
-export default function HomeClient({featured,newArrivals,categories,brands,blogPosts}: {featured:any[],newArrivals:any[],categories:any[],brands:any[],blogPosts:any[]}) {
+export default function HomeClient({featured,newArrivals,categories,brands,blogPosts,ads}: {featured:any[],newArrivals:any[],categories:any[],brands:any[],blogPosts:any[],ads:any[]}) {
   const router=useRouter();
   const roots=categories.filter(c=>!c.parent_id);
   const [openCats,setOpenCats]=useState(roots.length>0?[String(roots[0]?.id)]:["1"]);
+
+  const adsFor = (prefix: string) =>
+    ads.filter(a => a.position === prefix || (a.position && a.position.startsWith(prefix + '-')));
 
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','游ゴシック','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
 
       <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px"}}>
-        <CategoryBannerSwiper/>
+        <CategoryBannerSwiper ads={adsFor('hero')}/>
       </div>
 
       <div style={{width:"100%",maxWidth:"1800px",margin:"10px auto",padding:"0 12px"}}>
         <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
 
-          <AdColumn ads={LEFT_ADS}/>
+          <AdColumn ads={adsFor('left')}/>
           <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats}/>
 
           <div style={{flex:1,minWidth:0}}>
@@ -327,7 +300,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
               ))}
             </div>
 
-            <BannerAd ad={homepageAds.gradeBanner[0]}/>
+            <AdSlider ads={adsFor('featured-banner')}/>
 
             <div style={{marginBottom:14}}>
               <SectionHeader title={"注目商品一覧"} en="FEATURED ITEMS"/>
@@ -336,8 +309,6 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
               </div>
             </div>
 
-            <AdSlider ads={homepageAds.featuredSlider}/>
-
             <div style={{marginBottom:14}}>
               <SectionHeader title={"新着商品"} en="NEW ARRIVALS" color={C.primaryDeep}/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6}}>
@@ -345,14 +316,14 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
               </div>
             </div>
 
-            <AdSlider ads={homepageAds.newSlider}/>
+            <AdSlider ads={adsFor('new-banner')}/>
 
             <div style={{marginBottom:14}}>
               <SectionHeader title={"Appleの商品"} en="APPLE PRODUCTS" color="#555"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,marginBottom:8}}>
                 {APPLE_PRODUCTS.map((p:any)=><ProductCard key={p.id} product={p}/>)}
               </div>
-              <AdSlider ads={homepageAds.appleSlider}/>
+              <AdSlider ads={adsFor('apple-banner')}/>
             </div>
 
             <div style={{marginBottom:14}}>
@@ -360,7 +331,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,marginBottom:8}}>
                 {ACCESSORY_PRODUCTS.map((p:any)=><ProductCard key={p.id} product={p}/>)}
               </div>
-              <AdSlider ads={homepageAds.accessorySlider}/>
+              <AdSlider ads={adsFor('accessory-banner')}/>
             </div>
 
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
@@ -377,7 +348,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
             </div>
 
             <HomeBlogModule posts={blogPosts}/>
-            <AdSlider ads={homepageAds.blogSlider}/>
+            <AdSlider ads={adsFor('blog-banner')}/>
 
             <div style={{marginBottom:14}}>
               <SectionHeader title={"ブランドから探す"} en="BRANDS" color="#555"/>
@@ -393,7 +364,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
             </div>
           </div>
 
-          <AdColumn ads={RIGHT_ADS}/>
+          <AdColumn ads={adsFor('right')}/>
         </div>
       </div>
 

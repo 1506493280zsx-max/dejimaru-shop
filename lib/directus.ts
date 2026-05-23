@@ -20,7 +20,7 @@ export async function getProducts(options: {
   const params = new URLSearchParams({
     limit: String(limit),
     sort: sort.join(","),
-    "fields[]": "id,slug,name,short_description,price,compare_at_price,grade,condition,is_featured,is_new,published_at,cpu,os,memory,storage,display_size,brand_id.name,brand_id.slug,category_id.name,category_id.slug,category_id.id,images.directus_files_id",
+    "fields[]": "id,slug,name,short_description,price,compare_at_price,grade,condition,is_featured,is_new,published_at,cpu,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,brand_id.name,brand_id.slug,category_id.name,category_id.slug,category_id.id,images.directus_files_id",
   });
   if (Object.keys(filter).length > 0) params.append("filter", JSON.stringify(filter));
   try {
@@ -41,7 +41,7 @@ export async function getNewArrivals() {
 export async function getProductBySlug(slug: string) {
   try {
     const res = await fetch(
-      `${DIRECTUS_URL}/items/products?filter[slug][_eq]=${slug}&fields[]=id,slug,name,description,short_description,price,compare_at_price,grade,condition,cpu,os,memory,storage,display_size,brand_id.name,category_id.name,category_id.slug,images.directus_files_id`,
+      `${DIRECTUS_URL}/items/products?filter[slug][_eq]=${slug}&fields[]=id,slug,name,description,short_description,price,compare_at_price,grade,condition,cpu,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,brand_id.name,category_id.name,category_id.slug,images.directus_files_id`,
       { headers: publicHeaders, next: { revalidate: 300 } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -63,6 +63,17 @@ export async function getBrands() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()).data || [];
   } catch (e) { console.error("[getBrands]", e); return []; }
+}
+
+export async function getHomepageAds() {
+  try {
+    const res = await fetch(
+      `${DIRECTUS_URL}/items/homepage_ads?filter[is_active][_eq]=true&sort[]=sort_order&limit=200&fields[]=id,title,subtitle,image_desktop,image_mobile,link_url,position,sort_order`,
+      { headers: publicHeaders, next: { revalidate: 300 } }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return (await res.json()).data || [];
+  } catch (e) { console.error("[getHomepageAds]", e); return []; }
 }
 
 export function getImageUrl(fileId: string, width = 400, height = 300) {

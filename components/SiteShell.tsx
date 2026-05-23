@@ -1,5 +1,6 @@
 import Header from "@/app/components/Header";
 import Footer from "@/components/Footer";
+import CorporateQuoteLauncher from "@/components/CorporateQuoteLauncher";
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
   return (
@@ -7,6 +8,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       <Header />
       <main>{children}</main>
       <Footer />
+      <CorporateQuoteLauncher />
     </>
   );
 }

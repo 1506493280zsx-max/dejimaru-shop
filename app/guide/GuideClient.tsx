@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Sidebar from "@/app/components/Sidebar";
 
 const C = {
@@ -11,7 +12,7 @@ const C = {
 const GUIDE_SECTIONS = [
   {id:"first",   label:"初めてご利用のお客様"},
   {id:"payment", label:"お支払い方法について"},
-  {id:"shipping",label:"配送について"},
+  {id:"shipping",label:"配送について", path:"/shipping"},
   {id:"warranty",label:"保証について"},
   {id:"defect",  label:"初期不良について"},
   {id:"faq",     label:"よくあるご質問", path:"/faq"},
@@ -37,8 +38,12 @@ function Row({label,value}:{label:string,value:any}) {
   );
 }
 
+const hiddenSidebarRoutes = ["/guide", "/faq", "/shipping"];
+
 export default function GuideClient({categories}:{categories:any[]}) {
   const router = useRouter();
+  const pathname = usePathname();
+  const hideSidebar = hiddenSidebarRoutes.includes(pathname);
   const handleNav = (s:typeof GUIDE_SECTIONS[0]) => {
     if(s.path){ router.push(s.path); return; }
     document.getElementById(s.id)?.scrollIntoView({behavior:"smooth"});
@@ -49,7 +54,7 @@ export default function GuideClient({categories}:{categories:any[]}) {
 
       <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px 40px"}}>
         <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-          <Sidebar categories={categories}/>
+          {!hideSidebar && <Sidebar categories={categories}/>}
           <div style={{flex:1,minWidth:0}}>
             <h1 style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>ショッピングガイド</h1>
 
@@ -85,14 +90,6 @@ export default function GuideClient({categories}:{categories:any[]}) {
               <Row label="代金引換" value="商品受け取り時に配送員へお支払いください。代引手数料は330円〜です（現金のみ）。"/>
               <Row label="クレジットカード" value="VISA・MasterCard・JCB・AMEX対応。"/>
               <br/><div style={{padding:10,background:"#FFF8E8",border:"1px solid #F0D080",borderRadius:2,fontSize:12,color:"#886600"}}>※30万円以上の場合、代金引換はご利用いただけません。</div>
-            </Section>
-
-            <Section id="shipping" title="配送について">
-              <Row label="送料" value="全国一律無料（沖縄・離島を除く）"/>
-              <Row label="配送業者" value="ヤマト運輸・佐川急便（商品により異なります）"/>
-              <Row label="出荷日" value="平日14時までのご注文は当日出荷（土日祝除く）"/>
-              <Row label="お届け日数" value="出荷翌日〜3営業日程度"/>
-              <Row label="時間指定" value="午前中・14〜16時・16〜18時・18〜20時・19〜21時"/>
             </Section>
 
             <Section id="warranty" title="保証について">

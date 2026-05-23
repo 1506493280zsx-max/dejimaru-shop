@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Sidebar from "@/app/components/Sidebar";
 
 const C = {
@@ -50,13 +51,17 @@ function FaqItem({q,a}:{q:string,a:string}) {
   );
 }
 
+const hiddenSidebarRoutes = ["/guide", "/faq", "/shipping"];
+
 export default function FaqClient({categories}:{categories:any[]}) {
   const router=useRouter();
+  const pathname = usePathname();
+  const hideSidebar = hiddenSidebarRoutes.includes(pathname);
   return (
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13,color:C.text}}>
       <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px 40px"}}>
         <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-          <Sidebar categories={categories}/>
+          {!hideSidebar && <Sidebar categories={categories}/>}
           <div style={{flex:1,minWidth:0}}>
             <h1 style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>よくあるご質問</h1>
             {FAQS.map((cat,i)=>(

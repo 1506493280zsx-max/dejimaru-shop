@@ -114,11 +114,11 @@ export default function Header() {
       </div>
 
       <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
-        <div style={{maxWidth:1100,margin:"0 auto",display:"flex"}}>
+        <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px",boxSizing:"border-box",display:"flex",justifyContent:"center",alignItems:"stretch",gap:"24px"}}>
           {[
             {label:"ホーム",path:"/"},
             {label:"ショッピングガイド",path:"/guide"},
-            {label:"送料・配送について",path:"/guide"},
+            {label:"送料・配送について",path:"/shipping"},
             {label:"よくある質問",path:"/faq"},
             {label:"法人・学校・官公庁のお客様",path:"/corporate"},
             {label:"お問い合わせ",path:"/contact"},

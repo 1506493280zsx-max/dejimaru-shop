@@ -5,6 +5,7 @@ import { getImageUrl } from "@/lib/directus";
 
 import { homepageAds } from "@/lib/homepageAds";
 import HomeBlogModule from "@/components/HomeBlogModule";
+import CategoryBannerSwiper from "@/components/CategoryBannerSwiper";
 import { useWishlistStore } from "@/lib/wishlist-store";
 
 const C = {
@@ -22,72 +23,6 @@ const GRADE_STYLE: Record<string,{label:string,color:string,bg:string,border:str
   C:  {label:"C級", color:"#333",   bg:"#EEEEEE",border:"#888"},
 };
 
-const GRID_ADS = [
-  {text:"無期限セール",   url:"/search"},
-  {text:"MacBook特集",     url:"/category/laptops-used-mac"},
-  {text:"iPhone中古",      url:"/category/smartphones-iphone-used"},
-  {text:"ゲーミングPC",    url:"/category/desktops-gaming"},
-  {text:"タブレット特集",  url:"/category/tablets"},
-  {text:"タイムセール",    url:"/search"},
-  {text:"SSD大特集",       url:"/category/storage-ssd-internal"},
-  {text:"ビジネスPC",      url:"/category/laptops-used-business"},
-  {text:"Android中古",     url:"/category/smartphones-android-used"},
-  {text:"周辺機器特集",    url:"/category/peripherals"},
-  {text:"Surface特集",     url:"/search?brand=microsoft"},
-  {text:"ThinkPad特集",   url:"/search?brand=lenovo"},
-  {text:"iMac/Mac mini",  url:"/search?brand=apple"},
-  {text:"デスクトップPC",  url:"/category/desktops-used-business"},
-  {text:"Galaxyスマホ",    url:"/search?brand=samsung"},
-  {text:"Apple製品",       url:"/search?brand=apple"},
-  {text:"買取サービス",    url:"/buyback"},
-  {text:"法人向け",        url:"/corporate"},
-  {text:"修理サービス",    url:"/repair"},
-  {text:"Chromebook",     url:"/search?brand=google"},
-  {text:"モニター特集",    url:"/category/peripherals"},
-  {text:"キーボード特集",  url:"/category/peripherals"},
-  {text:"PODサービス",     url:"/pod-service"},
-  {text:"お問い合わせ",    url:"/contact"},
-];
-
-function GridBanner() {
-  const router = useRouter();
-  const firstRow = GRID_ADS.slice(0, 6);
-  const secondRow = GRID_ADS.slice(6, 12);
-  const row1Loop = [...firstRow, ...firstRow];
-  const row2Loop = [...secondRow, ...secondRow];
-  const tile = {width:200,height:160,flexShrink:0,overflow:"hidden",background:"#E0E0E0",border:"1px dashed #AAA",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",borderRadius:2} as const;
-  return (
-    <>
-      <style>{`
-        .marqueeWrapper{overflow:hidden;display:flex;flex-direction:column;gap:4px;}
-        .scrollLeft{display:flex;gap:4px;width:max-content;animation:scrollLeft 30s linear infinite;}
-        .scrollRight{display:flex;gap:4px;width:max-content;animation:scrollRight 30s linear infinite;}
-        @keyframes scrollLeft{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-        @keyframes scrollRight{0%{transform:translateX(-50%)}100%{transform:translateX(0)}}
-      `}</style>
-      <div className="marqueeWrapper">
-        <div className="scrollLeft">
-          {row1Loop.map((ad,i)=>(
-            <div key={i} onClick={()=>router.push(ad.url)} style={tile}
-              onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
-              onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
-              <div style={{fontSize:13,fontWeight:700,color:"#888",textAlign:"center",padding:"0 8px"}}>{ad.text}</div>
-            </div>
-          ))}
-        </div>
-        <div className="scrollRight">
-          {row2Loop.map((ad,i)=>(
-            <div key={i} onClick={()=>router.push(ad.url)} style={tile}
-              onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
-              onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
-              <div style={{fontSize:13,fontWeight:700,color:"#888",textAlign:"center",padding:"0 8px"}}>{ad.text}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </>
-  );
-}
 
 function GradeBadge({grade}: {grade:string|null}) {
   if(!grade) return null;
@@ -362,7 +297,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
     <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','游ゴシック','Hiragino Kaku Gothic ProN',sans-serif",fontSize:13,color:C.text}}>
 
       <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px"}}>
-        <GridBanner/>
+        <CategoryBannerSwiper/>
       </div>
 
       <div style={{width:"100%",maxWidth:"1800px",margin:"10px auto",padding:"0 12px"}}>

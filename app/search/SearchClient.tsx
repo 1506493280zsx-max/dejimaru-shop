@@ -82,7 +82,7 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
             </div>
             {isOpen&&(
               <div style={{background:C.white}}>
-                {children.length>0
+                {(children.length>0 && (cat.slug==="peripherals"||cat.slug==="storage"))
                   ? children.map(child=>(
                       <div key={child.slug}
                         onClick={()=>router.push(`/category/${child.slug}`)}

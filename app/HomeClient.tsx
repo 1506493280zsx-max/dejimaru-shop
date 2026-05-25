@@ -92,6 +92,7 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
       </div>
       {roots.map(cat=>{
         const catBrands=getBrandsForCategory(cat.slug, brands);
+        const children=categories.filter(c=>String(c.parent_id)===String(cat.id));
         const isOpen=openCats.includes(String(cat.id));
         return (
           <div key={cat.id}>
@@ -101,15 +102,26 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
             </div>
             {isOpen&&(
               <div style={{background:C.white}}>
-                {catBrands.map(b=>(
-                  <div key={b.slug}
-                    onClick={(e)=>{e.stopPropagation();console.log("APPLE_CLICK",b.slug,cat.slug);router.push(`/search?brand=${b.slug}&category=${cat.slug}`);console.log("PUSH_DONE");}}
-                    style={{padding:"8px 10px 8px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.textSub}}
-                    onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
-                    onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
-                    {b.name}
-                  </div>
-                ))}
+                {children.length>0
+                  ? children.map(child=>(
+                      <div key={child.slug}
+                        onClick={(e)=>{e.stopPropagation();router.push(`/category/${child.slug}`);}}
+                        style={{padding:"8px 10px 8px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.textSub}}
+                        onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
+                        onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
+                        {child.name}
+                      </div>
+                    ))
+                  : catBrands.map(b=>(
+                      <div key={b.slug}
+                        onClick={(e)=>{e.stopPropagation();router.push(`/search?brand=${b.slug}&category=${cat.slug}`);}}
+                        style={{padding:"8px 10px 8px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.textSub}}
+                        onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
+                        onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
+                        {b.name}
+                      </div>
+                    ))
+                }
               </div>
             )}
           </div>

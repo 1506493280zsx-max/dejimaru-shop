@@ -1,18 +1,15 @@
 import type { Brand } from "@/lib/directus";
 
+const PC_BRANDS = [
+  "apple", "lenovo", "fujitsu", "dynabook", "dell",
+  "hp", "panasonic", "nec", "asus", "microsoft",
+  "vaio", "acer", "msi", "lg", "galleria",
+] as const;
+
 export const CATEGORY_BRAND_SLUGS = {
-  "laptops-used": [
-    "apple", "lenovo", "dell", "hp", "microsoft",
-    "panasonic", "asus", "sony", "fujitsu", "nec",
-    "sharp", "dynabook", "acer", "msi", "galleria",
-  ],
-  "laptops-new": [
-    "apple", "microsoft", "asus", "lenovo", "dell", "hp", "msi", "galleria",
-  ],
-  "desktops": [
-    "apple", "dell", "hp", "lenovo", "asus",
-    "fujitsu", "nec", "msi", "galleria",
-  ],
+  "laptops-used": PC_BRANDS,
+  "laptops-new": PC_BRANDS,
+  "desktops": PC_BRANDS,
   "smartphones": [
     "apple", "samsung", "google", "sony", "sharp",
     "xiaomi", "huawei", "oppo", "motorola",

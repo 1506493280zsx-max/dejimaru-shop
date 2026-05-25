@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ZIPCLOUD = "https://zipcloud.ibsoli.com/api/search";
+const ZIPCLOUD = "https://zipcloud.ibsnet.co.jp/api/search";
 
 export async function POST(req: NextRequest) {
   let body: { postalCode?: unknown };

@@ -82,16 +82,28 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
             </div>
             {isOpen&&(
               <div style={{background:C.white}}>
-                {catBrands.map(b=>(
-                  <div key={b.slug}
-                    onClick={()=>router.push(`/search?brand=${b.slug}&category=${cat.slug}`)}
-                    style={{padding:"5px 10px 5px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.textSub,display:"flex",alignItems:"center",gap:4}}
-                    onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
-                    onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
-                    <span style={{color:C.primary,fontSize:9}}>●</span>
-                    <span style={{flex:1}}>{b.name}</span>
-                  </div>
-                ))}
+                {children.length>0
+                  ? children.map(child=>(
+                      <div key={child.slug}
+                        onClick={()=>router.push(`/category/${child.slug}`)}
+                        style={{padding:"5px 10px 5px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.textSub,display:"flex",alignItems:"center",gap:4}}
+                        onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
+                        onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
+                        <span style={{color:C.primary,fontSize:9}}>●</span>
+                        <span style={{flex:1}}>{child.name}</span>
+                      </div>
+                    ))
+                  : catBrands.map(b=>(
+                      <div key={b.slug}
+                        onClick={()=>router.push(`/search?brand=${b.slug}&category=${cat.slug}`)}
+                        style={{padding:"5px 10px 5px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.textSub,display:"flex",alignItems:"center",gap:4}}
+                        onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
+                        onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
+                        <span style={{color:C.primary,fontSize:9}}>●</span>
+                        <span style={{flex:1}}>{b.name}</span>
+                      </div>
+                    ))
+                }
               </div>
             )}
           </div>

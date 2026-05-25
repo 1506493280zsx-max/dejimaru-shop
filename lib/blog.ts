@@ -1,3 +1,4 @@
+const DIRECTUS_URL_FALLBACK = process.env.DIRECTUS_URL ?? "https://directus-production-2cfe.up.railway.app";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
 
 const adminHeaders = {
@@ -9,8 +10,8 @@ async function fetchDirectus(url: string): Promise<any> {
   if (ADMIN_TOKEN) {
     const res = await fetch(url, { headers: adminHeaders, next: { revalidate: 60 } });
     if (res.ok) return res.json();
-    if (res.status !== 401) throw new Error(`HTTP ${res.status}`);
-    // 401: token expired — fall through to public access
+    if (res.status !== 401 && res.status !== 403) throw new Error(`HTTP ${res.status}`);
+    // 401: token expired / 403: forbidden — fall through to public access
   }
   const res = await fetch(url, { next: { revalidate: 60 } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -65,8 +66,7 @@ export async function getBlogPosts(
   featured?: boolean
 ): Promise<BlogPost[]> {
   try {
-    const DIRECTUS_URL = process.env.DIRECTUS_URL;
-    if (!DIRECTUS_URL) return [];
+    const DIRECTUS_URL = DIRECTUS_URL_FALLBACK;
     const params = new URLSearchParams({
       "filter[status][_eq]": "published",
       limit: String(limit),
@@ -79,13 +79,12 @@ export async function getBlogPosts(
     const json = await fetchDirectus(`${DIRECTUS_URL}/items/Blog_Posts?${params}`);
     const data = json.data || [];
     return data.map((p: any) => ({ ...p, body: p.content ?? "" }));
-  } catch { return []; }
+  } catch (e) { console.error("[BLOG ERROR]", e); return []; }
 }
 
 export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
   try {
-    const DIRECTUS_URL = process.env.DIRECTUS_URL;
-    if (!DIRECTUS_URL) return null;
+    const DIRECTUS_URL = DIRECTUS_URL_FALLBACK;
     const params = new URLSearchParams();
     params.set("filter[slug][_eq]", slug);
     params.set("filter[status][_eq]", "published");
@@ -93,7 +92,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     const json = await fetchDirectus(`${DIRECTUS_URL}/items/Blog_Posts?${params}`);
     const item = json.data?.[0] || null;
     return item ? { ...item, body: item.content ?? "" } : null;
-  } catch { return null; }
+  } catch (e) { console.error("[BLOG ERROR]", e); return null; }
 }
 
 // ─── BLOG COMMENTS ────────────────────────────────────────────
@@ -106,8 +105,7 @@ const COMMENT_FIELDS = [
 
 export async function getComments(postId: string): Promise<BlogComment[]> {
   try {
-    const DIRECTUS_URL = process.env.DIRECTUS_URL;
-    if (!DIRECTUS_URL) return [];
+    const DIRECTUS_URL = DIRECTUS_URL_FALLBACK;
     const params = new URLSearchParams({
       "filter[post][_eq]": postId,
       "filter[approved][_eq]": "true",
@@ -122,5 +120,5 @@ export async function getComments(postId: string): Promise<BlogComment[]> {
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()).data || [];
-  } catch { return []; }
+  } catch (e) { console.error("[BLOG ERROR]", e); return []; }
 }

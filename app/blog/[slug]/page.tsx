@@ -17,12 +17,12 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
-  if (!post) return { title: "記事が見つかりません | デジマルショップ" };
+  if (!post) return { title: "記事が見つかりません | AI Across ショップ" };
   const description = post.excerpt
     ? post.excerpt.slice(0, 150)
     : post.body.replace(/<[^>]+>/g, "").slice(0, 150);
   return {
-    title: `${post.title} | デジマルショップ`,
+    title: `${post.title} | AI Across ショップ`,
     description,
   };
 }

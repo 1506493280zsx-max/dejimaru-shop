@@ -196,7 +196,7 @@ export default function Footer() {
       <div style={{ background: FC.deep, padding: "10px 16px", borderTop: "1px solid #1A2E2E" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
           <span style={{ fontSize: 10, color: "#3A6A6A" }}>© 2024 AI Across合同会社. All Rights Reserved.</span>
-          <span style={{ fontSize: 10, color: "#3A6A6A" }}>Operated by デジマルショップ</span>
+          <span style={{ fontSize: 10, color: "#3A6A6A" }}>Operated by AI Across ショップ</span>
         </div>
       </div>
     </footer>

@@ -6,7 +6,7 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
 export async function GET() {
   try {
     const res = await fetch(
-      `${DIRECTUS_URL}/items/product_reviews?filter[approved][_eq]=true&filter[rating][_gte]=4&sort[]=-created_at&limit=10&fields[]=id,user_name,rating,body,created_at,product.id,product.name,product.slug,product.images.directus_files_id`,
+      `${DIRECTUS_URL}/items/product_reviews?filter[status][_eq]=published&sort[]=sort&limit=10&fields[]=id,company_name,title,content,product,date_published`,
       {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${ADMIN_TOKEN}` },
         cache: "no-store",

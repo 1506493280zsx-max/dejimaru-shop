@@ -10,6 +10,8 @@ export interface CartItem {
   imageUrl: string | null;
   brand: string;
   grade: string | null;
+  warrantySelected: boolean;
+  warrantyPrice: number;
 }
 
 interface CartStore {
@@ -18,6 +20,8 @@ interface CartStore {
   removeItem: (id: string) => void;
   updateQty: (id: string, qty: number) => void;
   clearCart: () => void;
+  productTotal: () => number;
+  warrantyTotal: () => number;
   total: () => number;
   count: () => number;
 }
@@ -40,7 +44,12 @@ export const useCartStore = create<CartStore>()(
           : state.items.map(i => i.id === id ? { ...i, quantity: qty } : i)
       })),
       clearCart: () => set({ items: [] }),
-      total: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
+      productTotal: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
+      warrantyTotal: () => get().items.reduce((sum, i) => sum + i.warrantyPrice * i.quantity, 0),
+      total: () => {
+        const s = get();
+        return s.productTotal() + s.warrantyTotal();
+      },
       count: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
     }),
     { name: "dejimaru-cart" }

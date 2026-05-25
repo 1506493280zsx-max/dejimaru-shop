@@ -1,6 +1,13 @@
 const DIRECTUS_URL = process.env.DIRECTUS_URL ?? "https://directus-production-2cfe.up.railway.app";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
 
+// ─── TYPES ────────────────────────────────────────────────────
+export interface Brand {
+  id: number | string;
+  name: string;
+  slug: string;
+}
+
 const adminHeaders = {
   "Content-Type": "application/json",
   "Authorization": `Bearer ${ADMIN_TOKEN}`,
@@ -20,7 +27,7 @@ export async function getProducts(options: {
   const params = new URLSearchParams({
     limit: String(limit),
     sort: sort.join(","),
-    "fields[]": "id,slug,name,short_description,price,compare_at_price,grade,condition,is_featured,is_new,published_at,cpu,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,brand_id.name,brand_id.slug,category_id.name,category_id.slug,category_id.id,images.directus_files_id",
+    "fields[]": "id,slug,name,short_description,price,compare_at_price,grade,condition,is_featured,is_new,published_at,cpu,cpu_generation,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,premium_warranty_enabled,premium_warranty_price,brand_id.name,brand_id.slug,category_id.name,category_id.slug,category_id.id,images.image_file_id",
   });
   if (Object.keys(filter).length > 0) params.append("filter", JSON.stringify(filter));
   try {
@@ -41,7 +48,7 @@ export async function getNewArrivals() {
 export async function getProductBySlug(slug: string) {
   try {
     const res = await fetch(
-      `${DIRECTUS_URL}/items/products?filter[slug][_eq]=${slug}&fields[]=id,slug,name,description,short_description,price,compare_at_price,grade,condition,cpu,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,brand_id.name,category_id.name,category_id.slug,images.directus_files_id`,
+      `${DIRECTUS_URL}/items/products?filter[slug][_eq]=${slug}&fields[]=id,slug,name,description,short_description,price,compare_at_price,grade,condition,cpu,cpu_generation,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,premium_warranty_enabled,premium_warranty_price,brand_id.name,category_id.name,category_id.slug,images.image_file_id`,
       { headers: publicHeaders, next: { revalidate: 300 } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -57,7 +64,7 @@ export async function getCategories() {
   } catch (e) { console.error("[getCategories]", e); return []; }
 }
 
-export async function getBrands() {
+export async function getBrands(): Promise<Brand[]> {
   try {
     const res = await fetch(`${DIRECTUS_URL}/items/brands?limit=50&sort[]=sort_order&fields[]=id,name,slug`, { headers: publicHeaders, next: { revalidate: 300 } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -142,10 +149,35 @@ export async function logoutUser(token: string) {
 }
 
 // ─── REVIEWS ─────────────────────────────────────────────────
+export type CustomerReview = {
+  id: number;
+  customer_name: string;
+  rating: number;
+  comment: string;
+  created_at: string | null;
+  product: {
+    id: number;
+    name: string;
+    slug: string;
+    images: { image_file_id: string }[];
+  } | null;
+};
+
+export async function getCustomerReviews(limit = 20): Promise<CustomerReview[]> {
+  try {
+    const res = await fetch(
+      `${DIRECTUS_URL}/items/customer_reviews?filter[status][_eq]=published&sort[]=-created_at&limit=${limit}&fields[]=id,customer_name,rating,comment,created_at,product.id,product.name,product.slug,product.images.image_file_id`,
+      { headers: adminHeaders, next: { revalidate: 300 } }
+    );
+    if (!res.ok) return [];
+    return (await res.json()).data || [];
+  } catch { return []; }
+}
+
 export async function getFeaturedReviews(limit = 10) {
   try {
     const res = await fetch(
-      `${DIRECTUS_URL}/items/product_reviews?filter[approved][_eq]=true&filter[rating][_gte]=4&sort[]=-created_at&limit=${limit}&fields[]=id,user_name,rating,body,created_at,product.id,product.name,product.slug,product.images.directus_files_id`,
+      `${DIRECTUS_URL}/items/product_reviews?filter[approved][_eq]=true&filter[rating][_gte]=4&sort[]=-created_at&limit=${limit}&fields[]=id,user_name,rating,body,created_at,product.id,product.name,product.slug,product.images.image_file_id`,
       { headers: adminHeaders, cache: "no-store" }
     );
     if (!res.ok) return [];

@@ -21,7 +21,7 @@ export default function ProductPageClient({ product }: { product: any }) {
   const [reviewCount, setReviewCount] = useState(0);
 
   useEffect(() => {
-    const imgId = product.images?.[0]?.directus_files_id;
+    const imgId = product.images?.[0]?.image_file_id;
     saveRecentProduct(product, imgId ? getImageUrl(imgId, 200, 150) : null);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product.id]);

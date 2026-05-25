@@ -5,6 +5,18 @@ const adminHeaders = {
   Authorization: `Bearer ${ADMIN_TOKEN}`,
 };
 
+async function fetchDirectus(url: string): Promise<any> {
+  if (ADMIN_TOKEN) {
+    const res = await fetch(url, { headers: adminHeaders, next: { revalidate: 60 } });
+    if (res.ok) return res.json();
+    if (res.status !== 401) throw new Error(`HTTP ${res.status}`);
+    // 401: token expired — fall through to public access
+  }
+  const res = await fetch(url, { next: { revalidate: 60 } });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
 // ─── TYPES ────────────────────────────────────────────────────
 
 export type BlogPost = {
@@ -42,8 +54,8 @@ export type BlogComment = {
 // ─── BLOG POSTS ───────────────────────────────────────────────
 
 const POST_FIELDS = [
-  "id", "status", "sort", "date_created", "date_updated",
-  "title", "slug", "excerpt", "cover_image", "content", "featured",
+  "id", "status", "sort", "date_created", "date_updated", "date_published",
+  "title", "slug", "excerpt", "cover_image", "content", "featured", "type",
 ].join(",");
 
 export async function getBlogPosts(
@@ -61,16 +73,11 @@ export async function getBlogPosts(
       page: String(page),
     });
     params.set("fields", POST_FIELDS);
-    params.append("sort", "sort");
     params.append("sort", "-date_created");
     if (type) params.set("filter[type][_eq]", type);
     if (featured !== undefined) params.set("filter[featured][_eq]", String(featured));
-    const res = await fetch(
-      `${DIRECTUS_URL}/items/Blog_Posts?${params}`,
-      { headers: adminHeaders, next: { revalidate: 60 } }
-    );
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = (await res.json()).data || [];
+    const json = await fetchDirectus(`${DIRECTUS_URL}/items/Blog_Posts?${params}`);
+    const data = json.data || [];
     return data.map((p: any) => ({ ...p, body: p.content ?? "" }));
   } catch { return []; }
 }
@@ -83,12 +90,8 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     params.set("filter[slug][_eq]", slug);
     params.set("filter[status][_eq]", "published");
     params.set("fields", POST_FIELDS);
-    const res = await fetch(
-      `${DIRECTUS_URL}/items/Blog_Posts?${params}`,
-      { headers: adminHeaders, next: { revalidate: 60 } }
-    );
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const item = (await res.json()).data?.[0] || null;
+    const json = await fetchDirectus(`${DIRECTUS_URL}/items/Blog_Posts?${params}`);
+    const item = json.data?.[0] || null;
     return item ? { ...item, body: item.content ?? "" } : null;
   } catch { return null; }
 }

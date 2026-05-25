@@ -75,7 +75,7 @@ export default function ShippingPage() {
       <div style={{ width: "100%", maxWidth: "1800px", margin: "0 auto", padding: "0 12px 60px" }}>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>配送について</h1>
         <p style={{ lineHeight: 1.9, color: C.textSub, marginBottom: 4 }}>
-          デジマルショップでは、ヤマト運輸（クロネコヤマト）・日本郵便（ゆうパック）にて全国発送に対応しております。
+          AI Across ショップでは、ヤマト運輸（クロネコヤマト）・日本郵便（ゆうパック）にて全国発送に対応しております。
           安全・確実にお届けできるよう、梱包・出荷に万全を期しております。
         </p>
 

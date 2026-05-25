@@ -47,7 +47,7 @@ export default function WholesalePage() {
       <div style={{ width: "100%", maxWidth: "1800px", margin: "0 auto", padding: "0 12px 60px" }}>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>法人・卸販売サービス</h1>
         <div style={{ background: `linear-gradient(135deg,${C.primaryBg},#C8EEEC)`, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: "14px 18px", marginBottom: 8, fontSize: 13, color: C.textSub, lineHeight: 1.9 }}>
-          デジマルショップでは、法人・教育機関・官公庁向けに中古PC・スマートフォン・タブレット等の一括調達サービスを提供しております。
+          AI Across ショップでは、法人・教育機関・官公庁向けに中古PC・スマートフォン・タブレット等の一括調達サービスを提供しております。
           10台以上のまとめ買いから、キッティングや保守サポートまで、専任担当者がワンストップで対応いたします。
         </div>
 

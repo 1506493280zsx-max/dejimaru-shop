@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const C = {
   primary: "#0ABAB5", primaryDeep: "#007A76",
@@ -32,7 +33,7 @@ export default function DetailSections({ product }: { product: any }) {
   const router = useRouter();
 
   const specs = [
-    product.cpu          && { key: "CPU",         value: product.cpu },
+    (product.cpu || product.cpu_generation) && { key: "CPU", value: [product.cpu_generation, product.cpu].filter(Boolean).join(" ") },
     product.os           && { key: "OS",           value: product.os },
     product.memory       && { key: "メモリ",       value: product.memory },
     product.storage      && { key: "ストレージ",   value: product.storage },
@@ -127,12 +128,16 @@ export default function DetailSections({ product }: { product: any }) {
       {/* 6. Payment */}
       <SH title="お支払い方法" icon="💳" />
       <Panel>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 10 }}>
-          {["クレジットカード（VISA/MC/JCB/AMEX）","PayPay","楽天ペイ","au PAY","Apple Pay","Google Pay","銀行振込","代金引換"].map(p => (
-            <span key={p} style={{ background: "#F5F5F5", border: `1px solid ${C.border}`, borderRadius: 2, padding: "4px 10px", fontSize: 12, fontWeight: 700 }}>{p}</span>
-          ))}
+        <div style={{ padding: 0, margin: 0, background: "transparent", border: "none", boxShadow: "none", borderRadius: 0, overflow: "hidden" }}>
+          <Image
+            src="/images/payment-methods.png"
+            alt="お支払い方法"
+            width={2000}
+            height={300}
+            style={{ width: "100%", height: "auto", display: "block" }}
+          />
         </div>
-        <p style={{ margin: 0, fontSize: 12 }}>※ 銀行振込の場合は振込手数料はお客様負担です。代金引換は30万円以上ではご利用いただけません。</p>
+        <p style={{ margin: "10px 0 0", fontSize: 12 }}>※ 銀行振込手数料はお客様負担となります。代金引換は30万円以上ではご利用いただけません。</p>
       </Panel>
 
       {/* 7. Shipping */}

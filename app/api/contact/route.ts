@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "必須項目が未入力です" }, { status: 400 });
     }
 
-    const replySubject = encodeURIComponent(`Re: 【デジマルショップ】${type}`);
+    const replySubject = encodeURIComponent(`Re: 【AI Across ショップ】${type}`);
     const replyBody = encodeURIComponent(`${name} 様\n\nお問い合わせありがとうございます。\n\n---\n元のメッセージ:\n${message}`);
     const mailtoLink = `mailto:${email}?subject=${replySubject}&body=${replyBody}`;
 

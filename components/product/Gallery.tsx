@@ -10,7 +10,7 @@ export default function Gallery({ product }: { product: any }) {
 
   const images = product.images || [];
   const imgUrls: (string | null)[] = images.length > 0
-    ? images.map((img: any) => getImageUrl(img.directus_files_id, 600, 450))
+    ? images.map((img: any) => getImageUrl(img.image_file_id, 600, 450))
     : [null];
   const total = imgUrls.length;
   const prev = () => setMainIdx(i => (i - 1 + total) % total);

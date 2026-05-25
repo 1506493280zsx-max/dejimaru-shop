@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { getImageUrl } from "@/lib/directus";
 import { useCartStore } from "@/lib/cart-store";
 
@@ -35,19 +36,25 @@ export default function PurchasePanel({
   const { addItem } = useCartStore();
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const [warrantySelected, setWarrantySelected] = useState(false);
+
+  const warrantyEnabled = !!product.premium_warranty_enabled;
+  const warrantyPrice = product.premium_warranty_price;
 
   const disc = product.compare_at_price
     ? Math.round((1 - product.price / product.compare_at_price) * 100) : 0;
   const gs = GRADE_STYLE[product.grade] || GRADE_STYLE.C;
 
   const handleAddToCart = () => {
-    const imgId = product.images?.[0]?.directus_files_id;
+    const imgId = product.images?.[0]?.image_file_id;
     for (let i = 0; i < qty; i++) {
       addItem({
         id: String(product.id), slug: product.slug, name: product.name,
         price: product.price,
         imageUrl: imgId ? getImageUrl(imgId, 200, 150) : null,
         brand: product.brand_id?.name || "", grade: product.grade,
+        warrantySelected,
+        warrantyPrice: warrantySelected ? (warrantyPrice ?? 0) : 0,
       });
     }
     setAdded(true);
@@ -98,6 +105,32 @@ export default function PurchasePanel({
           </div>
         )}
 
+        {/* Premium 保証 */}
+        {warrantyEnabled && warrantyPrice > 0 && (
+          <label style={{
+            display:"flex", alignItems:"center", gap:10, cursor:"pointer",
+            padding:"10px 12px", marginBottom:12,
+            background: warrantySelected ? C.primaryBg : "#FAFAFA",
+            border: `1px solid ${warrantySelected ? C.primary : C.border}`,
+            borderRadius:2, userSelect:"none",
+          }}>
+            <input
+              type="checkbox"
+              checked={warrantySelected}
+              onChange={e => setWarrantySelected(e.target.checked)}
+              style={{ accentColor: C.primary, width:16, height:16, flexShrink:0 }}
+            />
+            <div>
+              <div style={{fontSize:12, fontWeight:700, color:C.text}}>
+                🛡️ プリミアム保証（終身保証）
+              </div>
+              <div style={{fontSize:11, color:C.primary, fontWeight:700}}>
+                +¥{warrantyPrice.toLocaleString()}
+              </div>
+            </div>
+          </label>
+        )}
+
         {/* Qty + Cart */}
         <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10 }}>
           <div style={{ display: "flex", alignItems: "center", border: `1px solid ${C.border}`, borderRadius: 2 }}>
@@ -122,10 +155,15 @@ export default function PurchasePanel({
         {/* Payment icons */}
         <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${C.border}` }}>
           <div style={{ fontSize: 11, color: C.textSub, marginBottom: 6 }}>対応決済方法</div>
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-            {["VISA","MC","JCB","AMEX","PayPay","楽天Pay","auPAY","銀行振込"].map(p => (
-              <span key={p} style={{ background: "#F5F5F5", border: `1px solid ${C.border}`, borderRadius: 2, padding: "3px 8px", fontSize: 10, color: C.text, fontWeight: 700 }}>{p}</span>
-            ))}
+          <div style={{ padding: 0, margin: 0, background: "transparent", border: "none", boxShadow: "none", borderRadius: 0, overflow: "hidden" }}>
+            <Image
+              src="/images/payment-methods.png"
+              alt="対応決済方法"
+              width={2000}
+              height={300}
+              priority
+              style={{ width: "100%", height: "auto", display: "block" }}
+            />
           </div>
         </div>
       </div>

@@ -30,7 +30,7 @@ export default function TermsPage() {
 
         <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 2, padding: 24 }}>
           <p style={{ fontSize: 13, color: C.textSub, lineHeight: 1.9, marginBottom: 20 }}>
-            本利用規約（以下「本規約」）は、AI Across合同会社（以下「当社」）が運営するデジマルショップ（以下「本サービス」）の利用条件を定めるものです。本サービスをご利用いただくことで、本規約に同意いただいたものとみなします。
+            本利用規約（以下「本規約」）は、AI Across合同会社（以下「当社」）が運営するAI Across ショップ（以下「本サービス」）の利用条件を定めるものです。本サービスをご利用いただくことで、本規約に同意いただいたものとみなします。
           </p>
 
           <Article num={1} title="適用範囲">

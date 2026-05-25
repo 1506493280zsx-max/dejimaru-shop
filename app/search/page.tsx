@@ -1,8 +1,23 @@
 import { getProducts, getBrands, getCategories } from "@/lib/directus";
 import SearchClient from "./SearchClient";
 
-export default async function SearchPage({ searchParams }: { searchParams: { q?: string, brand?: string, category?: string, grade?: string } }) {
-  const { q, brand, category, grade } = searchParams;
+export default async function SearchPage({
+  searchParams
+}:{
+  searchParams:Promise<{
+    q?:string
+    brand?:string
+    category?:string
+    grade?:string
+  }>
+}){
+
+const {
+  q,
+  brand,
+  category,
+  grade
+}=await searchParams;
 
   const filter: Record<string,any> = { is_published: { _eq: true } };
   if (grade) filter.grade = { _eq: grade };

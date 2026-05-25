@@ -62,7 +62,7 @@ function CorpProductCard({p}:{p:typeof CORP_PRODUCTS[0]}) {
     <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       style={{background:C.white,border:`1px solid ${hov?C.primary:C.border}`,borderRadius:2,padding:10,cursor:"pointer",transition:"border-color 0.15s",display:"flex",flexDirection:"column",gap:4}}>
       <div onClick={()=>router.push(`/products/${p.slug}`)}
-        style={{background:"#F5FAFA",borderRadius:2,aspectRatio:"4/3",display:"flex",alignItems:"center",justifyContent:"center",border:`1px solid ${C.primaryBorder}`,marginBottom:6,overflow:"hidden",position:"relative"}}>
+        style={{background:"#fff",borderRadius:2,width:"100%",height:220,display:"flex",alignItems:"center",justifyContent:"center",border:`1px solid ${C.primaryBorder}`,marginBottom:6,overflow:"hidden",position:"relative"}}>
         {disc>=10&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
       </div>
       <div style={{fontSize:10,color:C.textLight}}>{p.brand}</div>

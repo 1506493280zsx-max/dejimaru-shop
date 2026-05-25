@@ -74,7 +74,7 @@ export default function GuideClient({categories}:{categories:any[]}) {
             </div>
 
             <Section id="first" title="初めてご利用のお客様">
-              <p>デジマルショップへようこそ！当ショップでの商品のご購入方法をご説明いたします。</p><br/>
+              <p>AI Across ショップへようこそ！当ショップでの商品のご購入方法をご説明いたします。</p><br/>
               <p style={{fontWeight:700}}>【ご注文の流れ】</p>
               <ol style={{paddingLeft:20,marginTop:8}}>
                 <li style={{marginBottom:6}}>商品ページの「カートに入れる」をクリック</li>

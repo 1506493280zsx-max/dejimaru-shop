@@ -111,7 +111,7 @@ export default function CompanyClient({ categories }: { categories: any[] }) {
                 中古パソコン・スマートフォン・タブレット・通信機器の売買・修理・輸出入を主軸に、国内外にわたるデジタル機器の流通ネットワークを構築しています。
               </p>
               <p style={{ margin: 0 }}>
-                運営するオンラインショップ「デジマルショップ」では、動作確認・データ消去・クリーニングを施した中古デバイスを全国へ提供しています。
+                運営するオンラインショップ「AI Across ショップ」では、動作確認・データ消去・クリーニングを施した中古デバイスを全国へ提供しています。
                 リユース品の普及を通じて資源の有効活用に貢献し、個人・法人問わず幅広いお客様のデジタルライフをサポートします。
               </p>
             </PL>
@@ -141,7 +141,7 @@ export default function CompanyClient({ categories }: { categories: any[] }) {
               <ul style={{ paddingLeft: 18, margin: 0 }}>
                 <li style={{ marginBottom: 6 }}>各種通信機器・ゲーム機の輸出入貿易業務</li>
                 <li style={{ marginBottom: 6 }}>通信機器・ゲーム機・パソコン・スマートフォンの買取および販売</li>
-                <li style={{ marginBottom: 6 }}>インターネットを活用した通信販売業務（デジマルショップ）</li>
+                <li style={{ marginBottom: 6 }}>インターネットを活用した通信販売業務（AI Across ショップ）</li>
                 <li style={{ marginBottom: 6 }}>中古デバイスの修理・メンテナンス・データ消去</li>
                 <li style={{ marginBottom: 6 }}>法人向け中古デバイスの一括調達・卸販売</li>
                 <li>PODカスタムサービス（オリジナルプリント・ノベルティ製作）</li>

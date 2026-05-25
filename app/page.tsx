@@ -8,7 +8,7 @@ export default async function Home() {
     getNewArrivals(),
     getCategories(),
     getBrands(),
-    getBlogPosts(undefined, 6, 1, true),
+    getBlogPosts(undefined, 8),
     getHomepageAds(),
   ]);
 

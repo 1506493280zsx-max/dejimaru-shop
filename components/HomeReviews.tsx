@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { getImageUrl } from "@/lib/directus";
 
 const C = {
   primary: "#0ABAB5", primaryBg: "#E8F8F8",
@@ -10,27 +9,12 @@ const C = {
 
 type FeaturedReview = {
   id: string;
-  user_name: string;
-  rating: number;
-  body: string;
-  created_at: string;
-  product: {
-    id: string;
-    name: string;
-    slug: string;
-    images: { directus_files_id: string }[];
-  } | null;
+  company_name: string;
+  title: string | null;
+  content: string | null;
+  product: string | null;
+  date_published: string | null;
 };
-
-function Stars({ rating }: { rating: number }) {
-  return (
-    <span style={{ display: "inline-flex", gap: 1 }}>
-      {[1,2,3,4,5].map(i => (
-        <span key={i} style={{ fontSize: 13, color: i <= rating ? "#FFA000" : "#DDD" }}>★</span>
-      ))}
-    </span>
-  );
-}
 
 const VISIBLE = 3;
 const INTERVAL_MS = 4000;
@@ -79,35 +63,25 @@ export default function HomeReviews() {
         <span style={{ fontSize: 10, fontWeight: 400, marginLeft: 6, opacity: 0.8 }}>CUSTOMER REVIEWS</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: `repeat(${visible.length}, 1fr)`, gap: 6 }}>
-        {visible.map((r, i) => {
-          const imgId = r.product?.images?.[0]?.directus_files_id;
-          const imgUrl = imgId ? getImageUrl(imgId, 80, 60) : null;
-          return (
-            <div key={`${r.id}-${i}`}
-              style={{ background: C.white, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 12, display: "flex", flexDirection: "column", gap: 8 }}>
-              {r.product && (
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                  <div style={{ width: 48, height: 36, background: "#F5FAFA", border: `1px solid ${C.primaryBorder}`, borderRadius: 2, overflow: "hidden", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {imgUrl
-                      ? <img src={imgUrl} alt={r.product.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                      : <span style={{ fontSize: 16 }}>💻</span>
-                    }
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 10, color: C.textSub, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.product.name}</div>
-                  </div>
-                </div>
-              )}
-              <div>
-                <Stars rating={r.rating} />
-                <div style={{ fontSize: 12, color: C.text, marginTop: 6, lineHeight: 1.6, display: "-webkit-box" as any, WebkitLineClamp: 3, WebkitBoxOrient: "vertical" as any, overflow: "hidden" }}>
-                  {r.body}
-                </div>
-              </div>
-              <div style={{ fontSize: 11, color: C.textSub, marginTop: "auto" }}>— {r.user_name}</div>
+        {visible.map((r, i) => (
+          <div key={`${r.id}-${i}`}
+            style={{ background: C.white, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+            {r.title && (
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.text, lineHeight: 1.4 }}>{r.title}</div>
+            )}
+            <div style={{ fontSize: 12, color: C.text, lineHeight: 1.6, display: "-webkit-box" as any, WebkitLineClamp: 3, WebkitBoxOrient: "vertical" as any, overflow: "hidden" }}>
+              {r.content}
             </div>
-          );
-        })}
+            {r.product && (
+              <div style={{ fontSize: 10, color: C.primary, background: C.primaryBg, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: "2px 6px", alignSelf: "flex-start" }}>
+                {r.product}
+              </div>
+            )}
+            <div style={{ fontSize: 11, color: C.textSub, marginTop: "auto", paddingTop: 4, borderTop: `1px solid ${C.border}` }}>
+              — {r.company_name}
+            </div>
+          </div>
+        ))}
       </div>
       {reviews.length > VISIBLE && (
         <div style={{ display: "flex", justifyContent: "center", gap: 6, marginTop: 8 }}>

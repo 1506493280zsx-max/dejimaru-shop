@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getImageUrl } from "@/lib/directus";
+import type { Brand } from "@/lib/directus";
+import { getBrandsForCategory } from "@/lib/category-brands";
 
 import HomeBlogModule from "@/components/HomeBlogModule";
 import CategoryBannerSwiper from "@/components/CategoryBannerSwiper";
@@ -35,17 +37,17 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
   const [mounted,setMounted]=useState(false);
   useEffect(()=>setMounted(true),[]);
   const disc=product.compare_at_price?Math.round((1-product.price/product.compare_at_price)*100):0;
-  const imgId=product.images?.[0]?.directus_files_id;
+  const imgId=product.images?.[0]?.image_file_id;
   const imgUrl=imgId?getImageUrl(imgId,300,225):null;
   const liked=mounted&&hasItem(String(product.id));
 
   return (
     <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{background:C.white,border:`1px solid ${hov?C.primary:C.border}`,borderRadius:2,padding:size==="small"?8:10,cursor:"pointer",transition:"border-color 0.15s",display:"flex",flexDirection:"column",gap:4}}>
-      <div onClick={()=>router.push(`/products/${product.slug}`)}
-        style={{background:"#F5FAFA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",aspectRatio:"4/3",position:"relative",border:`1px solid ${C.primaryBorder}`,marginBottom:6,overflow:"hidden"}}>
+      style={{background:C.white,border:`1px solid ${hov?C.primary:C.border}`,borderRadius:2,padding:size==="small"?8:10,cursor:"pointer",transition:"border-color 0.15s",display:"flex",flexDirection:"column",gap:4,minHeight:size==="small"?332:undefined}}>
+      <div onClick={()=>{console.log("PRODUCT_CLICK",product.slug);router.push(`/products/${product.slug}`);}}
+        style={{width:"100%",padding:8,minHeight:148,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",background:"#fff",position:"relative"}}>
         {imgUrl
-          ? <img src={imgUrl} alt={product.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>
+          ? <img src={imgUrl} alt={product.name} style={{width:"100%",height:"auto",maxHeight:220,objectFit:"contain",objectPosition:"center",display:"block"}}/>
           : <span style={{fontSize:size==="small"?10:11,color:C.textLight}}>NO IMAGE</span>
         }
         {disc>=10&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
@@ -71,11 +73,17 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
   );
 }
 
-function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],openCats:string[],setOpenCats:any}) {
+const SHIPPING_RATES = [
+  {r:"北海道",p:1980},{r:"東北",p:1200},{r:"関東",p:980},
+  {r:"中部",p:980},{r:"関西",p:1200},{r:"中国",p:1400},
+  {r:"四国",p:1400},{r:"九州",p:1600},{r:"沖縄",p:1980},
+];
+
+function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:any[],openCats:string[],setOpenCats:any,brands:Brand[]}) {
   const router=useRouter();
   const toggle=(id:string)=>setOpenCats((p:string[])=>p.includes(id)?p.filter((x:string)=>x!==id):[...p,id]);
   const roots=categories.filter(c=>!c.parent_id);
-  const getChildren=(pid:string)=>categories.filter(c=>String(c.parent_id)===String(pid));
+  const [shippingOpen,setShippingOpen]=useState(false);
 
   return (
     <div style={{width:185,flexShrink:0,position:"sticky",top:20,alignSelf:"flex-start",height:"fit-content"}}>
@@ -83,7 +91,7 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
         <span>&#9632;</span> {"カテゴリ"} <span style={{fontSize:9,fontWeight:400,marginLeft:2,opacity:0.8}}>category</span>
       </div>
       {roots.map(cat=>{
-        const children=getChildren(String(cat.id));
+        const catBrands=getBrandsForCategory(cat.slug, brands);
         const isOpen=openCats.includes(String(cat.id));
         return (
           <div key={cat.id}>
@@ -93,38 +101,48 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
             </div>
             {isOpen&&(
               <div style={{background:C.white}}>
-                {children.map((sub:any)=>(
-                  <div key={sub.id} onClick={()=>router.push(`/category/${sub.slug}`)}
-                    style={{padding:"5px 10px 5px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.textSub,display:"flex",alignItems:"center",gap:4}}
+                {catBrands.map(b=>(
+                  <div key={b.slug}
+                    onClick={(e)=>{e.stopPropagation();console.log("APPLE_CLICK",b.slug,cat.slug);router.push(`/search?brand=${b.slug}&category=${cat.slug}`);console.log("PUSH_DONE");}}
+                    style={{padding:"8px 10px 8px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.textSub}}
                     onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
                     onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
-                    <span style={{color:C.primary,fontSize:9}}>▶</span>
-                    <span style={{flex:1}}>{sub.name}</span>
+                    {b.name}
                   </div>
                 ))}
-                <div onClick={()=>router.push(`/category/${cat.slug}`)}
-                  style={{padding:"5px 10px 5px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.primary,display:"flex",alignItems:"center",gap:4,fontWeight:700}}
-                  onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
-                  onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
-                  <span style={{color:C.primary,fontSize:9}}>▶</span>
-                  <span>{"すべて見る"}</span>
-                </div>
               </div>
             )}
           </div>
         );
       })}
       <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
-        {[
-          {title:"送料について",sub:"全国一律送料"},
-          {title:"30日間保証",sub:"全商品保証付き"},
-          {title:"お問い合わせ",sub:"03-0000-0000"},
-        ].map((item,i)=>(
-          <div key={i} style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>
-            <div style={{fontSize:12,fontWeight:700,color:C.text}}>{item.title}</div>
-            <div style={{fontSize:10,color:C.textLight,marginTop:2}}>{item.sub}</div>
+        <div style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,overflow:"hidden"}}>
+          <div onClick={()=>setShippingOpen(o=>!o)} style={{padding:"6px 8px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+            <div>
+              <div style={{fontSize:12,fontWeight:700,color:C.text}}>🚚 送料について</div>
+              <div style={{fontSize:10,color:C.textLight,marginTop:2}}>地域別送料</div>
+            </div>
+            <span style={{fontSize:9,color:C.primary,fontWeight:700,display:"inline-block",transform:shippingOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform 0.25s"}}>▼</span>
           </div>
-        ))}
+          <div style={{maxHeight:shippingOpen?320:0,overflow:"hidden",transition:"max-height 0.25s ease"}}>
+            <div style={{borderTop:`1px solid ${C.primaryBorder}`,padding:"6px 8px",display:"flex",flexDirection:"column",gap:3}}>
+              {SHIPPING_RATES.map(({r,p})=>(
+                <div key={r} style={{display:"flex",justifyContent:"space-between",fontSize:10,color:C.text}}>
+                  <span>{r}</span>
+                  <span style={{fontWeight:700,color:C.primaryDeep}}>¥{p.toLocaleString()}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>
+          <div style={{fontSize:12,fontWeight:700,color:C.text}}>🛡️ 30日間保証</div>
+          <div style={{fontSize:10,color:C.textLight,marginTop:2}}>全商品保証付き</div>
+        </div>
+        <div style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>
+          <div style={{fontSize:12,fontWeight:700,color:C.text}}>📞 お問い合わせ</div>
+          <div style={{fontSize:10,color:C.textLight,marginTop:2}}>048-816-3967</div>
+        </div>
       </div>
     </div>
   );
@@ -178,6 +196,47 @@ function BannerAd({ad}:{ad:any}) {
         <div style={{fontSize:22,fontWeight:700,color:imgUrl?"#fff":C.primaryDeep,lineHeight:1.4,textShadow:imgUrl?"0 1px 4px rgba(0,0,0,0.6)":"none"}}>{ad.title}</div>
         {ad.subtitle&&<div style={{fontSize:13,marginTop:8,color:imgUrl?"rgba(255,255,255,0.9)":C.textSub,textShadow:imgUrl?"0 1px 3px rgba(0,0,0,0.5)":"none"}}>{ad.subtitle}</div>}
       </div>
+    </div>
+  );
+}
+
+function FeaturedBannerSlider({ads}:{ads:any[]}) {
+  const router=useRouter();
+  const active=(ads??[]).filter(a=>a.is_active!==false).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+  const [page,setPage]=useState(0);
+  const [paused,setPaused]=useState(false);
+  useEffect(()=>{
+    if(active.length<=1||paused) return;
+    const timer=setInterval(()=>setPage(p=>(p+1)%active.length),4000);
+    return ()=>clearInterval(timer);
+  },[active.length,paused]);
+  if(active.length===0) return null;
+  const ad=active[page];
+  const imgUrl=ad.image_desktop?getImageUrl(ad.image_desktop,1400,350):null;
+  return (
+    <div style={{marginBottom:10,position:"relative"}}
+      onMouseEnter={()=>setPaused(true)}
+      onMouseLeave={()=>setPaused(false)}>
+      <style>{`.fb-banner{width:100%;height:350px;border-radius:2px;overflow:hidden;position:relative;background:linear-gradient(135deg,#E8F8F8,#B8EAE8);border:1px solid #B0E0DE;cursor:pointer;display:flex;align-items:center;justify-content:center}@media(max-width:640px){.fb-banner{height:auto;aspect-ratio:4/1;min-height:120px}}`}</style>
+      <div className="fb-banner" onClick={()=>router.push(ad.link_url||"/")}>
+        {imgUrl&&<img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover",objectPosition:"center"}}/>}
+        {imgUrl&&<div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.25)"}}/>}
+        <div style={{position:"relative",zIndex:1,textAlign:"center",padding:"0 40px"}}>
+          <div style={{fontSize:24,fontWeight:700,color:imgUrl?"#fff":C.primaryDeep,lineHeight:1.4,textShadow:imgUrl?"0 1px 4px rgba(0,0,0,0.6)":"none"}}>{ad.title}</div>
+          {ad.subtitle&&<div style={{fontSize:13,marginTop:8,color:imgUrl?"rgba(255,255,255,0.9)":C.textSub,textShadow:imgUrl?"0 1px 3px rgba(0,0,0,0.5)":"none"}}>{ad.subtitle}</div>}
+        </div>
+        {active.length>1&&<>
+          <button onClick={e=>{e.stopPropagation();setPage(p=>(p-1+active.length)%active.length);}} style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",background:"rgba(0,0,0,0.35)",color:"#fff",border:"none",borderRadius:2,width:32,height:48,fontSize:22,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0}}>&#8249;</button>
+          <button onClick={e=>{e.stopPropagation();setPage(p=>(p+1)%active.length);}} style={{position:"absolute",right:12,top:"50%",transform:"translateY(-50%)",background:"rgba(0,0,0,0.35)",color:"#fff",border:"none",borderRadius:2,width:32,height:48,fontSize:22,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0}}>&#8250;</button>
+        </>}
+      </div>
+      {active.length>1&&(
+        <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:6}}>
+          {active.map((_,i)=>(
+            <div key={i} onClick={()=>setPage(i)} style={{width:8,height:8,borderRadius:"50%",background:i===page?C.primary:C.border,cursor:"pointer",transition:"background 0.2s"}}/>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -277,7 +336,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
         <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
 
           <AdColumn ads={adsFor('left')}/>
-          <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats}/>
+          <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats} brands={brands}/>
 
           <div style={{flex:1,minWidth:0}}>
 
@@ -300,7 +359,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
               ))}
             </div>
 
-            <AdSlider ads={adsFor('featured-banner')}/>
+            <FeaturedBannerSlider ads={adsFor('featured-banner-main')}/>
 
             <div style={{marginBottom:14}}>
               <SectionHeader title={"注目商品一覧"} en="FEATURED ITEMS"/>
@@ -321,7 +380,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
             <div style={{marginBottom:14}}>
               <SectionHeader title={"Appleの商品"} en="APPLE PRODUCTS" color="#555"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,marginBottom:8}}>
-                {APPLE_PRODUCTS.map((p:any)=><ProductCard key={p.id} product={p}/>)}
+                {APPLE_PRODUCTS.map((p:any)=><ProductCard key={p.id} product={p} size="small"/>)}
               </div>
               <AdSlider ads={adsFor('apple-banner')}/>
             </div>
@@ -329,7 +388,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
             <div style={{marginBottom:14}}>
               <SectionHeader title={"アクセサリ"} en="ACCESSORIES" color="#555"/>
               <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,marginBottom:8}}>
-                {ACCESSORY_PRODUCTS.map((p:any)=><ProductCard key={p.id} product={p}/>)}
+                {ACCESSORY_PRODUCTS.map((p:any)=><ProductCard key={p.id} product={p} size="small"/>)}
               </div>
               <AdSlider ads={adsFor('accessory-banner')}/>
             </div>

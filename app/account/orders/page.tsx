@@ -9,8 +9,6 @@ const C = {
   border:"#DDD", bg:"#F0F5F5", white:"#FFF", red:"#CC2200",
 };
 
-const DIRECTUS = "https://directus-production-2cfe.up.railway.app";
-const TOKEN = "a5RnKIXFibE5JV_50ir42Hk84JnMZVMb";
 
 const STATUS_LABEL: Record<string,{label:string,color:string,bg:string}> = {
   pending:      {label:"注文受付中",  color:"#886600", bg:"#FFF8E8"},
@@ -41,22 +39,12 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      // まずcustomersテーブルからemail一致のcustomer_idを取得
-      const cusRes = await fetch(
-        `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(user!.email)}&fields=id&limit=1`,
-        { headers: { Authorization: `Bearer ${TOKEN}` } }
+      const res = await fetch(
+        `/api/orders/list?email=${encodeURIComponent(user!.email)}`,
+        { cache: "no-store" }
       );
-      const cusData = await cusRes.json();
-      const customer = cusData.data?.[0];
-      if (!customer) { setOrders([]); setLoading(false); return; }
-
-      // ordersテーブルから注文取得
-      const ordRes = await fetch(
-        `${DIRECTUS}/items/orders?filter[customer_id][_eq]=${customer.id}&fields=id,order_number,status,total,subtotal,shipping_fee,payment_method,created_at,shipping_address&sort=-created_at`,
-        { headers: { Authorization: `Bearer ${TOKEN}` } }
-      );
-      const ordData = await ordRes.json();
-      setOrders(ordData.data || []);
+      const data = await res.json();
+      setOrders(data.data || []);
     } catch(e) {
       console.error(e);
       setOrders([]);

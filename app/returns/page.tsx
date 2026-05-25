@@ -80,7 +80,7 @@ export default function ReturnsPage() {
       <div style={{ width: "100%", maxWidth: "1800px", margin: "0 auto", padding: "0 12px 60px" }}>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text, marginBottom: 8, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>返品・交換ポリシー</h1>
         <p style={{ lineHeight: 1.9, color: C.textSub, marginBottom: 4 }}>
-          デジマルショップでは、お客様に安心してお買い物いただけるよう、初期不良および商品説明と著しく異なる場合の返品・交換に対応しています。
+          AI Across ショップでは、お客様に安心してお買い物いただけるよう、初期不良および商品説明と著しく異なる場合の返品・交換に対応しています。
           中古品の特性上、商品ページに記載の状態をご確認の上、ご購入いただきますようお願いいたします。
         </p>
         <p style={{ padding: "10px 14px", background: C.warnBg, border: `1px solid ${C.warnBorder}`, borderRadius: 2, fontSize: 12, lineHeight: 1.8 }}>

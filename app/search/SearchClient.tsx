@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getImageUrl } from "@/lib/directus";
+import type { Brand } from "@/lib/directus";
+import { getBrandsForCategory } from "@/lib/category-brands";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryDeep:"#007A76",
@@ -33,15 +35,15 @@ function ProductCard({product}: {product:any}) {
   const [hov,setHov]=useState(false);
   const router=useRouter();
   const disc=product.compare_at_price?Math.round((1-product.price/product.compare_at_price)*100):0;
-  const imgId=product.images?.[0]?.directus_files_id;
+  const imgId=product.images?.[0]?.image_file_id;
   const imgUrl=imgId?getImageUrl(imgId,300,225):null;
 
   return (
     <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       onClick={()=>router.push(`/products/${product.slug}`)}
       style={{background:C.white,border:`1px solid ${hov?C.primary:C.border}`,borderRadius:2,padding:10,cursor:"pointer",display:"flex",flexDirection:"column",gap:4,transition:"border-color 0.15s"}}>
-      <div style={{background:"#F5FAFA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",aspectRatio:"4/3",position:"relative",border:`1px solid ${C.primaryBorder}`,marginBottom:6,overflow:"hidden"}}>
-        {imgUrl?<img src={imgUrl} alt={product.name} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:<span style={{fontSize:40}}>💻</span>}
+      <div style={{width:"100%",padding:8,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",background:"#fff",position:"relative"}}>
+        {imgUrl?<img src={imgUrl} alt={product.name} style={{width:"100%",height:"auto",maxHeight:220,objectFit:"contain",objectPosition:"center",display:"block"}}/>:<span style={{fontSize:40}}>💻</span>}
         {disc>=10&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
       </div>
       <div style={{fontSize:10,color:C.textLight}}>{product.brand_id?.name||"—"}</div>
@@ -56,7 +58,7 @@ function ProductCard({product}: {product:any}) {
   );
 }
 
-function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],openCats:string[],setOpenCats:any}) {
+function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:any[],openCats:string[],setOpenCats:any,brands:Brand[]}) {
   const router=useRouter();
   const toggle=(id:string)=>setOpenCats((p:string[])=>p.includes(id)?p.filter((x:string)=>x!==id):[...p,id]);
   const roots=categories.filter(c=>!c.parent_id);
@@ -70,31 +72,26 @@ function CategorySidebar({categories,openCats,setOpenCats}: {categories:any[],op
       {roots.map(cat=>{
         const children=getChildren(String(cat.id));
         const isOpen=openCats.includes(String(cat.id));
+        const catBrands=getBrandsForCategory(cat.slug, brands);
         return (
           <div key={cat.id}>
-            <div onClick={()=>toggle(String(cat.id))} style={{padding:"8px 10px",background:isOpen?C.primaryBg:"#F9F9F9",borderBottom:"1px solid #D8ECEC",cursor:"pointer",display:"flex",alignItems:"center",gap:6,borderLeft:`3px solid ${isOpen?C.primary:"transparent"}`}}>
+            <div onClick={()=>router.push(`/category/${cat.slug}`)} style={{padding:"8px 10px",background:isOpen?C.primaryBg:"#F9F9F9",borderBottom:"1px solid #D8ECEC",cursor:"pointer",display:"flex",alignItems:"center",gap:6,borderLeft:`3px solid ${isOpen?C.primary:"transparent"}`}}>
               <span style={{fontSize:14}}>{ICONS[cat.slug]||"📦"}</span>
               <div style={{flex:1}}><div style={{fontSize:12,fontWeight:700,color:C.text}}>{cat.name}</div></div>
-              <span style={{fontSize:10,color:C.primary,fontWeight:700}}>{isOpen?"▲":"▶"}</span>
+              <span onClick={(e)=>{e.stopPropagation();toggle(String(cat.id));}} style={{fontSize:10,color:C.primary,fontWeight:700,padding:"2px 4px"}}>{isOpen?"▲":"▶"}</span>
             </div>
             {isOpen&&(
               <div style={{background:C.white}}>
-                {children.map((sub:any)=>(
-                  <div key={sub.id} onClick={()=>router.push(`/category/${sub.slug}`)}
+                {catBrands.map(b=>(
+                  <div key={b.slug}
+                    onClick={()=>router.push(`/search?brand=${b.slug}&category=${cat.slug}`)}
                     style={{padding:"5px 10px 5px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.textSub,display:"flex",alignItems:"center",gap:4}}
                     onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
                     onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
-                    <span style={{color:C.primary,fontSize:9}}>▶</span>
-                    <span style={{flex:1}}>{sub.name}</span>
+                    <span style={{color:C.primary,fontSize:9}}>●</span>
+                    <span style={{flex:1}}>{b.name}</span>
                   </div>
                 ))}
-                <div onClick={()=>router.push(`/category/${cat.slug}`)}
-                  style={{padding:"5px 10px 5px 26px",borderBottom:"1px solid #EEF6F6",cursor:"pointer",fontSize:11,color:C.primary,display:"flex",alignItems:"center",gap:4,fontWeight:700}}
-                  onMouseEnter={e=>(e.currentTarget.style.background=C.primaryBg)}
-                  onMouseLeave={e=>(e.currentTarget.style.background=C.white)}>
-                  <span style={{color:C.primary,fontSize:9}}>▶</span>
-                  <span>すべて見る</span>
-                </div>
               </div>
             )}
           </div>
@@ -122,14 +119,23 @@ export default function SearchClient({initialProducts,brands,categories,query,br
   const [grade,setGrade]=useState(gradeFilter);
   const [sort,setSort]=useState("newest");
   const roots=categories.filter(c=>!c.parent_id);
-  const [openCats,setOpenCats]=useState(roots.length>0?[String(roots[0]?.id)]:["1"]);
+  const currentCat=categories.find((c:any)=>c.slug===categoryFilter);
+  const initOpen=currentCat?.parent_id
+    ?[String(currentCat.parent_id)]
+    :currentCat?.id?[String(currentCat.id)]
+    :roots.length>0?[String(roots[0]?.id)]:["1"];
+  const [openCats,setOpenCats]=useState(initOpen);
 
   const filtered=initialProducts.filter(p=>{
     const q=search.toLowerCase();
     const matchQ=!q||p.name?.toLowerCase().includes(q)||p.brand_id?.name?.toLowerCase().includes(q)||p.short_description?.toLowerCase().includes(q);
     const matchG=!grade||p.grade===grade;
     const matchB=!brandFilter||p.brand_id?.slug===brandFilter||p.brand_id?.name?.toLowerCase()===brandFilter.toLowerCase();
-    return matchQ&&matchG&&matchB;
+    const matchC =
+      !categoryFilter
+      || p.category_id?.slug === categoryFilter
+      || p.category_id?.name === categoryFilter;
+    return matchQ&&matchG&&matchB&&matchC;
   }).sort((a,b)=>{
     if(sort==="price-asc") return a.price-b.price;
     if(sort==="price-desc") return b.price-a.price;
@@ -148,7 +154,7 @@ export default function SearchClient({initialProducts,brands,categories,query,br
 
       <div style={{maxWidth:1100,margin:"0 auto",padding:"0 10px 20px"}}>
         <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-          <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats}/>
+          <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats} brands={brands}/>
           <div style={{flex:1,minWidth:0}}>
             <div style={{background:C.primary,color:"#fff",padding:"6px 12px",fontSize:14,fontWeight:700,marginBottom:10,display:"flex",alignItems:"center",gap:8}}>
               <span>📦</span> {pageTitle||`「${query}」の検索結果`}

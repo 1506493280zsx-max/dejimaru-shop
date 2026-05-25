@@ -1,3 +1,5 @@
+"use client";
+import { useState, useEffect } from "react";
 import { BlogPost } from "@/lib/blog";
 import { getImageUrl } from "@/lib/directus";
 
@@ -62,10 +64,30 @@ function HomeBlogCard({ post }: { post: BlogPost }) {
   );
 }
 
+const PAGE_SIZE = 4;
+
 export default function HomeBlogModule({ posts }: { posts: BlogPost[] }) {
   if (posts.length === 0) return null;
+
+  const pages = Math.ceil(posts.length / PAGE_SIZE);
+  const [page, setPage] = useState(0);
+
+  useEffect(() => {
+    if (pages <= 1) return;
+    const timer = setInterval(() => setPage(p => (p + 1) % pages), 4000);
+    return () => clearInterval(timer);
+  }, [pages]);
+
+  const visiblePosts = posts.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
   return (
     <div style={{ marginBottom: 14 }}>
+      <style>{`
+        .home-blog-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 8px; }
+        @media (max-width: 640px) { .home-blog-grid { grid-template-columns: 1fr; } }
+      `}</style>
+
+      {/* Fixed header */}
       <div style={{
         background: C.primary, color: "#fff", padding: "6px 10px",
         fontSize: 13, fontWeight: 700, display: "flex", alignItems: "center", marginBottom: 10,
@@ -77,9 +99,12 @@ export default function HomeBlogModule({ posts }: { posts: BlogPost[] }) {
           すべて見る →
         </a>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))", gap: 8, marginBottom: 10 }}>
-        {posts.map(post => <HomeBlogCard key={post.id} post={post} />)}
+
+      {/* Carousel card area */}
+      <div className="home-blog-grid">
+        {visiblePosts.map(post => <HomeBlogCard key={post.id} post={post} />)}
       </div>
+
     </div>
   );
 }

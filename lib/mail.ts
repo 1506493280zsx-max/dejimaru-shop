@@ -67,7 +67,7 @@ export async function sendContactEmail(params: {
   return resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to: email,
-    subject: "【デジマルショップ】お問い合わせを受け付けました",
+    subject: "【AI Across ショップ】お問い合わせを受け付けました",
     html: `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;">
         <h2 style="color:#0ABAB5;border-bottom:2px solid #0ABAB5;padding-bottom:8px;">
@@ -91,7 +91,7 @@ export async function sendContactEmail(params: {
         <p style="color:#999;font-size:12px;margin-top:20px;">
           ※このメールは自動送信です。<br>
           ご不明な点は aiacrossshop@gmail.com までお問い合わせください。<br>
-          デジマルショップ
+          AI Across ショップ
         </p>
       </div>
     `,

@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/coupons/notify-expiring",
+      "schedule": "0 0 * * *"
+    }
+  ]
+}

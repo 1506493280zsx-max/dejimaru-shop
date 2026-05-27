@@ -42,6 +42,15 @@ export async function GET(req: NextRequest) {
       { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
     );
     const ordData = await ordRes.json();
+    // customer_id で見つからなければ guest_email でフォールバック
+    if (!ordData.data || ordData.data.length === 0) {
+      const guestRes2 = await fetch(
+        `${DIRECTUS}/items/orders?filter[guest_email][_eq]=${encodeURIComponent(email)}&fields=id,order_number,status,total,subtotal,shipping_fee,payment_method,created_at,shipping_address&sort=-created_at`,
+        { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
+      );
+      const guestData2 = await guestRes2.json();
+      return NextResponse.json({ data: guestData2.data ?? [] });
+    }
     return NextResponse.json({ data: ordData.data || [] });
   } catch (e) {
     console.error("[orders/list]", e);

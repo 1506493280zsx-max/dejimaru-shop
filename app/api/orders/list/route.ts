@@ -24,12 +24,16 @@ export async function GET(req: NextRequest) {
     );
     const cusData = await cusRes.json();
     const customer = cusData.data?.[0];
+    console.log("[DEBUG] email:", email);
+    console.log("[DEBUG] customer:", JSON.stringify(customer));
+    console.log("[DEBUG] cusData:", JSON.stringify(cusData));
     if (!customer) {
       const guestRes = await fetch(
         `${DIRECTUS}/items/orders?filter[guest_email][_eq]=${encodeURIComponent(email)}&fields=id,order_number,status,total,subtotal,shipping_fee,payment_method,created_at,shipping_address&sort=-created_at`,
         { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
       );
       const guestData = await guestRes.json();
+      console.log("[DEBUG] guestData:", JSON.stringify(guestData));
       return NextResponse.json({ data: guestData.data ?? [] });
     }
 

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
 
 const C = {
@@ -10,6 +10,8 @@ const C = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
   const { setAuth } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -37,7 +39,7 @@ export default function LoginPage() {
       });
       const user = await meRes.json();
       setAuth(user, data.token);
-      router.push("/");
+      router.push(redirectTo);
     } catch {
       setError("接続エラーが発生しました");
     }
@@ -62,7 +64,7 @@ export default function LoginPage() {
       });
       const user = await meRes.json();
       setAuth(user, data.token);
-      router.push("/");
+      router.push(redirectTo);
     } catch {
       setError("接続エラーが発生しました");
     }

@@ -46,6 +46,15 @@ export default function CheckoutPage() {
   const [shippingLoading, setShippingLoading] = useState(false);
   const [guestEmail, setGuestEmail] = useState("");
 
+  // ── クーポン state ────────────────────────────────────────────
+  const [couponCode, setCouponCode] = useState("");
+  const [couponResult, setCouponResult] = useState<{
+    valid: boolean;
+    discountAmount: number;
+    message: string;
+  } | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
+
   // ── 既存 effects ─────────────────────────────────────────────
   useEffect(() => { setMounted(true); }, []);
 
@@ -116,6 +125,29 @@ export default function CheckoutPage() {
     return () => clearTimeout(timer);
   }, [mounted, selectedAddressId, prefecture, items]);
 
+  // ── クーポン適用 ─────────────────────────────────────────────
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code: couponCode.trim(),
+          email: user?.email ?? guestEmail,
+          cartItems: items.map(i => ({ id: i.id, price: i.price, quantity: i.quantity })),
+        }),
+      });
+      const data = await res.json();
+      setCouponResult(data);
+    } catch {
+      setCouponResult({ valid: false, discountAmount: 0, message: "エラーが発生しました" });
+    } finally {
+      setCouponLoading(false);
+    }
+  };
+
   // ── 注文確定 ─────────────────────────────────────────────────
   const handlePlaceOrder = async () => {
     setPlacing(true);
@@ -123,7 +155,8 @@ export default function CheckoutPage() {
     try {
       const productSub  = productTotal();
       const warrantySub = warrantyTotal();
-      const grand       = productSub + warrantySub + shippingFee;
+      const discount    = couponResult?.valid ? couponResult.discountAmount : 0;
+      const grand       = Math.max(0, productSub + warrantySub + shippingFee - discount);
       const addr = addresses.find(a => String(a.id) === selectedAddressId) ?? null;
       const sa = user && addr
         ? { postalCode: addr.postal_code, prefecture: addr.prefecture, city: addr.city, address1: addr.address1, address2: addr.address2 ?? "" }
@@ -142,6 +175,8 @@ export default function CheckoutPage() {
           shippingFee,
           total:            grand,
           shippingAddress:  sa,
+          couponCode:       couponResult?.valid ? couponCode : undefined,
+          discountAmount:   couponResult?.valid ? couponResult.discountAmount : 0,
         }),
       });
       const data = await res.json();
@@ -322,6 +357,32 @@ export default function CheckoutPage() {
               </div>
             </div>
 
+            {/* Coupon input */}
+            <div style={{ background: "#f9f9f9", borderRadius: 8, padding: 16, marginTop: 12 }}>
+              <p style={{ fontWeight: 600, marginBottom: 8 }}>🎫 クーポンコード</p>
+              <div style={{ display: "flex", gap: 8 }}>
+                <input
+                  type="text"
+                  value={couponCode}
+                  onChange={e => { setCouponCode(e.target.value); setCouponResult(null); }}
+                  placeholder="クーポンコードを入力"
+                  style={{ flex: 1, padding: "8px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 14 }}
+                />
+                <button
+                  onClick={handleApplyCoupon}
+                  disabled={couponLoading || !couponCode.trim()}
+                  style={{ padding: "8px 16px", background: "#0097a7", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
+                >
+                  {couponLoading ? "確認中..." : "適用"}
+                </button>
+              </div>
+              {couponResult && (
+                <p style={{ marginTop: 8, fontSize: 13, color: couponResult.valid ? "#2e7d32" : "#c62828" }}>
+                  {couponResult.message}
+                </p>
+              )}
+            </div>
+
           </div>
           {/* ── End left column ── */}
 
@@ -355,6 +416,14 @@ export default function CheckoutPage() {
             {!isFreeShipping && remaining > 0 && !shippingLoading && (
               <div style={{fontSize:10,color:C.textSub,marginBottom:8,textAlign:"right"}}>
                 あと¥{remaining.toLocaleString()}で送料無料
+              </div>
+            )}
+
+            {/* クーポン割引 */}
+            {couponResult?.valid && (
+              <div style={{ display: "flex", justifyContent: "space-between", color: "#2e7d32", fontWeight: 500 }}>
+                <span>クーポン割引</span>
+                <span>-¥{couponResult.discountAmount.toLocaleString()}</span>
               </div>
             )}
 

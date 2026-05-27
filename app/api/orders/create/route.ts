@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress } = await req.json();
+    const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress, couponCode, discountAmount } = await req.json();
 
     const order_number = generateOrderNumber();
 
@@ -39,7 +39,8 @@ export async function POST(req: NextRequest) {
         subtotal:       subtotal ?? total,
         warranty_total: warrantySubtotal ?? 0,
         shipping_fee:   shippingFee ?? 0,
-        discount_amount: 0,
+        discount_amount: discountAmount ?? 0,
+        coupon_code: couponCode ?? null,
         total,
         currency: "JPY",
         shipping_address: shippingAddress ?? null,
@@ -53,6 +54,42 @@ export async function POST(req: NextRequest) {
     }
 
     const orderId = (await orderRes.json()).data.id;
+
+    if (couponCode) {
+      try {
+        const cusRes = await fetch(
+          `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id&limit=1`,
+          { headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` } }
+        );
+        const cusData = await cusRes.json();
+        const customerId = cusData.data?.[0]?.id;
+        if (customerId) {
+          const cpRes = await fetch(
+            `${DIRECTUS}/items/coupons?filter[code][_eq]=${encodeURIComponent(couponCode)}&fields=id&limit=1`,
+            { headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` } }
+          );
+          const cpData = await cpRes.json();
+          const couponId = cpData.data?.[0]?.id;
+          if (couponId) {
+            const ucRes = await fetch(
+              `${DIRECTUS}/items/user_coupons?filter[customer_id][_eq]=${customerId}&filter[coupon_id][_eq]=${couponId}&filter[used_at][_null]=true&limit=1`,
+              { headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` } }
+            );
+            const ucData = await ucRes.json();
+            const ucId = ucData.data?.[0]?.id;
+            if (ucId) {
+              await fetch(`${DIRECTUS}/items/user_coupons/${ucId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` },
+                body: JSON.stringify({ used_at: new Date().toISOString(), order_id: orderId }),
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.error("[orders/create] coupon mark error", e);
+      }
+    }
 
     // product_id が有効な商品については Directus から正規の商品名を一括取得する
     const productIdList = [...new Set(

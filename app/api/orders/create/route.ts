@@ -54,9 +54,38 @@ export async function POST(req: NextRequest) {
 
     const orderId = (await orderRes.json()).data.id;
 
+    // product_id が有効な商品については Directus から正規の商品名を一括取得する
+    const productIdList = [...new Set(
+      (items as any[])
+        .map(item => (item.id !== null && item.id !== undefined && item.id !== "" && Number.isFinite(Number(item.id))) ? Number(item.id) : null)
+        .filter((id): id is number => id !== null)
+    )];
+
+    const productNameMap: Record<number, string> = {};
+    if (productIdList.length > 0) {
+      try {
+        const pRes = await fetch(
+          `${DIRECTUS}/items/products?filter[id][_in]=${productIdList.join(",")}&fields=id,name&limit=${productIdList.length}`,
+          { headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` } }
+        );
+        if (pRes.ok) {
+          const pData = await pRes.json();
+          for (const p of (pData.data ?? [])) {
+            productNameMap[p.id] = p.name;
+          }
+        }
+      } catch {
+        // 取得失敗時は item.name にフォールバック
+      }
+    }
+
     const itemResults = await Promise.all(
-      (items as any[]).map((item) =>
-        fetch(`${DIRECTUS}/items/order_items`, {
+      (items as any[]).map((item) => {
+        const productId = (item.id !== null && item.id !== undefined && item.id !== "" && Number.isFinite(Number(item.id))) ? Number(item.id) : null;
+        // Directus の products.name を優先し、取得できなければカートの name を使用
+        const productName = (productId !== null && productNameMap[productId]) ? productNameMap[productId] : item.name;
+
+        return fetch(`${DIRECTUS}/items/order_items`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -64,8 +93,8 @@ export async function POST(req: NextRequest) {
           },
           body: JSON.stringify({
             order_id:          orderId,
-            product_name:      item.name,
-            product_id:        item.id !== null && item.id !== undefined && item.id !== "" && Number.isFinite(Number(item.id)) ? Number(item.id) : null,
+            product_name:      productName,
+            product_id:        productId,
             quantity:          item.quantity,
             unit_price:        item.price,
             total_price:       item.price * item.quantity,
@@ -73,8 +102,8 @@ export async function POST(req: NextRequest) {
             warranty_price:    item.warrantyPrice    ?? 0,
             snapshot:          item,
           }),
-        })
-      )
+        });
+      })
     );
 
     const createdItemIds: number[] = [];

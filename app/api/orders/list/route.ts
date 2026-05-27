@@ -24,7 +24,14 @@ export async function GET(req: NextRequest) {
     );
     const cusData = await cusRes.json();
     const customer = cusData.data?.[0];
-    if (!customer) return NextResponse.json({ data: [] });
+    if (!customer) {
+      const guestRes = await fetch(
+        `${DIRECTUS}/items/orders?filter[guest_email][_eq]=${encodeURIComponent(email)}&fields=id,order_number,status,total,subtotal,shipping_fee,payment_method,created_at,shipping_address&sort=-created_at`,
+        { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
+      );
+      const guestData = await guestRes.json();
+      return NextResponse.json({ data: guestData.data ?? [] });
+    }
 
     const ordRes = await fetch(
       `${DIRECTUS}/items/orders?filter[customer_id][_eq]=${customer.id}&fields=id,order_number,status,total,subtotal,shipping_fee,payment_method,created_at,shipping_address&sort=-created_at`,

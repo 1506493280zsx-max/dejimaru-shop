@@ -80,6 +80,7 @@ export default function Header() {
                         {label:"🏠 マイページ",path:"/account"},
                         {label:"📦 注文履歴",path:"/account/orders"},
                         {label:"❤️ お気に入り",path:"/account/wishlist"},
+                        {label:"🎫 マイクーポン",path:"/account/coupons"},
                       ].map(item=>(
                         <div key={item.path} onClick={()=>{router.push(item.path);setShowMenu(false);}}
                           style={{padding:"9px 14px",fontSize:12,color:C.text,cursor:"pointer",borderBottom:"1px solid #F5F5F5"}}

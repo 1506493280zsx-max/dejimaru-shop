@@ -45,6 +45,7 @@ export default function AccountPage() {
     {title:"会員情報の変更",sub:"お名前・メールアドレスの変更",path:"/account/profile",badge:null},
     {title:"パスワードの変更",sub:"パスワードを変更する",path:"/account/password",badge:null},
     {title:"お届け先の管理",sub:"配送先住所を登録・変更",path:"/account/address",badge:null},
+    {title:"🎫 マイクーポン",sub:"保有クーポンを確認",path:"/account/coupons",badge:null},
   ];
 
   return (

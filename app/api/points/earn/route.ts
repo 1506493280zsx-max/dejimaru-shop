@@ -6,6 +6,13 @@ const H = { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json"
 
 export async function POST(req: NextRequest) {
   try {
+    // 内部APIのみ許可（ADMIN_TOKENで保護）
+    const authHeader = req.headers.get("Authorization");
+    const secret = authHeader?.replace("Bearer ", "");
+    if (secret !== process.env.ADMIN_TOKEN) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
     const { customerId, orderId, orderTotal } = await req.json();
     if (!customerId || !orderId || !orderTotal) {
       return NextResponse.json({ error: "customerId, orderId, orderTotal required" }, { status: 400 });
@@ -22,9 +29,14 @@ export async function POST(req: NextRequest) {
     const earnedPoints = Math.floor(orderTotal / rate);
     if (earnedPoints <= 0) return NextResponse.json({ success: true, earnedPoints: 0 });
 
-    // customers.pointsを更新
+    // customerId is a Directus auth UUID — look up email via users endpoint
+    const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=email`, { headers: H });
+    const email = (await userRes.json()).data?.email;
+    if (!email) return NextResponse.json({ error: "user not found" }, { status: 404 });
+
+    // customers.pointsを更新（customers.id is integer, look up by email）
     const cusRes = await fetch(
-      `${DIRECTUS}/items/customers?filter[id][_eq]=${customerId}&fields=id,points&limit=1`,
+      `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id,points&limit=1`,
       { headers: H }
     );
     const customer = (await cusRes.json()).data?.[0];

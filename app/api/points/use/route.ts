@@ -6,6 +6,12 @@ const H = { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json"
 
 export async function POST(req: NextRequest) {
   try {
+    const authHeader = req.headers.get("Authorization");
+    const userToken = authHeader?.replace("Bearer ", "");
+    if (!userToken) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     const { customerId, points, commit, orderId } = body;
     if (!customerId || !points) {

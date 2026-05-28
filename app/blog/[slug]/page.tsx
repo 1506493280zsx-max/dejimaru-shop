@@ -2,23 +2,36 @@ import { notFound } from "next/navigation";
 import { getBlogPostBySlug, getComments } from "@/lib/blog";
 import { getImageUrl } from "@/lib/directus";
 import BlogCommentSection from "@/app/components/BlogCommentSection";
+import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
-  if (!post) return { title: "記事が見つかりません | AI Across ショップ" };
-  const description = post.excerpt
-    ? post.excerpt.slice(0, 150)
-    : post.body.replace(/<[^>]+>/g, "").slice(0, 150);
-  return {
-    title: `${post.title} | AI Across ショップ`,
-    description,
-  };
+  try {
+    const post = await getBlogPostBySlug(slug);
+    if (!post) return { title: "記事が見つかりません" };
+    const title = `${post.title} | AI Across ショップ`;
+    const description = (post.excerpt || post.body?.replace(/<[^>]*>/g, "") || "").slice(0, 160);
+    return {
+      title,
+      description,
+      alternates: { canonical: `https://aiacrossshop.co.jp/blog/${slug}` },
+      openGraph: {
+        title,
+        description,
+        url: `https://aiacrossshop.co.jp/blog/${slug}`,
+        type: "article",
+        images: [{ url: "https://aiacrossshop.co.jp/opengraph-image", width: 1200, height: 630 }],
+      },
+      twitter: {
+        card: "summary_large_image",
+        title,
+        description,
+      },
+    };
+  } catch {
+    return { title: "AI Across ショップ" };
+  }
 }
 
 const C = {

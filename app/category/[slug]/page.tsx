@@ -1,5 +1,37 @@
 import { getProducts, getCategories, getBrands } from "@/lib/directus";
 import SearchClient from "@/app/search/SearchClient";
+import type { Metadata } from "next";
+
+const BASE_URL = "https://aiacrossshop.co.jp";
+const DIRECTUS = "https://directus-production-2cfe.up.railway.app";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  try {
+    const res = await fetch(`${DIRECTUS}/items/categories?filter[slug][_eq]=${slug}&fields=name,description&limit=1`);
+    const data = await res.json();
+    const category = data.data?.[0];
+    const name = category?.name || slug;
+    const title = `${name}の中古品一覧 | AI Across ショップ`;
+    const description = category?.description
+      ? category.description.replace(/<[^>]*>/g, "").slice(0, 160)
+      : `${name}の中古品を多数取り揃えています。全商品30日間動作保証・送料無料。`;
+
+    return {
+      title,
+      description,
+      alternates: { canonical: `${BASE_URL}/category/${slug}` },
+      openGraph: {
+        title,
+        description,
+        url: `${BASE_URL}/category/${slug}`,
+        images: [{ url: `${BASE_URL}/opengraph-image`, width: 1200, height: 630 }],
+      },
+    };
+  } catch {
+    return { title: "AI Across ショップ" };
+  }
+}
 
 export async function generateStaticParams() {
   const categories = await getCategories();

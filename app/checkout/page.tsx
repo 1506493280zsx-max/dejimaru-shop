@@ -184,7 +184,7 @@ export default function CheckoutPage() {
   };
 
   const handleUsePoints = (points: number) => {
-    if (points > pointBalance) return;
+    if (points < 0) return;
     const discount = Math.floor(points * 0.5);
     setUsePoints(points);
     setPointDiscount(discount);

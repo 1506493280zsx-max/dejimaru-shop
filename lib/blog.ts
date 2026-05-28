@@ -6,14 +6,15 @@ const adminHeaders = {
   Authorization: `Bearer ${ADMIN_TOKEN}`,
 };
 
-async function fetchDirectus(url: string): Promise<any> {
+async function fetchDirectus(url: string, opts: { next?: { revalidate?: number } } = {}): Promise<any> {
+  const next = opts.next ?? { revalidate: 60 };
   if (ADMIN_TOKEN) {
-    const res = await fetch(url, { headers: adminHeaders, next: { revalidate: 60 } });
+    const res = await fetch(url, { headers: adminHeaders, next });
     if (res.ok) return res.json();
     if (res.status !== 401 && res.status !== 403) throw new Error(`HTTP ${res.status}`);
     // 401: token expired / 403: forbidden — fall through to public access
   }
-  const res = await fetch(url, { next: { revalidate: 60 } });
+  const res = await fetch(url, { next });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
@@ -76,7 +77,7 @@ export async function getBlogPosts(
     params.append("sort", "-date_created");
     if (type) params.set("filter[type][_eq]", type);
     if (featured !== undefined) params.set("filter[featured][_eq]", String(featured));
-    const json = await fetchDirectus(`${DIRECTUS_URL}/items/Blog_Posts?${params}`);
+    const json = await fetchDirectus(`${DIRECTUS_URL}/items/Blog_Posts?${params}`, { next: { revalidate: 3600 } });
     const data = json.data || [];
     return data.map((p: any) => ({ ...p, body: p.content ?? "" }));
   } catch (e) { console.error("[BLOG ERROR]", e); return []; }
@@ -89,7 +90,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
     params.set("filter[slug][_eq]", slug);
     params.set("filter[status][_eq]", "published");
     params.set("fields", POST_FIELDS);
-    const json = await fetchDirectus(`${DIRECTUS_URL}/items/Blog_Posts?${params}`);
+    const json = await fetchDirectus(`${DIRECTUS_URL}/items/Blog_Posts?${params}`, { next: { revalidate: 3600 } });
     const item = json.data?.[0] || null;
     return item ? { ...item, body: item.content ?? "" } : null;
   } catch (e) { console.error("[BLOG ERROR]", e); return null; }

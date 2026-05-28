@@ -4,10 +4,12 @@ import { getImageUrl } from "@/lib/directus";
 import BlogCommentSection from "@/app/components/BlogCommentSection";
 
 export async function generateStaticParams() {
-  const posts = await getBlogPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+  try {
+    const posts = await getBlogPosts();
+    return posts.map((post) => ({ slug: post.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({

@@ -57,7 +57,12 @@ export async function POST(req: NextRequest) {
 
     // 4. 変数を置換
     const carrierMap: Record<string, string> = {
-      yamato: "ヤマト運輸", sagawa: "佐川急便", japanpost: "日本郵政", other: "その他"
+      yamato: "ヤマト運輸",
+      sagawa: "佐川急便",
+      japanpost: "日本郵便",
+      fedex: "FedEx",
+      dhl: "DHL",
+      other: "その他",
     };
     const vars = {
       firstName: firstName || "お客様",

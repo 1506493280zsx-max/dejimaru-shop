@@ -20,6 +20,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ orde
   const address = `〒${addr.postalCode || ""} ${addr.prefecture || ""}${addr.city || ""}${addr.address1 || ""}${addr.address2 ? " " + addr.address2 : ""}`;
   const phone = addr.phone || "";
   const issueDate = new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
+  const carrierMap: Record<string, string> = {
+    yamato: "ヤマト運輸",
+    sagawa: "佐川急便",
+    japanpost: "日本郵便",
+    fedex: "FedEx",
+    dhl: "DHL",
+    other: "その他",
+  };
   const invoiceNumber = `INV-${orderNumber}`;
   const stampPath = path.join(process.cwd(), "public", "stamp.png");
   const stampBase64 = fs.existsSync(stampPath)
@@ -90,6 +98,7 @@ ${order.status === "cancelled" ? `<div class="cancel-notice">⚠️ この注文
     <p>${address}</p>
     ${phone ? `<p>TEL: ${phone}</p>` : ""}
     ${order.guest_email ? `<p>${order.guest_email}</p>` : ""}
+    ${order.tracking_number ? `<p>追跡番号：${order.tracking_number}（${carrierMap[order.shipping_carrier] || order.shipping_carrier || ""}）</p>` : ""}
   </div>
   <div class="party">
     <h3>発行者</h3>

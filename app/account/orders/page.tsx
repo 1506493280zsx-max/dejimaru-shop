@@ -11,6 +11,15 @@ const C = {
 };
 
 
+const CARRIER_LABEL: Record<string, string> = {
+  yamato: "ヤマト運輸",
+  sagawa: "佐川急便",
+  japanpost: "日本郵便",
+  fedex: "FedEx",
+  dhl: "DHL",
+  other: "その他",
+};
+
 const STATUS_LABEL: Record<string,{label:string,color:string,bg:string}> = {
   pending:      {label:"注文受付中",  color:"#886600", bg:"#FFF8E8"},
   payment_pending:{label:"入金待ち", color:"#886600", bg:"#FFF8E8"},
@@ -176,7 +185,7 @@ export default function OrdersPage() {
                       <div>
                         <div style={{fontSize:12,color:"#888",marginBottom:4}}>追跡番号</div>
                         <div style={{fontSize:12,fontWeight:600}}>{order.tracking_number}</div>
-                        <div style={{fontSize:11,color:"#888"}}>{order.shipping_carrier}</div>
+                        <div style={{fontSize:11,color:"#888"}}>{CARRIER_LABEL[order.shipping_carrier] || order.shipping_carrier}</div>
                       </div>
                     )}
                   </div>

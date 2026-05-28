@@ -7,6 +7,24 @@ export async function POST(req: NextRequest) {
   try {
     const { email, password, firstName, lastName } = await req.json();
 
+    // バリデーション
+    if (!email || !password || !firstName || !lastName) {
+      return NextResponse.json({ error: "全ての項目を入力してください" }, { status: 400 });
+    }
+    // メールフォーマット検証
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return NextResponse.json({ error: "メールアドレスの形式が正しくありません" }, { status: 400 });
+    }
+    // パスワード強度検証（8文字以上）
+    if (password.length < 8) {
+      return NextResponse.json({ error: "パスワードは8文字以上で入力してください" }, { status: 400 });
+    }
+    // 名前の長さ検証
+    if (firstName.length > 50 || lastName.length > 50) {
+      return NextResponse.json({ error: "名前は50文字以内で入力してください" }, { status: 400 });
+    }
+
     // directus_usersにユーザー作成
     const createRes = await fetch(`${DIRECTUS_URL}/users`, {
       method: "POST",

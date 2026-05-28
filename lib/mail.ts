@@ -117,7 +117,7 @@ export async function sendOrderConfirmationEmail({
   return resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
     to,
-    subject: `【AI Across ショップ】ご注文確認 ${orderNumber}`,
+    subject: `【AIAcrossShop】ご注文確認 - ${orderNumber}`,
     html: `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#333;">
         <div style="background:#0ABAB5;padding:20px;border-radius:8px 8px 0 0;text-align:center;">
@@ -128,7 +128,13 @@ export async function sendOrderConfirmationEmail({
           <p>以下の内容でご注文を承りました。</p>
           <p style="background:#f0f5f5;padding:12px;border-radius:4px;">注文番号：<strong>${orderNumber}</strong></p>
           <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-            <thead><tr style="background:#f9f9f9;"><th style="padding:8px;text-align:left;border-bottom:2px solid #ddd;">商品</th><th style="padding:8px;text-align:center;border-bottom:2px solid #ddd;">数量</th><th style="padding:8px;text-align:right;border-bottom:2px solid #ddd;">金額</th></tr></thead>
+            <thead>
+              <tr style="background:#f9f9f9;">
+                <th style="padding:8px;text-align:left;border-bottom:2px solid #ddd;">商品</th>
+                <th style="padding:8px;text-align:center;border-bottom:2px solid #ddd;">数量</th>
+                <th style="padding:8px;text-align:right;border-bottom:2px solid #ddd;">金額</th>
+              </tr>
+            </thead>
             <tbody>${itemRows}</tbody>
           </table>
           <div style="text-align:right;margin-top:16px;">
@@ -142,7 +148,7 @@ export async function sendOrderConfirmationEmail({
           <p style="color:#666;font-size:13px;">商品は順次発送いたします。発送後にメールでお知らせします。</p>
           <a href="https://aiacrossshop.co.jp/account/orders" style="display:inline-block;background:#0ABAB5;color:#fff;padding:10px 20px;border-radius:4px;text-decoration:none;margin-top:12px;">注文履歴を確認する</a>
         </div>
-        <p style="text-align:center;color:#999;font-size:12px;margin-top:16px;">AI Across ショップ｜<a href="https://aiacrossshop.co.jp" style="color:#0ABAB5;">aiacrossshop.co.jp</a></p>
+        <p style="text-align:center;color:#999;font-size:12px;margin-top:16px;">AIAcrossShop｜<a href="https://aiacrossshop.co.jp" style="color:#0ABAB5;">aiacrossshop.co.jp</a></p>
       </div>
     `,
   });

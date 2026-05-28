@@ -62,7 +62,9 @@ export default function CheckoutPage() {
     fetch(`/api/coupons/my?email=${encodeURIComponent(user.email)}`)
       .then(r => r.json())
       .then(d => {
-        const available = (d.data || []).filter((c: any) => c.status === "available");
+        const available = (d.data || []).filter((c: any) =>
+          c.status === "available" && !c.used_at
+        );
         setMyCoupons(available);
       });
   }, [user?.email]);

@@ -40,7 +40,7 @@ export default function Gallery({ product }: { product: any }) {
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {imgUrls.map((url, i) => (
             <div key={i} onClick={() => setMainIdx(i)} style={{ width: 60, height: 60, border: `2px solid ${mainIdx === i ? C.primary : C.border}`, borderRadius: 2, cursor: "pointer", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center", background: C.white }}>
-              {url ? <img src={url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <span style={{ fontSize: 24 }}>💻</span>}
+              {url ? <img src={url} alt={product.name || "商品画像"} style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <span style={{ fontSize: 24 }}>💻</span>}
             </div>
           ))}
         </div>

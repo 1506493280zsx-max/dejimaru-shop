@@ -12,8 +12,11 @@ function renderTemplate(html: string, vars: Record<string, string>) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { orderId } = await req.json();
+    const body = await req.json();
+    const orderId = body.orderId || body.keys?.[0];
+    const status = body.payload?.status || body.status;
     if (!orderId) return NextResponse.json({ error: "orderId required" }, { status: 400 });
+    if (status && status !== "shipped") return NextResponse.json({ skipped: true });
 
     // 1. 注文情報を取得
     const orderRes = await fetch(

@@ -31,6 +31,9 @@ export default function CheckoutPage() {
   const [placeError, setPlaceError] = useState("");
 
   // ── 住所入力（ゲスト用） ─────────────────────────────────────
+  const [lastName, setLastName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [phone, setPhone] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [prefecture, setPrefecture] = useState("");
   const [city, setCity] = useState("");
@@ -173,9 +176,9 @@ export default function CheckoutPage() {
       const grand       = Math.max(0, productSub + warrantySub + shippingFee - discount);
       const addr = addresses.find(a => String(a.id) === selectedAddressId) ?? null;
       const sa = user && addr
-        ? { postalCode: addr.postal_code, prefecture: addr.prefecture, city: addr.city, address1: addr.address1, address2: addr.address2 ?? "" }
+        ? { lastName: addr.name_last ?? "", firstName: addr.name_first ?? "", phone: addr.phone ?? "", postalCode: addr.postal_code, prefecture: addr.prefecture, city: addr.city, address1: addr.address1, address2: addr.address2 ?? "" }
         : !user && prefecture
-        ? { postalCode, prefecture, city, address1, address2 }
+        ? { lastName, firstName, phone, postalCode, prefecture, city, address1, address2 }
         : null;
 
       const res = await fetch("/api/orders/create", {
@@ -307,6 +310,33 @@ export default function CheckoutPage() {
                     onChange={e=>setGuestEmail(e.target.value)}
                     placeholder="メールアドレス（注文確認に使用）"
                     style={inp}
+                  />
+                  {/* 姓名・電話番号 */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <input
+                      type="text"
+                      placeholder="姓"
+                      value={lastName}
+                      onChange={e => setLastName(e.target.value)}
+                      className="border rounded px-3 py-2 text-sm w-full"
+                      required
+                    />
+                    <input
+                      type="text"
+                      placeholder="名"
+                      value={firstName}
+                      onChange={e => setFirstName(e.target.value)}
+                      className="border rounded px-3 py-2 text-sm w-full"
+                      required
+                    />
+                  </div>
+                  <input
+                    type="tel"
+                    placeholder="電話番号"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    className="border rounded px-3 py-2 text-sm w-full"
+                    required
                   />
                   {/* 郵便番号 */}
                   <div style={{display:"flex",gap:8,alignItems:"center"}}>

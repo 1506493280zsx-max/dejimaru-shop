@@ -60,7 +60,9 @@ body{font-family:"Hiragino Sans","Yu Gothic",sans-serif;color:#333;padding:40px;
 .total-box{background:#f0fafa;border:2px solid #0ABAB5;border-radius:8px;padding:16px 24px;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;}
 .total-box .label{font-size:16px;}
 .total-box .amount{font-size:28px;font-weight:bold;color:#CC2200;}
-table{width:100%;border-collapse:collapse;margin-bottom:30px;}
+table{width:100%;border-collapse:collapse;margin-bottom:30px;page-break-inside:auto;}
+tr{page-break-inside:avoid;}
+table td{font-size:14px;}
 thead tr{background:#0ABAB5;color:white;}
 thead td{padding:10px;font-size:13px;}
 .stamp-area{display:flex;justify-content:flex-end;margin-top:20px;}

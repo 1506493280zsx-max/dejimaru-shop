@@ -12,9 +12,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "customerId, points required" }, { status: 400 });
     }
 
-    // 現在の残高確認
+    // customerId is a Directus auth UUID — look up email via users endpoint
+    const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=email`, { headers: H });
+    const email = (await userRes.json()).data?.email;
+    if (!email) return NextResponse.json({ error: "user not found" }, { status: 404 });
+
+    // Find customer by email (customers.id is integer, not UUID)
     const cusRes = await fetch(
-      `${DIRECTUS}/items/customers?filter[id][_eq]=${customerId}&fields=id,points&limit=1`,
+      `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id,points&limit=1`,
       { headers: H }
     );
     const customer = (await cusRes.json()).data?.[0];
@@ -25,10 +30,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "ポイントが不足しています" }, { status: 400 });
     }
 
-    // 当次使用：50%換算（300pt → 150円割引）
+    // 50%換算（300pt → 150円割引）
     const discountAmount = Math.floor(points * 0.5);
 
-    // commit=true の場合、実際にポイントを消費する
     if (commit) {
       const newPoints = currentPoints - points;
       await fetch(`${DIRECTUS}/items/customers/${customer.id}`, {

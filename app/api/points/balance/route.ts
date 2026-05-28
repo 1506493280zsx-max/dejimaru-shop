@@ -9,15 +9,19 @@ export async function GET(req: NextRequest) {
     const customerId = req.nextUrl.searchParams.get("customerId");
     if (!customerId) return NextResponse.json({ error: "customerId required" }, { status: 400 });
 
-    // 現在のポイント残高取得
+    // customerId is a Directus auth UUID — look up email via users endpoint
+    const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=email`, { headers: H });
+    const email = (await userRes.json()).data?.email;
+    if (!email) return NextResponse.json({ error: "user not found" }, { status: 404 });
+
+    // Find customer record by email (customers.id is integer, not UUID)
     const cusRes = await fetch(
-      `${DIRECTUS}/items/customers?filter[id][_eq]=${customerId}&fields=id,points&limit=1`,
+      `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id,points&limit=1`,
       { headers: H }
     );
     const customer = (await cusRes.json()).data?.[0];
     if (!customer) return NextResponse.json({ error: "customer not found" }, { status: 404 });
 
-    // 現在のレート取得
     const rateRes = await fetch(
       `${DIRECTUS}/items/point_settings?filter[is_active][_eq]=true&limit=1&sort=-created_at`,
       { headers: H }
@@ -27,7 +31,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       points: customer.points || 0,
       rate,
-      // 当次使用時の換算率（50%）
       useRate: 0.5,
     });
   } catch (e) {

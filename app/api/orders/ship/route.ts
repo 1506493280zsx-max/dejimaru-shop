@@ -35,12 +35,15 @@ export async function POST(req: NextRequest) {
     let email = order.guest_email;
     let firstName = "";
     if (order.customer_id) {
-      const cusRes = await fetch(
-        `${DIRECTUS}/items/customers?filter[id][_eq]=${order.customer_id}&fields=email,name_first&limit=1`,
+      const userRes = await fetch(
+        `${DIRECTUS}/users/${order.customer_id}?fields=email,first_name`,
         { headers: H() }
       );
-      const customer = (await cusRes.json()).data?.[0];
-      if (customer) { email = customer.email; firstName = customer.name_first || ""; }
+      const userInfo = (await userRes.json()).data;
+      if (userInfo) {
+        if (userInfo.email) email = userInfo.email;
+        firstName = userInfo.first_name || "";
+      }
     }
     if (!email) return NextResponse.json({ error: "no email found" }, { status: 400 });
 
@@ -97,7 +100,7 @@ export async function POST(req: NextRequest) {
       const earnedPoints = Math.floor((order.total || 0) / rate);
       if (earnedPoints > 0) {
         const cusRes = await fetch(
-          `${DIRECTUS}/items/customers?filter[id][_eq]=${order.customer_id}&fields=id,points&limit=1`,
+          `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id,points&limit=1`,
           { headers: H() }
         );
         const customer = (await cusRes.json()).data?.[0];

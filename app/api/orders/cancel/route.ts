@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     if (!orderId) return NextResponse.json({ error: "orderId required" }, { status: 400 });
 
     // 注文取得
-    const orderRes = await fetch(`${DIRECTUS}/items/orders/${orderId}?fields=id,status,customer_id,total,payment_method`, { headers: H });
+    const orderRes = await fetch(`${DIRECTUS}/items/orders/${orderId}?fields=id,status,customer_id,guest_email,total,payment_method`, { headers: H });
     const order = (await orderRes.json()).data;
     if (!order) return NextResponse.json({ error: "order not found" }, { status: 404 });
 
@@ -25,15 +25,22 @@ export async function POST(req: NextRequest) {
     }
 
     // ポイント処理（不正防止）
+    // customer email: look up via directus_users UUID (customers.id is integer, not UUID)
+    let customerEmail = order.guest_email || "";
+    if (order.customer_id && !customerEmail) {
+      const userRes = await fetch(`${DIRECTUS}/users/${order.customer_id}?fields=email`, { headers: H });
+      customerEmail = (await userRes.json()).data?.email || "";
+    }
+
     // 1. 獲得ポイントを取り消す
     const earnTxRes = await fetch(
       `${DIRECTUS}/items/point_transactions?filter[order_id][_eq]=${orderId}&filter[type][_eq]=earn&limit=1`,
       { headers: H }
     );
     const earnTx = (await earnTxRes.json()).data?.[0];
-    if (earnTx && order.customer_id) {
+    if (earnTx && order.customer_id && customerEmail) {
       const cusRes2 = await fetch(
-        `${DIRECTUS}/items/customers?filter[id][_eq]=${order.customer_id}&fields=id,points&limit=1`,
+        `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(customerEmail)}&fields=id,points&limit=1`,
         { headers: H }
       );
       const customer = (await cusRes2.json()).data?.[0];
@@ -63,9 +70,9 @@ export async function POST(req: NextRequest) {
       { headers: H }
     );
     const useTx = (await useTxRes.json()).data?.[0];
-    if (useTx && order.customer_id) {
+    if (useTx && order.customer_id && customerEmail) {
       const cusRes3 = await fetch(
-        `${DIRECTUS}/items/customers?filter[id][_eq]=${order.customer_id}&fields=id,points&limit=1`,
+        `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(customerEmail)}&fields=id,points&limit=1`,
         { headers: H }
       );
       const customer3 = (await cusRes3.json()).data?.[0];

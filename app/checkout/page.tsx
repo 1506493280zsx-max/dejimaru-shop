@@ -68,7 +68,9 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!user?.email) return;
-    fetch(`/api/coupons/my?email=${encodeURIComponent(user.email)}`)
+    fetch(`/api/coupons/my`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(r => r.json())
       .then(d => {
         const available = (d.data || []).filter((c: any) =>
@@ -169,10 +171,9 @@ export default function CheckoutPage() {
     try {
       const res = await fetch("/api/coupons/validate", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
           code: couponCode.trim(),
-          email: user?.email ?? guestEmail,
           cartItems: items.map(i => ({ id: i.id, price: i.price, quantity: i.quantity })),
         }),
       });
@@ -472,10 +473,9 @@ export default function CheckoutPage() {
                         try {
                           const res = await fetch("/api/coupons/validate", {
                             method: "POST",
-                            headers: { "Content-Type": "application/json" },
+                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
                             body: JSON.stringify({
                               code: item.coupon.code,
-                              email: user?.email ?? guestEmail,
                               cartItems: items.map(i => ({ id: i.id, price: i.price, quantity: i.quantity })),
                             }),
                           });

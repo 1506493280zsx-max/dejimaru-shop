@@ -20,7 +20,7 @@ export default function ProductPageClient({ product }: { product: any }) {
   const router = useRouter();
   const [avgRating, setAvgRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const [coupons, setCoupons] = useState<any[]>([]);
   const [claimingId, setClaimingId] = useState<number | null>(null);
   const [claimMsg, setClaimMsg] = useState<Record<number, string>>({});
@@ -43,8 +43,8 @@ export default function ProductPageClient({ product }: { product: any }) {
     try {
       const res = await fetch("/api/coupons/claim", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: coupon.code, email: user.email }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ code: coupon.code }),
       });
       const data = await res.json();
       setClaimMsg(prev => ({ ...prev, [coupon.id]: data.message }));

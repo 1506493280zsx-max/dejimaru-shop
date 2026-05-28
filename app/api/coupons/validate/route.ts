@@ -6,7 +6,18 @@ const H = () => ({ Authorization: `Bearer ${TOKEN}`, "Content-Type": "applicatio
 
 export async function POST(req: NextRequest) {
   try {
-    const { code, email, cartItems } = await req.json();
+    const authHeader = req.headers.get("Authorization");
+    const userToken = authHeader?.replace("Bearer ", "");
+    if (!userToken) return NextResponse.json({ valid: false, message: "認証が必要です" }, { status: 401 });
+
+    const meRes = await fetch(`${DIRECTUS}/users/me`, {
+      headers: { Authorization: `Bearer ${userToken}` }
+    });
+    if (!meRes.ok) return NextResponse.json({ valid: false, message: "認証エラー" }, { status: 401 });
+    const me = (await meRes.json()).data;
+
+    const { code, cartItems } = await req.json();
+    const email = me.email;
     if (!code || !email) {
       return NextResponse.json({ valid: false, message: "コードとメールが必要です" }, { status: 400 });
     }

@@ -29,7 +29,7 @@ type CouponItem = {
 
 export default function MyCouponsPage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const [mounted, setMounted] = useState(false);
   const [coupons, setCoupons] = useState<CouponItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -39,7 +39,7 @@ export default function MyCouponsPage() {
   useEffect(() => {
     if (!mounted) return;
     if (!user) { router.push("/login"); return; }
-    fetch(`/api/coupons/my?email=${encodeURIComponent(user.email)}`)
+    fetch("/api/coupons/my", { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(d => setCoupons(d.data || []))
       .finally(() => setLoading(false));

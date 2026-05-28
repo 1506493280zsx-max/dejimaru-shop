@@ -23,7 +23,7 @@ type Coupon = {
 
 export default function PublicCouponsPage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const [mounted, setMounted] = useState(false);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,8 +49,8 @@ export default function PublicCouponsPage() {
     try {
       const res = await fetch("/api/coupons/claim", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: coupon.code, email: user.email }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ code: coupon.code }),
       });
       const data = await res.json();
       setMessages(prev => ({ ...prev, [coupon.id]: { text: data.message, ok: data.success } }));

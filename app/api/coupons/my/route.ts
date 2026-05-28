@@ -6,7 +6,17 @@ const H = () => ({ Authorization: `Bearer ${TOKEN}`, "Content-Type": "applicatio
 
 export async function GET(req: NextRequest) {
   try {
-    const email = req.nextUrl.searchParams.get("email");
+    const authHeader = req.headers.get("Authorization");
+    const userToken = authHeader?.replace("Bearer ", "");
+    if (!userToken) return NextResponse.json({ data: [] }, { status: 401 });
+
+    const meRes = await fetch(`${DIRECTUS}/users/me`, {
+      headers: { Authorization: `Bearer ${userToken}` }
+    });
+    if (!meRes.ok) return NextResponse.json({ data: [] }, { status: 401 });
+    const me = (await meRes.json()).data;
+
+    const email = me.email;
     if (!email) return NextResponse.json({ data: [] }, { status: 400 });
 
     // 1. ユーザー確認

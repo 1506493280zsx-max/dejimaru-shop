@@ -55,6 +55,18 @@ export default function CheckoutPage() {
   } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
 
+  const [myCoupons, setMyCoupons] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user?.email) return;
+    fetch(`/api/coupons/my?email=${encodeURIComponent(user.email)}`)
+      .then(r => r.json())
+      .then(d => {
+        const available = (d.data || []).filter((c: any) => c.status === "available");
+        setMyCoupons(available);
+      });
+  }, [user?.email]);
+
   // ── 既存 effects ─────────────────────────────────────────────
   useEffect(() => { setMounted(true); }, []);
 
@@ -357,6 +369,32 @@ export default function CheckoutPage() {
                 🚧 Stripe / PayPal coming soon
               </div>
             </div>
+
+            {myCoupons.length > 0 && (
+              <div style={{ background: "#E8F8F8", borderRadius: 8, padding: 12, marginTop: 12 }}>
+                <p style={{ fontWeight: 600, marginBottom: 8, fontSize: 13 }}>🎫 利用できるクーポン</p>
+                {myCoupons.map((item: any) => (
+                  <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", border: "1px solid #B0E0DE", borderRadius: 6, padding: "8px 12px", marginBottom: 6 }}>
+                    <div>
+                      <p style={{ fontSize: 13, fontWeight: 700, color: "#CC2200", margin: 0 }}>
+                        {item.coupon?.discount_type === "percent" ? `${item.coupon.discount_value}% OFF` : `¥${item.coupon?.discount_value?.toLocaleString()} OFF`}
+                      </p>
+                      {item.coupon?.description && <p style={{ fontSize: 11, color: "#666", margin: "2px 0 0" }}>{item.coupon.description}</p>}
+                      {item.coupon?.expires_at && <p style={{ fontSize: 11, color: item.daysLeft <= 3 ? "#CC2200" : "#999", margin: "2px 0 0" }}>有効期限：{new Date(item.coupon.expires_at).toLocaleDateString("ja-JP")}（あと{item.daysLeft}日）</p>}
+                    </div>
+                    <button
+                      onClick={() => {
+                        setCouponCode(item.coupon.code);
+                        setCouponResult(null);
+                      }}
+                      style={{ padding: "4px 12px", background: couponResult?.valid && couponCode === item.coupon.code ? "#999" : "#0ABAB5", color: "#fff", border: "none", borderRadius: 4, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap" }}
+                    >
+                      {couponResult?.valid && couponCode === item.coupon.code ? "適用中✅" : "使う"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
 
             {/* Coupon input */}
             <div style={{ background: "#f9f9f9", borderRadius: 8, padding: 16, marginTop: 12 }}>

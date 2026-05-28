@@ -44,8 +44,11 @@ export async function POST(req: NextRequest) {
       `${DIRECTUS}/items/email_templates?filter[key][_eq]=shipping_notify&filter[is_active][_eq]=true&limit=1`,
       { headers: H() }
     );
-    const template = (await tmplRes.json()).data?.[0];
+    const tmplJson = await tmplRes.json();
+    console.log("[orders/ship] template:", tmplJson.data?.[0]?.key, "html length:", tmplJson.data?.[0]?.html?.length);
+    const template = tmplJson.data?.[0];
     if (!template) return NextResponse.json({ error: "template not found" }, { status: 404 });
+    if (!template.html) return NextResponse.json({ error: "template html is empty" }, { status: 500 });
 
     // 4. 変数を置換
     const carrierMap: Record<string, string> = {
@@ -62,12 +65,17 @@ export async function POST(req: NextRequest) {
     const html = renderTemplate(template.html, vars);
 
     // 5. メール送信
-    await resend.emails.send({
+    const { data: mailData, error: mailError } = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL!,
       to: email,
       subject,
       html,
     });
+    if (mailError) {
+      console.error("[orders/ship] resend error:", mailError);
+      return NextResponse.json({ error: "mail failed", detail: mailError }, { status: 500 });
+    }
+    console.log("[orders/ship] mail sent:", mailData?.id, "to:", email);
 
     // 6. 発送済みステータスに更新
     await fetch(`${DIRECTUS}/items/orders/${orderId}`, {

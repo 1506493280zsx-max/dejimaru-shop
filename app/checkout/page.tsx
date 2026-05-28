@@ -58,6 +58,12 @@ export default function CheckoutPage() {
   } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
 
+  // ポイント関連
+  const [pointBalance, setPointBalance] = useState(0);
+  const [pointRate, setPointRate] = useState(100);
+  const [usePoints, setUsePoints] = useState(0);
+  const [pointDiscount, setPointDiscount] = useState(0);
+
   const [myCoupons, setMyCoupons] = useState<any[]>([]);
 
   useEffect(() => {
@@ -71,6 +77,18 @@ export default function CheckoutPage() {
         setMyCoupons(available);
       });
   }, [user?.email]);
+
+  // ポイント残高取得（ログイン済みのみ）
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch(`/api/points/balance?customerId=${user.id}`)
+      .then(r => r.json())
+      .then(d => {
+        setPointBalance(d.points || 0);
+        setPointRate(d.rate || 100);
+      })
+      .catch(() => {});
+  }, [user]);
 
   // ── 既存 effects ─────────────────────────────────────────────
   useEffect(() => { setMounted(true); }, []);
@@ -165,6 +183,18 @@ export default function CheckoutPage() {
     }
   };
 
+  const handleUsePoints = (points: number) => {
+    if (points > pointBalance) return;
+    const discount = Math.floor(points * 0.5);
+    setUsePoints(points);
+    setPointDiscount(discount);
+  };
+
+  const handleClearPoints = () => {
+    setUsePoints(0);
+    setPointDiscount(0);
+  };
+
   // ── 注文確定 ─────────────────────────────────────────────────
   const handlePlaceOrder = async () => {
     setPlacing(true);
@@ -173,7 +203,7 @@ export default function CheckoutPage() {
       const productSub  = productTotal();
       const warrantySub = warrantyTotal();
       const discount    = couponResult?.valid ? couponResult.discountAmount : 0;
-      const grand       = Math.max(0, productSub + warrantySub + shippingFee - discount);
+      const grand       = Math.max(0, productSub + warrantySub + shippingFee - discount - pointDiscount);
       const addr = addresses.find(a => String(a.id) === selectedAddressId) ?? null;
       const sa = user && addr
         ? { lastName: addr.name_last ?? "", firstName: addr.name_first ?? "", phone: addr.phone ?? "", postalCode: addr.postal_code, prefecture: addr.prefecture, city: addr.city, address1: addr.address1, address2: addr.address2 ?? "" }
@@ -194,12 +224,39 @@ export default function CheckoutPage() {
           shippingAddress:  sa,
           couponCode:       couponResult?.valid ? couponCode : undefined,
           discountAmount:   couponResult?.valid ? couponResult.discountAmount : 0,
+          point_discount:   pointDiscount,
+          used_points:      usePoints,
         }),
       });
       const data = await res.json();
       if (data.success) {
         clearCart();
         router.push(`/checkout/success?orderNumber=${encodeURIComponent(data.orderNumber ?? "")}`);
+        // ポイント付与
+        if (user?.id) {
+          fetch("/api/points/earn", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              customerId: user.id,
+              orderId: data.orderId,
+              orderTotal: grand,
+            }),
+          }).catch(() => {});
+          // ポイント使用履歴記録
+          if (usePoints > 0) {
+            fetch("/api/points/use", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                customerId: user.id,
+                points: usePoints,
+                orderId: data.orderId,
+                commit: true,
+              }),
+            }).catch(() => {});
+          }
+        }
         return;
       } else {
         setPlaceError(data.error ?? "注文処理に失敗しました。もう一度お試しください。");
@@ -232,7 +289,7 @@ export default function CheckoutPage() {
   const productSubtotal  = productTotal();
   const warrantySubtotal = warrantyTotal();
   const discount         = couponResult?.valid ? couponResult.discountAmount : 0;
-  const grandTotal       = Math.max(0, productSubtotal + warrantySubtotal + shippingFee - discount);
+  const grandTotal       = Math.max(0, productSubtotal + warrantySubtotal + shippingFee - discount - pointDiscount);
   const remaining        = Math.max(0, freeThreshold - productSubtotal);
 
   return (
@@ -434,6 +491,36 @@ export default function CheckoutPage() {
               </div>
             )}
 
+            {/* ポイント使用セクション（ログイン済みのみ） */}
+            {user && pointBalance > 0 && (
+              <div style={{background:"#f0fafa",border:"1px solid #0ABAB5",borderRadius:8,padding:16,marginTop:16}}>
+                <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#0ABAB5"}}>🎯 保有ポイント：{pointBalance.toLocaleString()}pt</div>
+                <div style={{fontSize:12,color:"#888",marginBottom:12}}>
+                  ※ 今回ご利用の場合は0.5倍換算（300pt→150円引き）、次回以降は1pt=1円でご利用いただけます。
+                </div>
+                {usePoints === 0 ? (
+                  <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                    <button
+                      onClick={() => handleUsePoints(Math.min(pointBalance, grandTotal * 2))}
+                      style={{background:"#0ABAB5",color:"#fff",border:"none",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"pointer"}}
+                    >
+                      全ポイントを使う（{Math.floor(Math.min(pointBalance, grandTotal * 2) * 0.5).toLocaleString()}円引き）
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{display:"flex",alignItems:"center",gap:12}}>
+                    <span style={{fontSize:13,color:"#2e7d32",fontWeight:700}}>✅ {usePoints.toLocaleString()}pt使用（{pointDiscount.toLocaleString()}円引き）</span>
+                    <button
+                      onClick={handleClearPoints}
+                      style={{background:"none",border:"1px solid #ccc",padding:"4px 12px",borderRadius:4,fontSize:12,cursor:"pointer",color:"#666"}}
+                    >
+                      取消
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Payment placeholder */}
             <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,padding:16}}>
               <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>
@@ -485,6 +572,13 @@ export default function CheckoutPage() {
               <div style={{ display: "flex", justifyContent: "space-between", color: "#2e7d32", fontWeight: 500 }}>
                 <span>クーポン割引</span>
                 <span>-¥{couponResult.discountAmount.toLocaleString()}</span>
+              </div>
+            )}
+
+            {pointDiscount > 0 && (
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#2e7d32"}}>
+                <span>ポイント割引（{usePoints.toLocaleString()}pt使用）</span>
+                <span>-¥{pointDiscount.toLocaleString()}</span>
               </div>
             )}
 

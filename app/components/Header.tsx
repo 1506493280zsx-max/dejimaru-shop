@@ -109,6 +109,15 @@ export default function Header() {
                 🛒 カート
                 {cartCount>0&&<span style={{background:"#FFE000",color:"#333",borderRadius:10,padding:"1px 6px",fontSize:10,fontWeight:900}}>{cartCount}</span>}
               </button>
+              <button
+                onClick={() => {
+                  const val = prompt("注文番号を入力してください");
+                  if (val && val.trim()) window.open("/api/invoice/" + val.trim(), "_blank");
+                }}
+                style={{background:"#fff",color:"#0ABAB5",border:"2px solid #0ABAB5",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}
+              >
+                📄 請求書発行
+              </button>
             </div>
           </div>
         </div>

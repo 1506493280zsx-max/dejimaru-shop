@@ -20,14 +20,14 @@ export async function POST(req: NextRequest) {
 
     // 1. 注文情報を取得
     const orderRes = await fetch(
-      `${DIRECTUS}/items/orders/${orderId}?fields=id,order_number,guest_email,status,tracking_number,shipping_carrier,total,shipping_address,customer_id`,
+      `${DIRECTUS}/items/orders/${orderId}?fields=id,order_number,guest_email,status,tracking_number,shipping_carrier,total,shipping_address,customer_id,shipped_at`,
       { headers: H() }
     );
     const order = (await orderRes.json()).data;
     if (!order) return NextResponse.json({ error: "order not found" }, { status: 404 });
 
-    // 既にshipped済みならスキップ（重複送信防止）
-    if (order.status === "shipped") {
+    // shipped_atが既にセットされていたら重複送信防止でスキップ
+    if (order.shipped_at) {
       return NextResponse.json({ skipped: true, reason: "already shipped" });
     }
 

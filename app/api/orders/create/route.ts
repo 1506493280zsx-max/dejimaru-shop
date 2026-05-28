@@ -23,8 +23,6 @@ export async function POST(req: NextRequest) {
 
   try {
     const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress, couponCode, discountAmount } = await req.json();
-    console.log("[orders/create] couponCode:", couponCode);
-    console.log("[orders/create] discountAmount:", discountAmount);
 
     const order_number = generateOrderNumber();
 

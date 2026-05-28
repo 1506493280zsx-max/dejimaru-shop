@@ -26,6 +26,11 @@ export async function POST(req: NextRequest) {
     const order = (await orderRes.json()).data;
     if (!order) return NextResponse.json({ error: "order not found" }, { status: 404 });
 
+    // 既にshipped済みならスキップ（重複送信防止）
+    if (order.status === "shipped") {
+      return NextResponse.json({ skipped: true, reason: "already shipped" });
+    }
+
     // 2. メールアドレスを取得
     let email = order.guest_email;
     let firstName = "";

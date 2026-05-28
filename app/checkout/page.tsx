@@ -404,32 +404,6 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* Coupon input */}
-            <div style={{ background: "#f9f9f9", borderRadius: 8, padding: 16, marginTop: 12 }}>
-              <p style={{ fontWeight: 600, marginBottom: 8 }}>🎫 クーポンコード</p>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input
-                  type="text"
-                  value={couponCode}
-                  onChange={e => { setCouponCode(e.target.value); setCouponResult(null); }}
-                  placeholder="クーポンコードを入力"
-                  style={{ flex: 1, padding: "8px 12px", border: "1px solid #ddd", borderRadius: 6, fontSize: 14 }}
-                />
-                <button
-                  onClick={handleApplyCoupon}
-                  disabled={couponLoading || !couponCode.trim()}
-                  style={{ padding: "8px 16px", background: "#0097a7", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 14 }}
-                >
-                  {couponLoading ? "確認中..." : "適用"}
-                </button>
-              </div>
-              {couponResult && (
-                <p style={{ marginTop: 8, fontSize: 13, color: couponResult.valid ? "#2e7d32" : "#c62828" }}>
-                  {couponResult.message}
-                </p>
-              )}
-            </div>
-
             {/* Payment placeholder */}
             <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,padding:16}}>
               <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>

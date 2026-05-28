@@ -1,5 +1,6 @@
 import { getBlogPosts } from "@/lib/blog";
 import BlogListClient from "./BlogListClient";
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "BLOG | AI Across ショップ",

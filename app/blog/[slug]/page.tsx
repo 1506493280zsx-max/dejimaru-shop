@@ -1,16 +1,8 @@
 import { notFound } from "next/navigation";
-import { getBlogPosts, getBlogPostBySlug, getComments } from "@/lib/blog";
+import { getBlogPostBySlug, getComments } from "@/lib/blog";
 import { getImageUrl } from "@/lib/directus";
 import BlogCommentSection from "@/app/components/BlogCommentSection";
-
-export async function generateStaticParams() {
-  try {
-    const posts = await getBlogPosts();
-    return posts.map((post) => ({ slug: post.slug }));
-  } catch {
-    return [];
-  }
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,

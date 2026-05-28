@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 4. 領取回数チェック
-    const ucR = await fetch(`${DIRECTUS}/items/user_coupons?filter[customer_id][_eq]=${customer.id}&filter[coupon_id][_eq]=${coupon.id}`, { headers: H() });
+    const ucR = await fetch(`${DIRECTUS}/items/user_coupons?filter[customer_id][_eq]=${customer.id}&filter[coupon_id][_eq]=${coupon.id}&filter[used_at][_null]=false`, { headers: H() });
     const ucD = await ucR.json();
     if ((ucD.data?.length || 0) >= coupon.max_claims_per_user) {
       return NextResponse.json({ valid: false, message: "このクーポンはすでに使用済みです" });

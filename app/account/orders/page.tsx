@@ -51,7 +51,10 @@ export default function OrdersPage() {
     try {
       const res = await fetch(
         `/api/orders/list?email=${encodeURIComponent(user!.email)}`,
-        { cache: "no-store" }
+        {
+          cache: "no-store",
+          headers: { Authorization: `Bearer ${token}` }
+        }
       );
       const data = await res.json();
       setOrders(data.data || []);
@@ -67,8 +70,11 @@ export default function OrdersPage() {
     try {
       const res = await fetch("/api/orders/cancel", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId, userId: user?.id }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ orderId }),
       });
       const data = await res.json();
       if (!res.ok) {

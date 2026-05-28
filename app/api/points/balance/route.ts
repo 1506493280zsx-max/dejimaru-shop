@@ -6,8 +6,19 @@ const H = { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json"
 
 export async function GET(req: NextRequest) {
   try {
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+    if (!token) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+    const meRes = await fetch(`${process.env.DIRECTUS_URL || "https://directus-production-2cfe.up.railway.app"}/users/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!meRes.ok) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    const me = (await meRes.json()).data;
+
+    // customerId が自分のIDと一致するか確認
     const customerId = req.nextUrl.searchParams.get("customerId");
-    if (!customerId) return NextResponse.json({ error: "customerId required" }, { status: 400 });
+    if (customerId !== me.id) return NextResponse.json({ error: "unauthorized" }, { status: 403 });
 
     // customerId is a Directus auth UUID — look up email via users endpoint
     const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=email`, { headers: H });

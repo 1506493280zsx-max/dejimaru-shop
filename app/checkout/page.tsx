@@ -20,7 +20,7 @@ const inp: React.CSSProperties = {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, productTotal, warrantyTotal, count, clearCart } = useCartStore();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
 
   // ── 既存 state ──────────────────────────────────────────────
   const [mounted, setMounted] = useState(false);
@@ -81,7 +81,9 @@ export default function CheckoutPage() {
   // ポイント残高取得（ログイン済みのみ）
   useEffect(() => {
     if (!user?.id) return;
-    fetch(`/api/points/balance?customerId=${user.id}`)
+    fetch(`/api/points/balance?customerId=${user.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(r => r.json())
       .then(d => {
         setPointBalance(d.points || 0);

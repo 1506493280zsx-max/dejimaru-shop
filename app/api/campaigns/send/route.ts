@@ -8,6 +8,12 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
+    const authHeader = req.headers.get("Authorization");
+    const secret = authHeader?.replace("Bearer ", "");
+    if (secret !== process.env.ADMIN_TOKEN) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
     const { campaignId } = await req.json();
     if (!campaignId) return NextResponse.json({ error: "campaignId required" }, { status: 400 });
 

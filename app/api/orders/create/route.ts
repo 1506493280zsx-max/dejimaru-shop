@@ -23,7 +23,48 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress, couponCode, discountAmount, customerId } = await req.json();
+    const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress, couponCode, discountAmount, customerId, pointsUsed } = await req.json();
+
+    // サーバー側で金額を再計算（フロントの値を信用しない）
+    const itemsRes = await Promise.all(
+      items.map(async (item: any) => {
+        const pRes = await fetch(
+          `${DIRECTUS}/items/products?filter[id][_eq]=${item.product_id}&fields=price&limit=1`,
+          { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+        );
+        const pData = await pRes.json();
+        const serverPrice = pData.data?.[0]?.price || 0;
+        return { ...item, unit_price: serverPrice };
+      })
+    );
+    const serverSubtotal = itemsRes.reduce((sum: number, item: any) => sum + item.unit_price * item.quantity, 0);
+    const serverWarrantySubtotal = itemsRes.reduce((sum: number, item: any) =>
+      sum + (item.warranty_selected ? (item.warranty_price || 0) * item.quantity : 0), 0);
+
+    // クーポン割引をサーバー側で検証
+    let serverDiscount = 0;
+    if (couponCode) {
+      const cpRes = await fetch(
+        `${DIRECTUS}/items/coupons?filter[code][_eq]=${couponCode}&filter[is_active][_eq]=true&limit=1`,
+        { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+      );
+      const cpData = await cpRes.json();
+      const coupon = cpData.data?.[0];
+      if (coupon) {
+        serverDiscount = coupon.discount_type === "percent"
+          ? Math.floor(serverSubtotal * coupon.discount_value / 100)
+          : coupon.discount_value;
+      }
+    }
+
+    // ポイント割引をサーバー側で検証（最大50%換算）
+    const serverPointDiscount = Math.min(
+      Math.floor((pointsUsed || 0) * 0.5),
+      serverSubtotal
+    );
+
+    const serverShippingFee = serverSubtotal >= 5000 ? 0 : 800;
+    const serverTotal = Math.max(0, serverSubtotal + serverWarrantySubtotal + serverShippingFee - serverDiscount - serverPointDiscount);
 
     const order_number = generateOrderNumber();
 
@@ -38,12 +79,12 @@ export async function POST(req: NextRequest) {
         customer_id: customerId || null,
         guest_email: email || null,
         status: "pending",
-        subtotal:       subtotal ?? total,
-        warranty_total: warrantySubtotal ?? 0,
-        shipping_fee:   shippingFee ?? 0,
-        discount_amount: discountAmount ?? 0,
-        coupon_code: couponCode ?? null,
-        total,
+        subtotal:        serverSubtotal,
+        warranty_total:  serverWarrantySubtotal,
+        shipping_fee:    serverShippingFee,
+        discount_amount: serverDiscount,
+        coupon_code:     couponCode ?? null,
+        total:           serverTotal,
         currency: "JPY",
         shipping_address: shippingAddress ?? null,
       }),

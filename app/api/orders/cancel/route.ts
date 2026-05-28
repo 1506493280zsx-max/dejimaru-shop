@@ -6,7 +6,19 @@ const H = { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json"
 
 export async function POST(req: NextRequest) {
   try {
-    const { orderId, userId } = await req.json();
+    // Authorizationヘッダーからtokenを取得して本人確認
+    const authHeader = req.headers.get("Authorization");
+    const token = authHeader?.replace("Bearer ", "");
+    if (!token) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+    // tokenでDirectusから現在のユーザーを取得
+    const meRes = await fetch(`${process.env.DIRECTUS_URL || "https://directus-production-2cfe.up.railway.app"}/users/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    if (!meRes.ok) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    const me = (await meRes.json()).data;
+
+    const { orderId } = await req.json();
     if (!orderId) return NextResponse.json({ error: "orderId required" }, { status: 400 });
 
     // 注文取得
@@ -15,7 +27,7 @@ export async function POST(req: NextRequest) {
     if (!order) return NextResponse.json({ error: "order not found" }, { status: 404 });
 
     // 本人確認
-    if (userId && order.customer_id !== userId) {
+    if (order.customer_id && order.customer_id !== me.id) {
       return NextResponse.json({ error: "unauthorized" }, { status: 403 });
     }
 

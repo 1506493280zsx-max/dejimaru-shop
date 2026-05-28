@@ -4,7 +4,7 @@ import { useAuthStore } from "@/lib/auth-store";
 import { useRouter } from "next/navigation";
 
 export default function PointsPage() {
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
   const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [rate, setRate] = useState(100);
@@ -13,10 +13,14 @@ export default function PointsPage() {
 
   useEffect(() => {
     if (!user?.id) { router.push("/login"); return; }
-    fetch(`/api/points/balance?customerId=${user.id}`)
+    fetch(`/api/points/balance?customerId=${user.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(r => r.json())
       .then(d => { setBalance(d.points || 0); setRate(d.rate || 100); });
-    fetch(`/api/points/history?customerId=${user.id}`)
+    fetch(`/api/points/history?customerId=${user.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(r => r.json())
       .then(d => { setTransactions(d.transactions || []); setLoading(false); });
   }, [user]);

@@ -87,7 +87,43 @@ export async function POST(req: NextRequest) {
     }
     console.log("[orders/ship] mail sent:", mailData?.id, "to:", email);
 
-    // 6. 発送済みステータスに更新
+    // 6. ポイント付与（発送時に確定）
+    if (order.customer_id) {
+      const rateRes = await fetch(
+        `${DIRECTUS}/items/point_settings?filter[is_active][_eq]=true&limit=1&sort=-created_at`,
+        { headers: H() }
+      );
+      const rate = (await rateRes.json()).data?.[0]?.rate || 100;
+      const earnedPoints = Math.floor((order.total || 0) / rate);
+      if (earnedPoints > 0) {
+        const cusRes = await fetch(
+          `${DIRECTUS}/items/customers?filter[id][_eq]=${order.customer_id}&fields=id,points&limit=1`,
+          { headers: H() }
+        );
+        const customer = (await cusRes.json()).data?.[0];
+        if (customer) {
+          const newPoints = (customer.points || 0) + earnedPoints;
+          await fetch(`${DIRECTUS}/items/customers/${customer.id}`, {
+            method: "PATCH",
+            headers: H(),
+            body: JSON.stringify({ points: newPoints }),
+          });
+          await fetch(`${DIRECTUS}/items/point_transactions`, {
+            method: "POST",
+            headers: H(),
+            body: JSON.stringify({
+              customer_id: order.customer_id,
+              order_id: order.id,
+              type: "earn",
+              points: earnedPoints,
+              description: `注文 #${order.order_number} 発送確定ポイント付与`,
+            }),
+          });
+        }
+      }
+    }
+
+    // 7. 発送済みステータスに更新
     await fetch(`${DIRECTUS}/items/orders/${orderId}`, {
       method: "PATCH",
       headers: H(),

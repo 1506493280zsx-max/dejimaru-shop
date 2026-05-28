@@ -17,7 +17,16 @@ export default function AccountPage() {
   const { count: cartCount } = useCartStore();
   const { count: wishCount } = useWishlistStore();
   const [mounted, setMounted] = useState(false);
+  const [pointBalance, setPointBalance] = useState(0);
   useEffect(()=>setMounted(true),[]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch(`/api/points/balance?customerId=${user.id}`)
+      .then(r => r.json())
+      .then(d => setPointBalance(d.points || 0))
+      .catch(() => {});
+  }, [user]);
 
   const handleLogout = () => {
     clearAuth();
@@ -46,6 +55,7 @@ export default function AccountPage() {
     {title:"パスワードの変更",sub:"パスワードを変更する",path:"/account/password",badge:null},
     {title:"お届け先の管理",sub:"配送先住所を登録・変更",path:"/account/address",badge:null},
     {title:"🎫 マイクーポン",sub:"保有クーポンを確認",path:"/account/coupons",badge:null},
+    {title:"🎯 ポイント履歴",sub:"ポイント獲得・使用履歴",path:"/account/points",badge:null},
   ];
 
   return (
@@ -69,7 +79,7 @@ export default function AccountPage() {
           </button>
         </div>
 
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10,marginBottom:16}}>
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:10,marginBottom:16}}>
           {[
             {label:"カート",value:mounted?cartCount():0,unit:"点",path:"/cart",color:C.red},
             {label:"お気に入り",value:mounted?wishCount():0,unit:"件",path:"/account/wishlist",color:C.red},
@@ -83,6 +93,11 @@ export default function AccountPage() {
               <div style={{fontSize:11,color:C.textSub,marginTop:4}}>{s.label}</div>
             </div>
           ))}
+          <div style={{background:"#f0fafa",border:"1px solid #0ABAB5",borderRadius:8,padding:16,textAlign:"center",cursor:"pointer"}}
+            onClick={()=>router.push("/account/points")}>
+            <div style={{fontSize:24,fontWeight:700,color:"#0ABAB5"}}>{pointBalance.toLocaleString()}</div>
+            <div style={{fontSize:12,color:"#888",marginTop:4}}>ポイント残高</div>
+          </div>
         </div>
 
         <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,overflow:"hidden",marginBottom:16}}>

@@ -24,28 +24,24 @@ export async function GET(req: NextRequest) {
     );
     const cusData = await cusRes.json();
     const customer = cusData.data?.[0];
-    console.log("[DEBUG] email:", email);
-    console.log("[DEBUG] customer:", JSON.stringify(customer));
-    console.log("[DEBUG] cusData:", JSON.stringify(cusData));
     if (!customer) {
       const guestRes = await fetch(
-        `${DIRECTUS}/items/orders?filter[guest_email][_eq]=${encodeURIComponent(email)}&fields=id,order_number,status,total,subtotal,shipping_fee,payment_method,created_at,shipping_address&sort=-created_at`,
+        `${DIRECTUS}/items/orders?filter[guest_email][_eq]=${encodeURIComponent(email)}&fields=id,order_number,status,total,subtotal,shipping_fee,discount_amount,warranty_total,payment_method,created_at,shipping_address,tracking_number,shipping_carrier,order_items.id,order_items.product_name,order_items.quantity,order_items.unit_price,order_items.total_price,order_items.warranty_selected,order_items.warranty_price&sort=-created_at`,
         { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
       );
       const guestData = await guestRes.json();
-      console.log("[DEBUG] guestData:", JSON.stringify(guestData));
       return NextResponse.json({ data: guestData.data ?? [] });
     }
 
     const ordRes = await fetch(
-      `${DIRECTUS}/items/orders?filter[customer_id][_eq]=${customer.id}&fields=id,order_number,status,total,subtotal,shipping_fee,payment_method,created_at,shipping_address&sort=-created_at`,
+      `${DIRECTUS}/items/orders?filter[customer_id][_eq]=${customer.id}&fields=id,order_number,status,total,subtotal,shipping_fee,discount_amount,warranty_total,payment_method,created_at,shipping_address,tracking_number,shipping_carrier,order_items.id,order_items.product_name,order_items.quantity,order_items.unit_price,order_items.total_price,order_items.warranty_selected,order_items.warranty_price&sort=-created_at`,
       { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
     );
     const ordData = await ordRes.json();
     // customer_id で見つからなければ guest_email でフォールバック
     if (!ordData.data || ordData.data.length === 0) {
       const guestRes2 = await fetch(
-        `${DIRECTUS}/items/orders?filter[guest_email][_eq]=${encodeURIComponent(email)}&fields=id,order_number,status,total,subtotal,shipping_fee,payment_method,created_at,shipping_address&sort=-created_at`,
+        `${DIRECTUS}/items/orders?filter[guest_email][_eq]=${encodeURIComponent(email)}&fields=id,order_number,status,total,subtotal,shipping_fee,discount_amount,warranty_total,payment_method,created_at,shipping_address,tracking_number,shipping_carrier,order_items.id,order_items.product_name,order_items.quantity,order_items.unit_price,order_items.total_price,order_items.warranty_selected,order_items.warranty_price&sort=-created_at`,
         { headers: { Authorization: `Bearer ${token}` }, cache: "no-store" }
       );
       const guestData2 = await guestRes2.json();

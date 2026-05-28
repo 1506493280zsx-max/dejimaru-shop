@@ -140,34 +140,53 @@ export default function OrdersPage() {
                     )}
                   </div>
 
-                  {/* 注文詳細 */}
-                  <div style={{padding:"12px 16px"}}>
-                    <div style={{display:"flex",gap:20,flexWrap:"wrap"}}>
-                      <div style={{flex:1,minWidth:200}}>
-                        <div style={{fontSize:11,fontWeight:700,color:C.textSub,marginBottom:6}}>金額内訳</div>
-                        <div style={{fontSize:12,color:C.textSub,display:"flex",flexDirection:"column",gap:3}}>
-                          <div style={{display:"flex",justifyContent:"space-between"}}>
-                            <span>小計</span><span>¥{(order.subtotal||0).toLocaleString()}</span>
-                          </div>
-                          <div style={{display:"flex",justifyContent:"space-between"}}>
-                            <span>送料</span><span>{order.shipping_fee===0?"無料":`¥${(order.shipping_fee||0).toLocaleString()}`}</span>
-                          </div>
-                          <div style={{display:"flex",justifyContent:"space-between",fontWeight:700,color:C.red,borderTop:`1px solid ${C.border}`,paddingTop:4,marginTop:2}}>
-                            <span>合計</span><span>¥{(order.total||0).toLocaleString()}</span>
-                          </div>
+                  {/* 商品一覧 */}
+                  <div style={{padding:"12px 16px",borderBottom:"1px solid #f0f0f0"}}>
+                    <div style={{fontSize:12,color:"#888",marginBottom:8}}>購入商品</div>
+                    {(order.order_items||[]).map((item:any,i:number)=>(
+                      <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",padding:"6px 0",borderBottom:"1px solid #f9f9f9"}}>
+                        <div style={{flex:1}}>
+                          <div style={{fontSize:13,fontWeight:600}}>{item.product_name}</div>
+                          {item.warranty_selected&&<div style={{fontSize:11,color:"#0ABAB5",marginTop:2}}>🛡️ 無期限保障 ¥{(item.warranty_price||0).toLocaleString()}</div>}
+                        </div>
+                        <div style={{textAlign:"right",minWidth:120}}>
+                          <div style={{fontSize:13}}>x{item.quantity}</div>
+                          <div style={{fontSize:13,fontWeight:600}}>¥{(item.total_price||0).toLocaleString()}</div>
                         </div>
                       </div>
-                      {addr && (
-                        <div style={{flex:1,minWidth:200}}>
-                          <div style={{fontSize:11,fontWeight:700,color:C.textSub,marginBottom:6}}>お届け先</div>
-                          <div style={{fontSize:12,color:C.textSub,lineHeight:1.8}}>
-                            〒{addr.postal_code}<br/>
-                            {addr.prefecture}{addr.city}{addr.address1}<br/>
-                            {addr.name}
-                          </div>
-                        </div>
-                      )}
+                    ))}
+                  </div>
+
+                  {/* 金額内訳 */}
+                  <div style={{padding:"12px 16px",borderBottom:"1px solid #f0f0f0",display:"flex",gap:32,flexWrap:"wrap"}}>
+                    <div>
+                      <div style={{fontSize:12,color:"#888",marginBottom:4}}>金額内訳</div>
+                      <div style={{fontSize:12}}>小計：¥{order.subtotal?.toLocaleString()}</div>
+                      {(order.warranty_total||0)>0&&<div style={{fontSize:12,color:"#0ABAB5"}}>無期限保障：¥{order.warranty_total?.toLocaleString()}</div>}
+                      {(order.discount_amount||0)>0&&<div style={{fontSize:12,color:"#2e7d32"}}>割引：-¥{order.discount_amount?.toLocaleString()}</div>}
+                      <div style={{fontSize:12}}>送料：{order.shipping_fee===0?"無料":"¥"+order.shipping_fee?.toLocaleString()}</div>
+                      <div style={{fontSize:13,fontWeight:700,color:"#CC2200",marginTop:4}}>合計：¥{order.total?.toLocaleString()}</div>
                     </div>
+                    <div>
+                      <div style={{fontSize:12,color:"#888",marginBottom:4}}>お届け先</div>
+                      <div style={{fontSize:12}}>〒{order.shipping_address?.postalCode} {order.shipping_address?.prefecture}{order.shipping_address?.city}</div>
+                      <div style={{fontSize:12}}>{order.shipping_address?.address1} {order.shipping_address?.address2||""}</div>
+                    </div>
+                    {order.tracking_number&&(
+                      <div>
+                        <div style={{fontSize:12,color:"#888",marginBottom:4}}>追跡番号</div>
+                        <div style={{fontSize:12,fontWeight:600}}>{order.tracking_number}</div>
+                        <div style={{fontSize:11,color:"#888"}}>{order.shipping_carrier}</div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 請求書ボタン */}
+                  <div style={{padding:"10px 16px",textAlign:"right"}}>
+                    <a href={`/api/invoice/${order.order_number}`} target="_blank"
+                      style={{fontSize:12,color:"#0ABAB5",textDecoration:"none",border:"1px solid #0ABAB5",padding:"4px 12px",borderRadius:4}}>
+                      📄 請求書を発行
+                    </a>
                   </div>
                 </div>
               );

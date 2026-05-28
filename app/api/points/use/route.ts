@@ -6,7 +6,8 @@ const H = { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json"
 
 export async function POST(req: NextRequest) {
   try {
-    const { customerId, points } = await req.json();
+    const body = await req.json();
+    const { customerId, points, commit, orderId } = body;
     if (!customerId || !points) {
       return NextResponse.json({ error: "customerId, points required" }, { status: 400 });
     }
@@ -26,6 +27,27 @@ export async function POST(req: NextRequest) {
 
     // 当次使用：50%換算（300pt → 150円割引）
     const discountAmount = Math.floor(points * 0.5);
+
+    // commit=true の場合、実際にポイントを消費する
+    if (commit) {
+      const newPoints = currentPoints - points;
+      await fetch(`${DIRECTUS}/items/customers/${customer.id}`, {
+        method: "PATCH",
+        headers: H,
+        body: JSON.stringify({ points: newPoints }),
+      });
+      await fetch(`${DIRECTUS}/items/point_transactions`, {
+        method: "POST",
+        headers: H,
+        body: JSON.stringify({
+          customer_id: customerId,
+          order_id: orderId || null,
+          type: "use",
+          points: -points,
+          description: `注文でポイント使用`,
+        }),
+      });
+    }
 
     return NextResponse.json({
       success: true,

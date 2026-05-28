@@ -3,10 +3,15 @@ import { sendContactEmail } from "@/lib/mail";
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, type, message } = await req.json();
+    const { name, email, type, message, website } = await req.json();
 
     if (!name || !email || !message) {
       return NextResponse.json({ error: "必須項目が未入力です" }, { status: 400 });
+    }
+
+    // ハニーポット：ボット対策（隐しフィールド）
+    if (website) {
+      return NextResponse.json({ success: true }); // ボットには成功を返してシグナルを与えない
     }
 
     const replySubject = encodeURIComponent(`Re: 【AI Across ショップ】${type}`);

@@ -30,11 +30,7 @@ export default function PointsPage() {
       <div style={{background:"#f0fafa",border:"2px solid #0ABAB5",borderRadius:12,padding:24,marginBottom:24,textAlign:"center"}}>
         <div style={{fontSize:36,fontWeight:700,color:"#0ABAB5"}}>{balance.toLocaleString()}<span style={{fontSize:16,marginLeft:4}}>pt</span></div>
         <div style={{fontSize:13,color:"#666",marginTop:8}}>現在のポイント残高</div>
-        <div style={{fontSize:12,color:"#888",marginTop:4}}>現在のレート：{rate}円 = 1pt</div>
-        <div style={{fontSize:12,color:"#e65100",marginTop:8,background:"#fff3e0",padding:"8px 12px",borderRadius:6}}>
-          ⚠️ 今回のお買い物でご利用の場合は0.5倍換算（300pt→150円引き）<br/>
-          次回以降のご利用は1pt=1円でご使用いただけます
-        </div>
+        <div style={{fontSize:12,color:"#888",marginTop:4}}>100円のお買い物ごとに1pt付与</div>
       </div>
 
       {/* 履歴一覧 */}

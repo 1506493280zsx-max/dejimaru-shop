@@ -37,9 +37,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ orde
     </tr>
     ${item.warranty_selected ? `
     <tr>
-      <td style="padding:4px 10px 10px 20px;border-bottom:1px solid #eee;color:#333;font-size:13px;">無期限保障</td>
-      <td style="padding:4px 10px 10px;border-bottom:1px solid #eee;text-align:center;font-size:13px;">${item.quantity}</td>
-      <td style="padding:4px 10px 10px;border-bottom:1px solid #eee;text-align:right;font-size:13px;">¥${warrantyTotal.toLocaleString("ja-JP")}</td>
+      <td style="padding:10px;border-bottom:1px solid #eee;font-size:14px;">無期限保障</td>
+      <td style="padding:10px;border-bottom:1px solid #eee;font-size:14px;text-align:center;">${item.quantity}</td>
+      <td style="padding:10px;border-bottom:1px solid #eee;font-size:14px;text-align:right;">¥${warrantyTotal.toLocaleString("ja-JP")}</td>
     </tr>` : ""}`;
   }).join("");
 

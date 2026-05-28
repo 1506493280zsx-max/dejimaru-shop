@@ -53,6 +53,26 @@ export default function OrdersPage() {
     setLoading(false);
   };
 
+  const handleCancel = async (orderId: string) => {
+    if (!confirm("この注文をキャンセルしますか？")) return;
+    try {
+      const res = await fetch("/api/orders/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId, userId: user?.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || "キャンセルに失敗しました");
+        return;
+      }
+      alert("注文をキャンセルしました");
+      router.refresh();
+    } catch {
+      alert("エラーが発生しました");
+    }
+  };
+
   const formatDate = (dt: string) => {
     if (!dt) return "—";
     return new Date(dt).toLocaleDateString("ja-JP", {year:"numeric",month:"long",day:"numeric"});
@@ -110,6 +130,14 @@ export default function OrdersPage() {
                         {st.label}
                       </span>
                     </div>
+                    {order.status === "pending" && (
+                      <button
+                        onClick={() => handleCancel(order.id)}
+                        className="text-sm text-red-500 border border-red-300 rounded px-3 py-1 hover:bg-red-50 transition"
+                      >
+                        注文をキャンセル
+                      </button>
+                    )}
                   </div>
 
                   {/* 注文詳細 */}

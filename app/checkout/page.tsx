@@ -491,30 +491,37 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {/* ポイント使用セクション（ログイン済みのみ） */}
             {user && pointBalance > 0 && (
               <div style={{background:"#f0fafa",border:"1px solid #0ABAB5",borderRadius:8,padding:16,marginTop:16}}>
-                <div style={{fontWeight:700,fontSize:14,marginBottom:8,color:"#0ABAB5"}}>🎯 保有ポイント：{pointBalance.toLocaleString()}pt</div>
-                <div style={{fontSize:12,color:"#888",marginBottom:12}}>
-                  ※ 今回ご利用の場合は0.5倍換算（300pt→150円引き）、次回以降は1pt=1円でご利用いただけます。
+                <div style={{fontWeight:700,fontSize:14,marginBottom:8}}>保有ポイント：{pointBalance.toLocaleString()}pt</div>
+                <div style={{fontSize:12,color:"#e65100",background:"#fff3e0",padding:"8px 12px",borderRadius:6,marginBottom:12}}>
+                  今回ご利用：{pointBalance.toLocaleString()}pt → {Math.floor(pointBalance * 0.5).toLocaleString()}円引き（0.5倍換算）<br/>
+                  次回ご利用：{pointBalance.toLocaleString()}pt → {pointBalance.toLocaleString()}円引き（1pt=1円）
                 </div>
                 {usePoints === 0 ? (
                   <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                     <button
-                      onClick={() => handleUsePoints(Math.min(pointBalance, grandTotal * 2))}
-                      style={{background:"#0ABAB5",color:"#fff",border:"none",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"pointer"}}
+                      onClick={() => handleUsePoints(pointBalance)}
+                      style={{background:"#0ABAB5",color:"#fff",border:"none",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"pointer",fontWeight:700}}
                     >
-                      全ポイントを使う（{Math.floor(Math.min(pointBalance, grandTotal * 2) * 0.5).toLocaleString()}円引き）
+                      今回使う（{Math.floor(pointBalance * 0.5).toLocaleString()}円引き）
+                    </button>
+                    <button
+                      onClick={() => {}}
+                      style={{background:"#fff",color:"#666",border:"1px solid #ccc",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"default"}}
+                      disabled
+                    >
+                      次回に取っておく
                     </button>
                   </div>
                 ) : (
-                  <div style={{display:"flex",alignItems:"center",gap:12}}>
-                    <span style={{fontSize:13,color:"#2e7d32",fontWeight:700}}>✅ {usePoints.toLocaleString()}pt使用（{pointDiscount.toLocaleString()}円引き）</span>
+                  <div style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+                    <span style={{fontSize:13,color:"#2e7d32",fontWeight:700}}>{usePoints.toLocaleString()}pt使用 → {pointDiscount.toLocaleString()}円引き</span>
                     <button
                       onClick={handleClearPoints}
                       style={{background:"none",border:"1px solid #ccc",padding:"4px 12px",borderRadius:4,fontSize:12,cursor:"pointer",color:"#666"}}
                     >
-                      取消
+                      取消して次回に取っておく
                     </button>
                   </div>
                 )}
@@ -587,6 +594,13 @@ export default function CheckoutPage() {
               <span>合計（税込）</span>
               <span style={{color:C.red}}>¥{grandTotal.toLocaleString()}</span>
             </div>
+
+            {user && (
+              <div style={{background:"#f0fafa",border:"1px solid #0ABAB5",borderRadius:6,padding:"10px 14px",marginTop:8,fontSize:13}}>
+                この注文で <strong style={{color:"#0ABAB5"}}>{Math.floor(grandTotal / pointRate).toLocaleString()}pt</strong> 獲得予定
+                <div style={{fontSize:11,color:"#888",marginTop:2}}>発送後にポイントが付与されます</div>
+              </div>
+            )}
 
             {/* お届け先サマリー（ログイン済み） */}
             {selectedAddress && (

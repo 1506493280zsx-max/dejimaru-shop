@@ -360,16 +360,6 @@ export default function CheckoutPage() {
               )}
             </div>
 
-            {/* Payment placeholder */}
-            <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,padding:16}}>
-              <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>
-                💳 お支払い方法
-              </div>
-              <div style={{background:"#FFFBF0",border:"1px solid #FFE082",borderRadius:2,padding:12,fontSize:12,color:"#7A6000",textAlign:"center"}}>
-                🚧 Stripe / PayPal coming soon
-              </div>
-            </div>
-
             {myCoupons.length > 0 && (
               <div style={{ background: "#E8F8F8", borderRadius: 8, padding: 12, marginTop: 12 }}>
                 <p style={{ fontWeight: 600, marginBottom: 8, fontSize: 13 }}>🎫 利用できるクーポン</p>
@@ -383,9 +373,25 @@ export default function CheckoutPage() {
                       {item.coupon?.expires_at && <p style={{ fontSize: 11, color: item.daysLeft <= 3 ? "#CC2200" : "#999", margin: "2px 0 0" }}>有効期限：{new Date(item.coupon.expires_at).toLocaleDateString("ja-JP")}（あと{item.daysLeft}日）</p>}
                     </div>
                     <button
-                      onClick={() => {
+                      onClick={async () => {
                         setCouponCode(item.coupon.code);
                         setCouponResult(null);
+                        setCouponLoading(true);
+                        try {
+                          const res = await fetch("/api/coupons/validate", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              code: item.coupon.code,
+                              email: user?.email ?? guestEmail,
+                              cartItems: items.map(i => ({ id: i.id, price: i.price, quantity: i.quantity })),
+                            }),
+                          });
+                          const data = await res.json();
+                          setCouponResult(data);
+                        } finally {
+                          setCouponLoading(false);
+                        }
                       }}
                       style={{ padding: "4px 12px", background: couponResult?.valid && couponCode === item.coupon.code ? "#999" : "#0ABAB5", color: "#fff", border: "none", borderRadius: 4, fontSize: 12, cursor: "pointer", whiteSpace: "nowrap" }}
                     >
@@ -420,6 +426,16 @@ export default function CheckoutPage() {
                   {couponResult.message}
                 </p>
               )}
+            </div>
+
+            {/* Payment placeholder */}
+            <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,padding:16}}>
+              <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>
+                💳 お支払い方法
+              </div>
+              <div style={{background:"#FFFBF0",border:"1px solid #FFE082",borderRadius:2,padding:12,fontSize:12,color:"#7A6000",textAlign:"center"}}>
+                🚧 Stripe / PayPal coming soon
+              </div>
             </div>
 
           </div>

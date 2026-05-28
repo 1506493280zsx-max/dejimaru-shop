@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import fs from "fs";
+import path from "path";
 
 const DIRECTUS = process.env.DIRECTUS_URL || "https://directus-production-2cfe.up.railway.app";
 const TOKEN = process.env.ADMIN_TOKEN!;
@@ -19,6 +21,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ orde
   const phone = addr.phone || "";
   const issueDate = new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" });
   const invoiceNumber = `INV-${orderNumber}`;
+  const stampPath = path.join(process.cwd(), "public", "stamp.png");
+  const stampBase64 = fs.existsSync(stampPath)
+    ? `data:image/png;base64,${fs.readFileSync(stampPath).toString("base64")}`
+    : null;
 
   const itemRows = (order.order_items || []).map((item: any) => {
     const productTotal = item.unit_price * item.quantity;
@@ -58,7 +64,7 @@ table{width:100%;border-collapse:collapse;margin-bottom:30px;}
 thead tr{background:#0ABAB5;color:white;}
 thead td{padding:10px;font-size:13px;}
 .stamp-area{display:flex;justify-content:flex-end;margin-top:20px;}
-.stamp{width:80px;height:80px;border:2px solid #cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#cc0000;font-size:11px;text-align:center;line-height:1.4;}
+.stamp{width:100px;height:100px;opacity:0.85;}
 .footer{margin-top:40px;padding-top:20px;border-top:1px solid #eee;font-size:11px;color:#888;text-align:center;}
 .cancel-notice{background:#fee;border:2px solid #cc0000;border-radius:8px;padding:20px;text-align:center;font-size:18px;color:#cc0000;margin-bottom:30px;}
 @media print{body{padding:20px;}button{display:none;}}
@@ -108,7 +114,10 @@ ${order.status === "cancelled" ? `<div class="cancel-notice">⚠️ この注文
   </tbody>
 </table>
 <div class="stamp-area">
-  <div class="stamp">AI Across<br>合同会社<br>代表印</div>
+  ${stampBase64
+    ? `<img src="${stampBase64}" class="stamp" alt="印章" />`
+    : `<div class="stamp" style="width:80px;height:80px;border:2px solid #cc0000;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#cc0000;font-size:11px;text-align:center;line-height:1.4;">AI Across<br>合同会社<br>代表印</div>`
+  }
 </div>
 <div style="text-align:center;margin-top:20px;">
   <button onclick="window.print()" style="background:#0ABAB5;color:white;border:none;padding:12px 32px;border-radius:4px;font-size:16px;cursor:pointer;">🖨️ PDFとして印刷・保存</button>

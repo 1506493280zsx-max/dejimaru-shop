@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendWelcomeEmail } from "@/lib/mail";
 const DIRECTUS_URL = process.env.DIRECTUS_URL!;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN!;
 
@@ -45,6 +46,13 @@ export async function POST(req: NextRequest) {
         { error: cusError.errors?.[0]?.message || "顧客情報の作成に失敗しました" },
         { status: 400 }
       );
+    }
+
+    // ウェルカムメール送信（失敗してもエラーにしない）
+    try {
+      await sendWelcomeEmail(email, firstName);
+    } catch (e) {
+      console.error("[register] welcome email failed:", e);
     }
 
     // 登録後ログイン

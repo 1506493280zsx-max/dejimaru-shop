@@ -29,12 +29,13 @@ export async function POST(req: NextRequest) {
     const itemsRes = await Promise.all(
       items.map(async (item: any) => {
         const pRes = await fetch(
-          `${DIRECTUS}/items/products?filter[id][_eq]=${item.product_id}&fields=price&limit=1`,
+          `${DIRECTUS}/items/products?filter[id][_eq]=${item.product_id}&fields=price,warranty_price&limit=1`,
           { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
         );
         const pData = await pRes.json();
         const serverPrice = pData.data?.[0]?.price || 0;
-        return { ...item, unit_price: serverPrice };
+        const serverWarrantyPrice = pData.data?.[0]?.warranty_price || 0;
+        return { ...item, unit_price: serverPrice, warranty_price: serverWarrantyPrice };
       })
     );
     const serverSubtotal = itemsRes.reduce((sum: number, item: any) => sum + item.unit_price * item.quantity, 0);
@@ -134,13 +135,13 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 注文確認メール送信
+    // 確認メール送信
     try {
-      const firstName = email.split("@")[0];
-      const mailItems = (items as any[]).map(item => ({
-        product_name: item.name,
+      const firstName = shippingAddress?.firstName || "";
+      const mailItems = (items as any[]).map((item: any) => ({
+        product_name: item.name || item.product_name || "",
         quantity: item.quantity,
-        unit_price: item.price,
+        unit_price: item.price || item.unit_price || 0,
         warranty_selected: item.warrantySelected ?? false,
         warranty_price: item.warrantyPrice ?? 0,
       }));
@@ -149,11 +150,11 @@ export async function POST(req: NextRequest) {
         firstName,
         orderNumber: order_number,
         items: mailItems,
-        subtotal: subtotal ?? total,
-        warrantySubtotal: warrantySubtotal ?? 0,
-        shippingFee: shippingFee ?? 0,
-        discountAmount: discountAmount ?? 0,
-        total,
+        subtotal: serverSubtotal,
+        warrantySubtotal: serverWarrantySubtotal,
+        shippingFee: serverShippingFee,
+        discountAmount: serverDiscount,
+        total: serverTotal,
       });
     } catch (mailErr) {
       console.error("[orders/create] mail error", mailErr);
@@ -236,6 +237,24 @@ export async function POST(req: NextRequest) {
         { success: false, error: "Order item creation failed" },
         { status: 500 }
       );
+    }
+
+    // ポイント使用を実際に控除
+    if (customerId && pointsUsed && pointsUsed > 0) {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "https://aiacrossshop.co.jp"}/api/points/use`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerId,
+            points: pointsUsed,
+            orderId,
+            commit: true,
+          }),
+        });
+      } catch (e) {
+        console.error("[orders/create] points use error", e);
+      }
     }
 
     return NextResponse.json({ success: true, orderId, orderNumber: order_number });

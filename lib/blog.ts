@@ -1,15 +1,19 @@
 const DIRECTUS_URL_FALLBACK = process.env.DIRECTUS_URL ?? "https://directus-production-2cfe.up.railway.app";
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
 
-const adminHeaders = {
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${ADMIN_TOKEN}`,
-};
+// adminHeadersを固定せず、毎回動的に生成する
+function getAdminHeaders(): Record<string, string> {
+  const token = process.env.ADMIN_TOKEN ?? "";
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
 
 async function fetchDirectus(url: string, opts: { next?: { revalidate?: number } } = {}): Promise<any> {
   const next = opts.next ?? { revalidate: 60 };
-  if (ADMIN_TOKEN) {
-    const res = await fetch(url, { headers: adminHeaders, next });
+  const token = process.env.ADMIN_TOKEN ?? "";
+  if (token) {
+    const res = await fetch(url, { headers: getAdminHeaders(), next });
     if (res.ok) return res.json();
     if (res.status !== 401 && res.status !== 403) throw new Error(`HTTP ${res.status}`);
     // 401: token expired / 403: forbidden — fall through to public access
@@ -117,7 +121,7 @@ export async function getComments(postId: string): Promise<BlogComment[]> {
     params.append("sort", "date_created");
     const res = await fetch(
       `${DIRECTUS_URL}/items/blog_comments?${params}`,
-      { headers: adminHeaders, next: { revalidate: 60 } }
+      { headers: getAdminHeaders(), next: { revalidate: 60 } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return (await res.json()).data || [];

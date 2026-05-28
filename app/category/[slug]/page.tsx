@@ -60,15 +60,30 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     : [];
 
   return (
-    <SearchClient
-      initialProducts={products}
-      brands={brands}
-      categories={categories}
-      query=""
-      brandFilter=""
-      categoryFilter={slug}
-      gradeFilter=""
-      pageTitle={category?.name || slug}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://aiacrossshop.co.jp" },
+              { "@type": "ListItem", "position": 2, "name": category?.name || slug, "item": `https://aiacrossshop.co.jp/category/${slug}` }
+            ]
+          })
+        }}
+      />
+      <SearchClient
+        initialProducts={products}
+        brands={brands}
+        categories={categories}
+        query=""
+        brandFilter=""
+        categoryFilter={slug}
+        gradeFilter=""
+        pageTitle={category?.name || slug}
+      />
+    </>
   );
 }

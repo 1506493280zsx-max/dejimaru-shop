@@ -51,6 +51,36 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="ja">
       <body suppressHydrationWarning style={{ margin: 0, padding: 0, fontFamily: "'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif" }}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "AI Across合同会社",
+              "url": "https://aiacrossshop.co.jp",
+              "logo": "https://aiacrossshop.co.jp/icon.png",
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "048-816-3967",
+                "contactType": "customer service",
+                "areaServed": "JP",
+                "availableLanguage": ["Japanese", "Chinese", "English"]
+              },
+              "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "古河市大山1331-2",
+                "addressLocality": "古河市",
+                "addressRegion": "茨城県",
+                "postalCode": "306-0052",
+                "addressCountry": "JP"
+              },
+              "sameAs": [
+                "https://aiacrossshop.co.jp"
+              ]
+            })
+          }}
+        />
         <SiteShell>{children}</SiteShell>
       </body>
     </html>

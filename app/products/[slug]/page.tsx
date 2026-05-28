@@ -84,6 +84,20 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           })
         }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "ホーム", "item": "https://aiacrossshop.co.jp" },
+              { "@type": "ListItem", "position": 2, "name": "商品一覧", "item": "https://aiacrossshop.co.jp/products" },
+              { "@type": "ListItem", "position": 3, "name": product?.name || "", "item": `https://aiacrossshop.co.jp/products/${product?.slug || ""}` }
+            ]
+          })
+        }}
+      />
       <ProductPageClient product={product} />
     </>
   );

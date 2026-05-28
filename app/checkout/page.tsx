@@ -491,25 +491,27 @@ export default function CheckoutPage() {
               </div>
             )}
 
-            {user && pointBalance > 0 && (
+            {user && (
               <div style={{background:"#f0fafa",border:"1px solid #0ABAB5",borderRadius:8,padding:16,marginTop:16}}>
-                <div style={{fontWeight:700,fontSize:14,marginBottom:8}}>保有ポイント：{pointBalance.toLocaleString()}pt</div>
+                <div style={{fontWeight:700,fontSize:14,marginBottom:8}}>
+                  この注文で獲得予定：<span style={{color:"#0ABAB5"}}>{Math.floor(grandTotal / pointRate).toLocaleString()}pt</span>
+                  {pointBalance > 0 && <span style={{fontSize:12,color:"#888",marginLeft:8}}>（保有：{pointBalance.toLocaleString()}pt）</span>}
+                </div>
                 <div style={{fontSize:12,color:"#e65100",background:"#fff3e0",padding:"8px 12px",borderRadius:6,marginBottom:12}}>
-                  今回ご利用：{pointBalance.toLocaleString()}pt → {Math.floor(pointBalance * 0.5).toLocaleString()}円引き（0.5倍換算）<br/>
-                  次回ご利用：{pointBalance.toLocaleString()}pt → {pointBalance.toLocaleString()}円引き（1pt=1円）
+                  今回ご利用：{Math.floor(grandTotal / pointRate).toLocaleString()}pt → {Math.floor(Math.floor(grandTotal / pointRate) * 0.5).toLocaleString()}円引き（0.5倍換算）<br/>
+                  次回ご利用：{Math.floor(grandTotal / pointRate).toLocaleString()}pt → {Math.floor(grandTotal / pointRate).toLocaleString()}円引き（1pt=1円）
                 </div>
                 {usePoints === 0 ? (
                   <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                     <button
-                      onClick={() => handleUsePoints(pointBalance)}
+                      onClick={() => handleUsePoints(Math.floor(grandTotal / pointRate))}
                       style={{background:"#0ABAB5",color:"#fff",border:"none",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"pointer",fontWeight:700}}
                     >
-                      今回使う（{Math.floor(pointBalance * 0.5).toLocaleString()}円引き）
+                      今回使う（{Math.floor(Math.floor(grandTotal / pointRate) * 0.5).toLocaleString()}円引き）
                     </button>
                     <button
-                      onClick={() => {}}
-                      style={{background:"#fff",color:"#666",border:"1px solid #ccc",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"default"}}
                       disabled
+                      style={{background:"#fff",color:"#666",border:"1px solid #ccc",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"default"}}
                     >
                       次回に取っておく
                     </button>

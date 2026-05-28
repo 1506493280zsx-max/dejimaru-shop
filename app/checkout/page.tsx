@@ -279,7 +279,7 @@ export default function CheckoutPage() {
                       <div style={{fontSize:11,color:C.textSub}}>数量: {item.quantity}</div>
                       {item.warrantySelected && (
                         <div style={{fontSize:10,color:C.primary,fontWeight:700}}>
-                          🛡️ プリミアム保証 +¥{item.warrantyPrice.toLocaleString()}
+                          無期限保障 +¥{item.warrantyPrice.toLocaleString()}
                         </div>
                       )}
                     </div>
@@ -457,10 +457,10 @@ export default function CheckoutPage() {
               <span>¥{productSubtotal.toLocaleString()}</span>
             </div>
 
-            {/* プリミアム保証 */}
+            {/* 無期限保障 */}
             {warrantySubtotal > 0 && (
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:8,fontSize:12}}>
-                <span style={{color:C.textSub}}>🛡️ プリミアム保証</span>
+                <span style={{color:C.textSub}}>無期限保障</span>
                 <span style={{color:C.primary,fontWeight:700}}>+¥{warrantySubtotal.toLocaleString()}</span>
               </div>
             )}

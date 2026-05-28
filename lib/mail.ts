@@ -108,7 +108,7 @@ export async function sendOrderConfirmationEmail({
   const resend = new Resend(process.env.RESEND_API_KEY);
   const itemRows = items.map(item => `
     <tr>
-      <td style="padding:8px;border-bottom:1px solid #eee;">${item.product_name}${item.warranty_selected ? '<br><span style="font-size:11px;color:#0ABAB5;">🛡️ プレミアム保証（終身保証）付き</span>' : ''}</td>
+      <td style="padding:8px;border-bottom:1px solid #eee;">${item.product_name}${item.warranty_selected ? '<br><span style="font-size:11px;color:#0ABAB5;">無期限保障付き</span>' : ''}</td>
       <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
       <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">¥${(item.unit_price * item.quantity).toLocaleString()}</td>
     </tr>

@@ -122,7 +122,7 @@ export default function PurchasePanel({
             />
             <div>
               <div style={{fontSize:12, fontWeight:700, color:C.text}}>
-                🛡️ プリミアム保証（終身保証）
+                無期限保障
               </div>
               <div style={{fontSize:11, color:C.primary, fontWeight:700}}>
                 +¥{warrantyPrice.toLocaleString()}

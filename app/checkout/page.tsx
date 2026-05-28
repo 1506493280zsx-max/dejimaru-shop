@@ -214,7 +214,8 @@ export default function CheckoutPage() {
   const selectedAddress  = addresses.find(a => String(a.id) === selectedAddressId) ?? null;
   const productSubtotal  = productTotal();
   const warrantySubtotal = warrantyTotal();
-  const grandTotal       = productSubtotal + warrantySubtotal + shippingFee;
+  const discount         = couponResult?.valid ? couponResult.discountAmount : 0;
+  const grandTotal       = Math.max(0, productSubtotal + warrantySubtotal + shippingFee - discount);
   const remaining        = Math.max(0, freeThreshold - productSubtotal);
 
   return (

@@ -134,7 +134,7 @@ export async function POST(req: NextRequest) {
             product_id:        productId,
             quantity:          item.quantity,
             unit_price:        item.price,
-            total_price:       item.price * item.quantity,
+            total_price:       (item.price + (item.warrantyPrice ?? 0)) * item.quantity,
             warranty_selected: item.warrantySelected ?? false,
             warranty_price:    item.warrantyPrice    ?? 0,
             snapshot:          item,

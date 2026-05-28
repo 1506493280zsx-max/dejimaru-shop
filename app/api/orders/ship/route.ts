@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     });
     if (mailError) {
       console.error("[orders/ship] resend error:", mailError);
-      return NextResponse.json({ error: "mail failed", detail: mailError }, { status: 500 });
+      // メール失敗は無視してポイント付与・ステータス更新を継続
     }
     console.log("[orders/ship] mail sent:", mailData?.id, "to:", email);
 

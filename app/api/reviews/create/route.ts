@@ -7,9 +7,20 @@ const headers = { "Content-Type": "application/json", Authorization: `Bearer ${A
 
 export async function POST(req: NextRequest) {
   try {
+    const authHeader = req.headers.get("Authorization");
+    const userToken = authHeader?.replace("Bearer ", "");
+    if (!userToken) return NextResponse.json({ error: "ログインが必要です" }, { status: 401 });
+
+    const meRes = await fetch(`${DIRECTUS_URL}/users/me`, {
+      headers: { Authorization: `Bearer ${userToken}` }
+    });
+    if (!meRes.ok) return NextResponse.json({ error: "認証エラー" }, { status: 401 });
+    const me = (await meRes.json()).data;
+
     const payload = await req.json();
-    const { product, user_name, rating, title, body: content } = payload;
-    if (!product || !user_name || !rating || !content) {
+    const { product, rating, title, body: content } = payload;
+    const user_name = `${me.last_name || ""} ${me.first_name || ""}`.trim() || "匿名";
+    if (!product || !rating || !content) {
       return NextResponse.json({ error: "必須項目が不足しています" }, { status: 400 });
     }
     const res = await fetch(`${DIRECTUS_URL}/items/product_reviews`, {

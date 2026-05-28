@@ -5,8 +5,16 @@ const TOKEN = process.env.ADMIN_TOKEN;
 
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const email = searchParams.get("email");
+    const authHeader = req.headers.get("Authorization");
+    const userToken = authHeader?.replace("Bearer ", "");
+    if (!userToken) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+
+    const meRes = await fetch(`${DIRECTUS}/users/me`, {
+      headers: { Authorization: `Bearer ${userToken}` }
+    });
+    if (!meRes.ok) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    const me = (await meRes.json()).data;
+    const email = me.email;
 
     if (!email) {
       return NextResponse.json({ error: "Missing email" }, { status: 400 });
@@ -65,13 +73,16 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const authHeader = req.headers.get("Authorization");
+    const userToken = authHeader?.replace("Bearer ", "");
+    if (!userToken) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-    console.log("DIRECTUS:", DIRECTUS);
-    console.log("TOKEN exists:", !!TOKEN);
+    const meRes = await fetch(`${DIRECTUS}/users/me`, {
+      headers: { Authorization: `Bearer ${userToken}` }
+    });
+    if (!meRes.ok) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
     const body = await req.json();
-
-    console.log("BODY:", body);
 
     const res = await fetch(
       `${DIRECTUS}/items/addresses`,
@@ -86,9 +97,6 @@ export async function POST(req: NextRequest) {
     );
 
     const text = await res.text();
-
-    console.log("DIRECTUS STATUS:", res.status);
-    console.log("DIRECTUS RESPONSE:", text);
 
     return NextResponse.json(
       {

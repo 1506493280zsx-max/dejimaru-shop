@@ -10,7 +10,6 @@ const C = {
 };
 
 const DIRECTUS = "https://directus-production-2cfe.up.railway.app";
-const TOKEN = "a5RnKIXFibE5JV_50ir42Hk84JnMZVMb";
 
 function Input({label,value,onChange,placeholder,required=false,type="text"}:{label:string,value:string,onChange:(v:string)=>void,placeholder?:string,required?:boolean,type?:string}) {
   return (

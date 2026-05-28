@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress, couponCode, discountAmount } = await req.json();
+    const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress, couponCode, discountAmount, customerId } = await req.json();
 
     const order_number = generateOrderNumber();
 
@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         order_number,
+        customer_id: customerId || null,
         guest_email: email || null,
         status: "pending",
         subtotal:       subtotal ?? total,

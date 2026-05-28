@@ -217,6 +217,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items,
           email:            user?.email ?? guestEmail,
+          customerId:       user?.id || null,
           subtotal:         productSub,
           warrantySubtotal: warrantySub,
           shippingFee,

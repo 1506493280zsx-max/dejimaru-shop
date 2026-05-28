@@ -12,6 +12,13 @@ function renderTemplate(html: string, vars: Record<string, string>) {
 
 export async function POST(req: NextRequest) {
   try {
+    // Directus FlowまたはADMIN_TOKENからの呼び出しのみ許可
+    const authHeader = req.headers.get("Authorization");
+    const secret = authHeader?.replace("Bearer ", "");
+    if (secret !== process.env.ADMIN_TOKEN) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     const orderId = body.orderId || body.keys?.[0];
     const status = body.payload?.status || body.status;

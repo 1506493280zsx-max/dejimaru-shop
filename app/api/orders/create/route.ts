@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { sendOrderConfirmationEmail } from "@/lib/mail";
 
 const DIRECTUS = "https://directus-production-2cfe.up.railway.app";
 const TOKEN =
@@ -89,6 +90,31 @@ export async function POST(req: NextRequest) {
       } catch (e) {
         console.error("[orders/create] coupon mark error", e);
       }
+    }
+
+    // 注文確認メール送信
+    try {
+      const firstName = email.split("@")[0];
+      const mailItems = (items as any[]).map(item => ({
+        product_name: item.name,
+        quantity: item.quantity,
+        unit_price: item.price,
+        warranty_selected: item.warrantySelected ?? false,
+        warranty_price: item.warrantyPrice ?? 0,
+      }));
+      await sendOrderConfirmationEmail({
+        to: email,
+        firstName,
+        orderNumber: order_number,
+        items: mailItems,
+        subtotal: subtotal ?? total,
+        warrantySubtotal: warrantySubtotal ?? 0,
+        shippingFee: shippingFee ?? 0,
+        discountAmount: discountAmount ?? 0,
+        total,
+      });
+    } catch (mailErr) {
+      console.error("[orders/create] mail error", mailErr);
     }
 
     // product_id が有効な商品については Directus から正規の商品名を一括取得する

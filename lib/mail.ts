@@ -97,3 +97,53 @@ export async function sendContactEmail(params: {
     `,
   });
 }
+
+export async function sendOrderConfirmationEmail({
+  to, firstName, orderNumber, items, subtotal, warrantySubtotal, shippingFee, discountAmount, total,
+}: {
+  to: string; firstName: string; orderNumber: string;
+  items: Array<{ product_name: string; quantity: number; unit_price: number; warranty_selected: boolean; warranty_price: number; }>;
+  subtotal: number; warrantySubtotal: number; shippingFee: number; discountAmount: number; total: number;
+}) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  const itemRows = items.map(item => `
+    <tr>
+      <td style="padding:8px;border-bottom:1px solid #eee;">${item.product_name}${item.warranty_selected ? '<br><span style="font-size:11px;color:#0ABAB5;">🛡️ プレミアム保証（終身保証）付き</span>' : ''}</td>
+      <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
+      <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">¥${(item.unit_price * item.quantity).toLocaleString()}</td>
+    </tr>
+    ${item.warranty_selected ? `<tr><td style="padding:4px 8px;color:#0ABAB5;font-size:11px;">　└ 保証料</td><td style="text-align:center;font-size:11px;">${item.quantity}</td><td style="text-align:right;font-size:11px;">¥${(item.warranty_price * item.quantity).toLocaleString()}</td></tr>` : ''}
+  `).join('');
+  return resend.emails.send({
+    from: process.env.RESEND_FROM_EMAIL!,
+    to,
+    subject: `【AI Across ショップ】ご注文確認 ${orderNumber}`,
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#333;">
+        <div style="background:#0ABAB5;padding:20px;border-radius:8px 8px 0 0;text-align:center;">
+          <h1 style="color:#fff;margin:0;font-size:20px;">ご注文ありがとうございます</h1>
+        </div>
+        <div style="background:#fff;border:1px solid #ddd;border-top:none;padding:24px;border-radius:0 0 8px 8px;">
+          <p>${firstName || 'お客様'} 様</p>
+          <p>以下の内容でご注文を承りました。</p>
+          <p style="background:#f0f5f5;padding:12px;border-radius:4px;">注文番号：<strong>${orderNumber}</strong></p>
+          <table style="width:100%;border-collapse:collapse;margin:16px 0;">
+            <thead><tr style="background:#f9f9f9;"><th style="padding:8px;text-align:left;border-bottom:2px solid #ddd;">商品</th><th style="padding:8px;text-align:center;border-bottom:2px solid #ddd;">数量</th><th style="padding:8px;text-align:right;border-bottom:2px solid #ddd;">金額</th></tr></thead>
+            <tbody>${itemRows}</tbody>
+          </table>
+          <div style="text-align:right;margin-top:16px;">
+            <p style="margin:4px 0;">商品小計：¥${subtotal.toLocaleString()}</p>
+            ${warrantySubtotal > 0 ? `<p style="margin:4px 0;color:#0ABAB5;">🛡️ 保証合計：¥${warrantySubtotal.toLocaleString()}</p>` : ''}
+            <p style="margin:4px 0;">送料：${shippingFee === 0 ? '無料' : '¥' + shippingFee.toLocaleString()}</p>
+            ${discountAmount > 0 ? `<p style="margin:4px 0;color:#2e7d32;">クーポン割引：-¥${discountAmount.toLocaleString()}</p>` : ''}
+            <p style="font-size:18px;font-weight:bold;color:#CC2200;margin:8px 0;">合計：¥${total.toLocaleString()}</p>
+          </div>
+          <hr style="margin:24px 0;border:none;border-top:1px solid #eee;">
+          <p style="color:#666;font-size:13px;">商品は順次発送いたします。発送後にメールでお知らせします。</p>
+          <a href="https://aiacrossshop.co.jp/account/orders" style="display:inline-block;background:#0ABAB5;color:#fff;padding:10px 20px;border-radius:4px;text-decoration:none;margin-top:12px;">注文履歴を確認する</a>
+        </div>
+        <p style="text-align:center;color:#999;font-size:12px;margin-top:16px;">AI Across ショップ｜<a href="https://aiacrossshop.co.jp" style="color:#0ABAB5;">aiacrossshop.co.jp</a></p>
+      </div>
+    `,
+  });
+}

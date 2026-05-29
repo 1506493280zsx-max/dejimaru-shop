@@ -8,13 +8,14 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
+    const body = await req.json();
     const authHeader = req.headers.get("Authorization");
-    const secret = authHeader?.replace("Bearer ", "");
+    const secret = authHeader?.replace("Bearer ", "") || body.token;
     if (secret !== process.env.ADMIN_TOKEN) {
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
 
-    const { campaignId } = await req.json();
+    const campaignId = body.campaignId || body.keys?.[0];
     if (!campaignId) return NextResponse.json({ error: "campaignId required" }, { status: 400 });
 
     // 1. キャンペーン取得
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
       if (!customer.email) continue;
       try {
         await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL!,
+          from: `AI Across Shop <${process.env.RESEND_FROM_EMAIL}>`,
           to: customer.email,
           subject: campaign.subject,
           html: campaign.html.replace(/\{\{firstName\}\}/g, customer.name_first || "お客様"),

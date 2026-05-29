@@ -137,7 +137,7 @@ export async function sendOrderConfirmationEmail({
           </table>
           <div style="text-align:right;margin-top:16px;">
             <p style="margin:4px 0;">商品小計：¥${subtotal.toLocaleString()}</p>
-            ${warrantySubtotal > 0 ? `<p style="margin:4px 0;color:#0ABAB5;">🛡️ 保証合計：¥${warrantySubtotal.toLocaleString()}</p>` : ''}
+            ${warrantySubtotal > 0 ? `<p style="margin:4px 0;">保証合計：¥${warrantySubtotal.toLocaleString()}</p>` : ''}
             <p style="margin:4px 0;">送料：${shippingFee === 0 ? '無料' : '¥' + shippingFee.toLocaleString()}</p>
             ${discountAmount > 0 ? `<p style="margin:4px 0;color:#2e7d32;">クーポン割引：-¥${discountAmount.toLocaleString()}</p>` : ''}
             ${(pointsDiscount ?? 0) > 0 ? `<p style="margin:4px 0;color:#2e7d32;">ポイント利用：-¥${(pointsDiscount ?? 0).toLocaleString()}</p>` : ''}

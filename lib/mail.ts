@@ -4,7 +4,7 @@ export async function sendCorporateQuoteEmail(body: string, company: string) {
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   return resend.emails.send({
-    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
+    from: `AI Across Shop <${process.env.RESEND_FROM_EMAIL}>`,
     to: "aiacrossshop@gmail.com",
     subject: "[Corporate Quote] " + company,
     text: body,
@@ -22,7 +22,7 @@ export async function sendContactEmail(params: {
   const { name, email, type, message, mailtoLink } = params;
 
   const adminResult = await resend.emails.send({
-    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
+    from: `AI Across Shop <${process.env.RESEND_FROM_EMAIL}>`,
     to: "aiacrossshop@gmail.com",
     replyTo: `${name} <${email}>`,
     subject: `【お問い合わせ】${name}様 - ${type}`,
@@ -65,7 +65,7 @@ export async function sendContactEmail(params: {
   if (adminResult.error) return adminResult;
 
   return resend.emails.send({
-    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
+    from: `AI Across Shop <${process.env.RESEND_FROM_EMAIL}>`,
     to: email,
     subject: "【AI Across ショップ】お問い合わせを受け付けました",
     html: `
@@ -115,7 +115,7 @@ export async function sendOrderConfirmationEmail({
     ${item.warranty_selected ? `<tr><td style="padding:4px 8px;color:#0ABAB5;font-size:11px;">　└ 保証料</td><td style="text-align:center;font-size:11px;">${item.quantity}</td><td style="text-align:right;font-size:11px;">¥${(item.warranty_price * item.quantity).toLocaleString()}</td></tr>` : ''}
   `).join('');
   return resend.emails.send({
-    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
+    from: `AI Across Shop <${process.env.RESEND_FROM_EMAIL}>`,
     to,
     subject: `【AI Across Shop】ご注文確認 - ${orderNumber}`,
     html: `
@@ -155,7 +155,7 @@ export async function sendOrderConfirmationEmail({
 export async function sendWelcomeEmail(email: string, firstName: string, lastName: string = "") {
   const resend = new Resend(process.env.RESEND_API_KEY);
   await resend.emails.send({
-    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
+    from: `AI Across Shop <${process.env.RESEND_FROM_EMAIL}>`,
     to: email,
     subject: "【AI Across Shop】会員登録ありがとうございます",
     html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#333;">

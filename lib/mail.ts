@@ -154,7 +154,7 @@ export async function sendOrderConfirmationEmail({
   });
 }
 
-export async function sendWelcomeEmail(email: string, firstName: string) {
+export async function sendWelcomeEmail(email: string, firstName: string, lastName: string = "") {
   const resend = new Resend(process.env.RESEND_API_KEY);
   await resend.emails.send({
     from: process.env.RESEND_FROM_EMAIL!,
@@ -165,7 +165,7 @@ export async function sendWelcomeEmail(email: string, firstName: string) {
     <h1 style="color:#fff;margin:0;font-size:22px;">会員登録ありがとうございます</h1>
   </div>
   <div style="background:#fff;border:1px solid #ddd;border-top:none;padding:24px;border-radius:0 0 8px 8px;">
-    <p>${firstName || 'お客様'}様、AIAcrossShopへようこそ！</p>
+    <p>${lastName || ''}${firstName || 'お客様'}様、AIAcrossShopへようこそ！</p>
     <p>会員登録が完了しました。これからお買い物をお楽しみください。</p>
     <div style="text-align:center;margin:24px 0;">
       <a href="https://aiacrossshop.co.jp" style="background:#0ABAB5;color:#fff;padding:12px 32px;border-radius:4px;text-decoration:none;font-weight:bold;">ショッピングを始める</a>

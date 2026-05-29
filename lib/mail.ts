@@ -99,20 +99,20 @@ export async function sendContactEmail(params: {
 }
 
 export async function sendOrderConfirmationEmail({
-  to, firstName, orderNumber, items, subtotal, warrantySubtotal, shippingFee, discountAmount, total,
+  to, firstName, orderNumber, items, subtotal, warrantySubtotal, shippingFee, discountAmount, pointsDiscount, total,
 }: {
   to: string; firstName: string; orderNumber: string;
   items: Array<{ product_name: string; quantity: number; unit_price: number; warranty_selected: boolean; warranty_price: number; }>;
-  subtotal: number; warrantySubtotal: number; shippingFee: number; discountAmount: number; total: number;
+  subtotal: number; warrantySubtotal: number; shippingFee: number; discountAmount: number; pointsDiscount?: number; total: number;
 }) {
   const resend = new Resend(process.env.RESEND_API_KEY);
   const itemRows = items.map(item => `
     <tr>
-      <td style="padding:8px;border-bottom:1px solid #eee;">${item.product_name}${item.warranty_selected ? '<br><span style="font-size:11px;color:#0ABAB5;">無期限保障付き</span>' : ''}</td>
+      <td style="padding:8px;border-bottom:1px solid #eee;">${item.product_name}${item.warranty_selected ? '<br><span style="font-size:13px;color:#333;">無期限保障付き</span>' : ''}</td>
       <td style="padding:8px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
       <td style="padding:8px;border-bottom:1px solid #eee;text-align:right;">¥${(item.unit_price * item.quantity).toLocaleString()}</td>
     </tr>
-    ${item.warranty_selected ? `<tr><td style="padding:4px 8px;color:#0ABAB5;font-size:11px;">　└ 保証料</td><td style="text-align:center;font-size:11px;">${item.quantity}</td><td style="text-align:right;font-size:11px;">¥${(item.warranty_price * item.quantity).toLocaleString()}</td></tr>` : ''}
+    ${item.warranty_selected ? `<tr><td style="padding:4px 8px;color:#333;font-size:13px;">　└ 保証料</td><td style="text-align:center;font-size:13px;">${item.quantity}</td><td style="text-align:right;font-size:13px;">¥${(item.warranty_price * item.quantity).toLocaleString()}</td></tr>` : ''}
   `).join('');
   return resend.emails.send({
     from: `AI Across Shop <${process.env.RESEND_FROM_EMAIL}>`,
@@ -140,6 +140,7 @@ export async function sendOrderConfirmationEmail({
             ${warrantySubtotal > 0 ? `<p style="margin:4px 0;color:#0ABAB5;">🛡️ 保証合計：¥${warrantySubtotal.toLocaleString()}</p>` : ''}
             <p style="margin:4px 0;">送料：${shippingFee === 0 ? '無料' : '¥' + shippingFee.toLocaleString()}</p>
             ${discountAmount > 0 ? `<p style="margin:4px 0;color:#2e7d32;">クーポン割引：-¥${discountAmount.toLocaleString()}</p>` : ''}
+            ${(pointsDiscount ?? 0) > 0 ? `<p style="margin:4px 0;color:#2e7d32;">ポイント利用：-¥${(pointsDiscount ?? 0).toLocaleString()}</p>` : ''}
             <p style="font-size:18px;font-weight:bold;color:#CC2200;margin:8px 0;">合計：¥${total.toLocaleString()}</p>
           </div>
           <hr style="margin:24px 0;border:none;border-top:1px solid #eee;">

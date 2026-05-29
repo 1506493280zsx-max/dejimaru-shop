@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress, couponCode, discountAmount, customerId, pointsUsed } = await req.json();
+    const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress, couponCode, discountAmount, customerId, pointsUsed, used_points } = await req.json();
 
     // サーバー側で金額を再計算（フロントの値を信用しない）
     const itemsRes = await Promise.all(
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
         const pData = await pRes.json();
         const serverPrice = pData.data?.[0]?.price || 0;
         const serverWarrantyPrice = pData.data?.[0]?.warranty_price || 0;
-        return { ...item, unit_price: serverPrice, warranty_price: serverWarrantyPrice };
+        return { ...item, unit_price: serverPrice, warranty_price: serverWarrantyPrice, warranty_selected: !!(item.warranty_selected || item.warrantySelected) };
       })
     );
     const serverSubtotal = itemsRes.reduce((sum: number, item: any) => sum + item.unit_price * item.quantity, 0);
@@ -60,8 +60,9 @@ export async function POST(req: NextRequest) {
     }
 
     // ポイント割引をサーバー側で検証（最大50%換算）
+    const pointsToUse = pointsUsed ?? used_points ?? 0;
     const serverPointDiscount = Math.min(
-      Math.floor((pointsUsed || 0) * 0.5),
+      Math.floor(pointsToUse * 0.5),
       serverSubtotal
     );
 
@@ -153,7 +154,7 @@ export async function POST(req: NextRequest) {
         quantity: item.quantity,
         unit_price: itemsRes.find((ir: any) => ir.id === item.id || ir.product_id === item.id)?.unit_price || item.price || item.unit_price || 0,
         warranty_selected: item.warrantySelected ?? false,
-        warranty_price: item.warrantyPrice ?? 0,
+        warranty_price: itemsRes.find((ir: any) => ir.id === item.id || ir.product_id === item.id)?.warranty_price ?? item.warrantyPrice ?? 0,
       }));
       await sendOrderConfirmationEmail({
         to: email,

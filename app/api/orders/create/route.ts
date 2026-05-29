@@ -30,12 +30,12 @@ export async function POST(req: NextRequest) {
       items.map(async (item: any) => {
         const productId = item.product_id || item.id;
         const pRes = await fetch(
-          `${DIRECTUS}/items/products?filter[id][_eq]=${productId}&fields=price,warranty_price&limit=1`,
+          `${DIRECTUS}/items/products?filter[id][_eq]=${productId}&fields=price,premium_warranty_price&limit=1`,
           { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
         );
         const pData = await pRes.json();
         const serverPrice = pData.data?.[0]?.price || 0;
-        const serverWarrantyPrice = pData.data?.[0]?.warranty_price || 0;
+        const serverWarrantyPrice = pData.data?.[0]?.premium_warranty_price || 0;
         return { ...item, unit_price: serverPrice, warranty_price: serverWarrantyPrice, warranty_selected: !!(item.warranty_selected || item.warrantySelected) };
       })
     );

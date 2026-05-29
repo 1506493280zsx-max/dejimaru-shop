@@ -28,8 +28,9 @@ export async function POST(req: NextRequest) {
     // サーバー側で金額を再計算（フロントの値を信用しない）
     const itemsRes = await Promise.all(
       items.map(async (item: any) => {
+        const productId = item.product_id || item.id;
         const pRes = await fetch(
-          `${DIRECTUS}/items/products?filter[id][_eq]=${item.product_id}&fields=price,warranty_price&limit=1`,
+          `${DIRECTUS}/items/products?filter[id][_eq]=${productId}&fields=price,warranty_price&limit=1`,
           { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
         );
         const pData = await pRes.json();

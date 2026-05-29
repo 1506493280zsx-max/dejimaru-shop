@@ -4,7 +4,7 @@ export async function sendCorporateQuoteEmail(body: string, company: string) {
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   return resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL!,
+    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
     to: "aiacrossshop@gmail.com",
     subject: "[Corporate Quote] " + company,
     text: body,
@@ -22,7 +22,7 @@ export async function sendContactEmail(params: {
   const { name, email, type, message, mailtoLink } = params;
 
   const adminResult = await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL!,
+    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
     to: "aiacrossshop@gmail.com",
     replyTo: `${name} <${email}>`,
     subject: `【お問い合わせ】${name}様 - ${type}`,
@@ -65,7 +65,7 @@ export async function sendContactEmail(params: {
   if (adminResult.error) return adminResult;
 
   return resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL!,
+    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
     to: email,
     subject: "【AI Across ショップ】お問い合わせを受け付けました",
     html: `
@@ -115,9 +115,9 @@ export async function sendOrderConfirmationEmail({
     ${item.warranty_selected ? `<tr><td style="padding:4px 8px;color:#0ABAB5;font-size:11px;">　└ 保証料</td><td style="text-align:center;font-size:11px;">${item.quantity}</td><td style="text-align:right;font-size:11px;">¥${(item.warranty_price * item.quantity).toLocaleString()}</td></tr>` : ''}
   `).join('');
   return resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL!,
+    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
     to,
-    subject: `【AIAcrossShop】ご注文確認 - ${orderNumber}`,
+    subject: `【AI Across Shop】ご注文確認 - ${orderNumber}`,
     html: `
       <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#333;">
         <div style="background:#0ABAB5;padding:20px;border-radius:8px 8px 0 0;text-align:center;">
@@ -146,7 +146,7 @@ export async function sendOrderConfirmationEmail({
           <p style="color:#666;font-size:13px;">商品は順次発送いたします。発送後にメールでお知らせします。</p>
           <a href="https://aiacrossshop.co.jp/account/orders" style="display:inline-block;background:#0ABAB5;color:#fff;padding:10px 20px;border-radius:4px;text-decoration:none;margin-top:12px;">注文履歴を確認する</a>
         </div>
-        <p style="text-align:center;color:#999;font-size:12px;margin-top:16px;">AIAcrossShop｜<a href="https://aiacrossshop.co.jp" style="color:#0ABAB5;">aiacrossshop.co.jp</a></p>
+        <p style="text-align:center;color:#999;font-size:12px;margin-top:16px;">AI Across Shop｜<a href="https://aiacrossshop.co.jp" style="color:#0ABAB5;">aiacrossshop.co.jp</a></p>
       </div>
     `,
   });
@@ -155,20 +155,20 @@ export async function sendOrderConfirmationEmail({
 export async function sendWelcomeEmail(email: string, firstName: string, lastName: string = "") {
   const resend = new Resend(process.env.RESEND_API_KEY);
   await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL!,
+    from: `AI Across合同会社 <${process.env.RESEND_FROM_EMAIL}>`,
     to: email,
-    subject: "【AIAcrossShop】会員登録ありがとうございます",
+    subject: "【AI Across Shop】会員登録ありがとうございます",
     html: `<div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#333;">
   <div style="background:#0ABAB5;padding:24px;border-radius:8px 8px 0 0;text-align:center;">
     <h1 style="color:#fff;margin:0;font-size:22px;">会員登録ありがとうございます</h1>
   </div>
   <div style="background:#fff;border:1px solid #ddd;border-top:none;padding:24px;border-radius:0 0 8px 8px;">
-    <p>${lastName || ''}${firstName || 'お客様'}様、AIAcrossShopへようこそ！</p>
+    <p>${lastName || ''}${firstName || 'お客様'}様、AI Across Shopへようこそ！</p>
     <p>会員登録が完了しました。これからお買い物をお楽しみください。</p>
     <div style="text-align:center;margin:24px 0;">
       <a href="https://aiacrossshop.co.jp" style="background:#0ABAB5;color:#fff;padding:12px 32px;border-radius:4px;text-decoration:none;font-weight:bold;">ショッピングを始める</a>
     </div>
-    <p style="color:#888;font-size:12px;">AIAcrossShop カスタマーサポート</p>
+    <p style="color:#888;font-size:12px;">AI Across Shop カスタマーサポート</p>
   </div>
 </div>`,
   });

@@ -13,13 +13,13 @@ function renderTemplate(html: string, vars: Record<string, string>) {
 export async function POST(req: NextRequest) {
   try {
     // Directus FlowまたはADMIN_TOKENからの呼び出しのみ許可
+    const body = await req.json();
     const authHeader = req.headers.get("Authorization");
-    const secret = authHeader?.replace("Bearer ", "");
+    const secret = authHeader?.replace("Bearer ", "") || body.token;
     if (secret !== process.env.ADMIN_TOKEN) {
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
     const orderId = body.orderId || body.keys?.[0];
     const status = body.payload?.status || body.status;
     if (!orderId) return NextResponse.json({ error: "orderId required" }, { status: 400 });

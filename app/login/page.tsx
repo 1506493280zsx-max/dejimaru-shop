@@ -39,7 +39,7 @@ function LoginContent() {
         headers: { "Authorization": `Bearer ${data.token}` },
       });
       const user = await meRes.json();
-      setAuth(user, data.token);
+      setAuth(user, data.token, data.refresh_token);
       router.push(redirectTo);
     } catch {
       setError("接続エラーが発生しました");
@@ -64,7 +64,7 @@ function LoginContent() {
         headers: { "Authorization": `Bearer ${data.token}` },
       });
       const user = await meRes.json();
-      setAuth(user, data.token);
+      setAuth(user, data.token, data.refresh_token);
       router.push(redirectTo);
     } catch {
       setError("接続エラーが発生しました");

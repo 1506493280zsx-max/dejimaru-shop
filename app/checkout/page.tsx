@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/cart-store";
 import { useAuthStore } from "@/lib/auth-store";
+import { authFetch } from "@/lib/auth-fetch";
 import { useState, useEffect } from "react";
 
 const C = {
@@ -20,7 +21,7 @@ const inp: React.CSSProperties = {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, productTotal, warrantyTotal, count, clearCart } = useCartStore();
-  const { user, token } = useAuthStore();
+  const { user } = useAuthStore();
 
   // ── 既存 state ──────────────────────────────────────────────
   const [mounted, setMounted] = useState(false);
@@ -68,9 +69,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!user?.email) return;
-    fetch(`/api/coupons/my`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    authFetch(`/api/coupons/my`)
       .then(r => r.json())
       .then(d => {
         const available = (d.data || []).filter((c: any) =>
@@ -83,9 +82,7 @@ export default function CheckoutPage() {
   // ポイント残高取得（ログイン済みのみ）
   useEffect(() => {
     if (!user?.id) return;
-    fetch(`/api/points/balance?customerId=${user.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    authFetch(`/api/points/balance?customerId=${user.id}`)
       .then(r => r.json())
       .then(d => {
         setPointBalance(d.points || 0);
@@ -100,7 +97,7 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (!mounted || !user) return;
     setLoadingAddresses(true);
-    fetch(`/api/address?email=${encodeURIComponent(user.email)}`, { cache: "no-store" })
+    authFetch(`/api/address`, { cache: "no-store" })
       .then(r => r.ok ? r.json() : { data: [] })
       .then(data => {
         const list: any[] = data.data || [];
@@ -169,9 +166,9 @@ export default function CheckoutPage() {
     if (!couponCode.trim()) return;
     setCouponLoading(true);
     try {
-      const res = await fetch("/api/coupons/validate", {
+      const res = await authFetch("/api/coupons/validate", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           code: couponCode.trim(),
           cartItems: items.map(i => ({ id: i.id, price: i.price, quantity: i.quantity })),
@@ -471,9 +468,9 @@ export default function CheckoutPage() {
                         setCouponResult(null);
                         setCouponLoading(true);
                         try {
-                          const res = await fetch("/api/coupons/validate", {
+                          const res = await authFetch("/api/coupons/validate", {
                             method: "POST",
-                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                            headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({
                               code: item.coupon.code,
                               cartItems: items.map(i => ({ id: i.id, price: i.price, quantity: i.quantity })),

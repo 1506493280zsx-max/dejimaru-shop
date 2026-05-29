@@ -83,7 +83,10 @@ export async function POST(req: NextRequest) {
     if (!loginRes.ok) {
       return NextResponse.json({ error: "登録は完了しましたがログインに失敗しました" }, { status: 400 });
     }
-    return NextResponse.json({ token: loginData.data.access_token });
+    return NextResponse.json({
+      token: loginData.data.access_token,
+      refresh_token: loginData.data.refresh_token,
+    });
   } catch (e) {
     return NextResponse.json({ error: "サーバーエラー" }, { status: 500 });
   }

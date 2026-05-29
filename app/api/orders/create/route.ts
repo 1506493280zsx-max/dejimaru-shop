@@ -137,11 +137,20 @@ export async function POST(req: NextRequest) {
 
     // 確認メール送信
     try {
-      const firstName = shippingAddress?.firstName || "";
+      let firstName = shippingAddress?.firstName || shippingAddress?.lastName || "";
+      if (!firstName && customerId) {
+        try {
+          const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=first_name,last_name`, {
+            headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" }
+          });
+          const userData = (await userRes.json()).data;
+          firstName = userData?.last_name || userData?.first_name || "";
+        } catch {}
+      }
       const mailItems = (items as any[]).map((item: any) => ({
         product_name: item.name || item.product_name || "",
         quantity: item.quantity,
-        unit_price: item.price || item.unit_price || 0,
+        unit_price: itemsRes.find((ir: any) => ir.id === item.id || ir.product_id === item.id)?.unit_price || item.price || item.unit_price || 0,
         warranty_selected: item.warrantySelected ?? false,
         warranty_price: item.warrantyPrice ?? 0,
       }));

@@ -128,13 +128,11 @@ export async function sendOrderConfirmationEmail({
           <p>以下の内容でご注文を承りました。</p>
           <p style="background:#f0f5f5;padding:12px;border-radius:4px;">注文番号：<strong>${orderNumber}</strong></p>
           <table style="width:100%;border-collapse:collapse;margin:16px 0;">
-            <thead>
-              <tr style="background:#f9f9f9;">
-                <th style="padding:8px;text-align:left;border-bottom:2px solid #ddd;">商品</th>
-                <th style="padding:8px;text-align:center;border-bottom:2px solid #ddd;">数量</th>
-                <th style="padding:8px;text-align:right;border-bottom:2px solid #ddd;">金額</th>
-              </tr>
-            </thead>
+            <thead><tr style="background:#f9f9f9;">
+              <th style="padding:8px;text-align:left;border-bottom:2px solid #ddd;min-width:200px;">商品</th>
+              <th style="padding:8px;text-align:center;border-bottom:2px solid #ddd;width:60px;">数量</th>
+              <th style="padding:8px;text-align:right;border-bottom:2px solid #ddd;width:100px;">金額</th>
+            </tr></thead>
             <tbody>${itemRows}</tbody>
           </table>
           <div style="text-align:right;margin-top:16px;">

@@ -25,8 +25,20 @@ export async function POST(req: NextRequest) {
     // 1. ユーザー確認
     const cusR = await fetch(`${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id&limit=1`, { headers: H() });
     const cusD = await cusR.json();
-    const customer = cusD.data?.[0];
-    if (!customer) return NextResponse.json({ success: false, message: "会員登録が必要です" }, { status: 403 });
+    let customer = cusD.data?.[0];
+    if (!customer) {
+      // 新規登録直後はcustomersレコードがまだ存在しない場合があるため1秒待って再試行
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const retryRes = await fetch(
+        `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id&limit=1`,
+        { headers: H() }
+      );
+      const retryCustomer = (await retryRes.json()).data?.[0];
+      if (!retryCustomer) {
+        return NextResponse.json({ success: false, message: "しばらく経ってから再度お試しください" }, { status: 403 });
+      }
+      customer = retryCustomer;
+    }
 
     // 2. クーポン取得
     const cpR = await fetch(`${DIRECTUS}/items/coupons?filter[code][_eq]=${encodeURIComponent(code)}&limit=1`, { headers: H() });

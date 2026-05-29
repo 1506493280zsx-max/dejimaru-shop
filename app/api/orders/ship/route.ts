@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const orderId = body.orderId || body.keys?.[0];
     const status = body.payload?.status || body.status;
     if (!orderId) return NextResponse.json({ error: "orderId required" }, { status: 400 });
-    if (status && status !== "shipped") return NextResponse.json({ skipped: true });
+    if (!status || status !== "shipped") return NextResponse.json({ skipped: true });
 
     // 1. 注文情報を取得
     const orderRes = await fetch(
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         if (userInfo.email) email = userInfo.email;
         const givenName = userInfo.first_name || "";
         const familyName = userInfo.last_name || "";
-        firstName = [givenName, familyName].filter(Boolean).join(" ");
+        firstName = [familyName, givenName].filter(Boolean).join(" ");
       }
     }
     if (!email) return NextResponse.json({ error: "no email found" }, { status: 400 });

@@ -180,10 +180,16 @@ const handleDelete = async (id:number) => {
       <div style={{maxWidth:800,margin:"16px auto",padding:"0 10px 40px"}}>
         <div style={{display:"flex",alignItems:"center",marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>
           <h1 style={{fontSize:18,fontWeight:700,color:C.text,margin:0}}>📍 お届け先の管理</h1>
-          <button onClick={()=>{clearForm();setEditId(null);setShowForm(true);}}
-            style={{marginLeft:"auto",background:C.primary,color:"#fff",border:"none",padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
-            ＋ 新しい住所を追加
-          </button>
+          <div style={{marginLeft:"auto",display:"flex",gap:8}}>
+            <button onClick={()=>router.back()}
+              style={{background:C.white,color:C.primary,border:`1px solid ${C.primary}`,padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+              ← チェックアウトに戻る
+            </button>
+            <button onClick={()=>{clearForm();setEditId(null);setShowForm(true);}}
+              style={{background:C.primary,color:"#fff",border:"none",padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+              ＋ 新しい住所を追加
+            </button>
+          </div>
         </div>
 
         {error&&<div style={{background:"#FFF0F0",border:"1px solid #FFAAAA",borderRadius:2,padding:"10px 14px",fontSize:12,color:C.red,marginBottom:14}}>{error}</div>}

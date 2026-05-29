@@ -43,13 +43,15 @@ export async function POST(req: NextRequest) {
     let firstName = "";
     if (order.customer_id) {
       const userRes = await fetch(
-        `${DIRECTUS}/users/${order.customer_id}?fields=email,first_name`,
+        `${DIRECTUS}/users/${order.customer_id}?fields=email,first_name,last_name`,
         { headers: H() }
       );
       const userInfo = (await userRes.json()).data;
       if (userInfo) {
         if (userInfo.email) email = userInfo.email;
-        firstName = userInfo.first_name || "";
+        const givenName = userInfo.first_name || "";
+        const familyName = userInfo.last_name || "";
+        firstName = [givenName, familyName].filter(Boolean).join(" ");
       }
     }
     if (!email) return NextResponse.json({ error: "no email found" }, { status: 400 });
@@ -86,7 +88,7 @@ export async function POST(req: NextRequest) {
 
     // 5. メール送信
     const { data: mailData, error: mailError } = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL!,
+      from: `AI Across Shop <${process.env.RESEND_FROM_EMAIL}>`,
       to: email,
       subject,
       html,

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import SiteShell from "@/components/SiteShell";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: {
@@ -82,6 +83,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           }}
         />
         <SiteShell>{children}</SiteShell>
+        <GoogleAnalytics gaId="G-VG4BGSB5YB" />
       </body>
     </html>
   );

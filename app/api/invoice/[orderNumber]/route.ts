@@ -9,7 +9,7 @@ const H = { Authorization: `Bearer ${TOKEN}` };
 export async function GET(req: NextRequest, { params }: { params: Promise<{ orderNumber: string }> }) {
   const { orderNumber } = await params;
   const res = await fetch(
-    `${DIRECTUS}/items/orders?filter[order_number][_eq]=${orderNumber}&fields=*,order_items.*&limit=1`,
+    `${DIRECTUS}/items/orders?filter[order_number][_eq]=${orderNumber}&fields=*,order_items.*,point_discount,used_points&limit=1`,
     { headers: H }
   );
   const order = (await res.json()).data?.[0];
@@ -122,6 +122,16 @@ ${order.status === "cancelled" ? `<div class="cancel-notice">⚠️ この注文
     ${itemRows}
     ${(order.shipping_fee || 0) > 0 ? `<tr><td style="padding:10px;border-bottom:1px solid #eee;">送料</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">-</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:right;">¥${order.shipping_fee.toLocaleString("ja-JP")}</td></tr>` : ""}
     ${(order.discount_amount || 0) > 0 ? `<tr><td style="padding:10px;border-bottom:1px solid #eee;color:#2e7d32;">クーポン割引</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">-</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:right;color:#2e7d32;">-¥${order.discount_amount.toLocaleString("ja-JP")}</td></tr>` : ""}
+    ${(order.point_discount || 0) > 0 ? `<tr>
+      <td style="padding:10px;border-bottom:1px solid #eee;color:#0ABAB5;">ポイント割引（${(order.used_points || 0).toLocaleString()}pt使用）</td>
+      <td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">-</td>
+      <td style="padding:10px;border-bottom:1px solid #eee;text-align:right;color:#0ABAB5;">-¥${(order.point_discount || 0).toLocaleString("ja-JP")}</td>
+    </tr>` : ""}
+    ${(order.saved_point_discount || 0) > 0 ? `<tr>
+      <td style="padding:10px;border-bottom:1px solid #eee;color:#ff6d00;">保有ポイント割引（${(order.saved_points_used || 0).toLocaleString()}pt使用）</td>
+      <td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">-</td>
+      <td style="padding:10px;border-bottom:1px solid #eee;text-align:right;color:#ff6d00;">-¥${(order.saved_point_discount || 0).toLocaleString("ja-JP")}</td>
+    </tr>` : ""}
   </tbody>
 </table>
 <div class="stamp-area">

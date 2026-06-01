@@ -11,16 +11,26 @@ export async function POST(req: NextRequest) {
     if (!userToken) {
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
+    const isAdminCall = userToken === process.env.ADMIN_TOKEN;
 
     const body = await req.json();
-    const { customerId, points, commit, orderId } = body;
+    const { customerId, points, commit, orderId, useFullRate } = body;
     if (!customerId || !points) {
       return NextResponse.json({ error: "customerId, points required" }, { status: 400 });
     }
 
     // customerId is a Directus auth UUID — look up email via users endpoint
-    const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=email`, { headers: H });
-    const email = (await userRes.json()).data?.email;
+    let email: string | null = null;
+    if (isAdminCall) {
+      const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=email`, { headers: H });
+      email = (await userRes.json()).data?.email;
+    } else {
+      const meRes = await fetch(`${DIRECTUS}/users/me`, { headers: { Authorization: `Bearer ${userToken}` } });
+      if (!meRes.ok) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+      const me = (await meRes.json()).data;
+      if (me.id !== customerId) return NextResponse.json({ error: "unauthorized" }, { status: 403 });
+      email = me.email;
+    }
     if (!email) return NextResponse.json({ error: "user not found" }, { status: 404 });
 
     // Find customer by email (customers.id is integer, not UUID)
@@ -36,8 +46,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "ポイントが不足しています" }, { status: 400 });
     }
 
-    // 50%換算（300pt → 150円割引）
-    const discountAmount = Math.floor(points * 0.5);
+    // 50%換算（300pt → 150円割引）or 100%換算（保有ポイント）
+    const discountAmount = useFullRate ? points : Math.floor(points * 0.5);
 
     if (commit) {
       const newPoints = currentPoints - points;

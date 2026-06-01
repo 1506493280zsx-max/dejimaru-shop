@@ -21,7 +21,7 @@ const inp: React.CSSProperties = {
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, productTotal, warrantyTotal, count, clearCart } = useCartStore();
-  const { user } = useAuthStore();
+  const { user, token } = useAuthStore();
 
   // ── 既存 state ──────────────────────────────────────────────
   const [mounted, setMounted] = useState(false);
@@ -64,6 +64,8 @@ export default function CheckoutPage() {
   const [pointRate, setPointRate] = useState(100);
   const [usePoints, setUsePoints] = useState(0);
   const [pointDiscount, setPointDiscount] = useState(0);
+  const [savedPointsUsed, setSavedPointsUsed] = useState(0);
+  const [savedPointDiscount, setSavedPointDiscount] = useState(0);
 
   const [myCoupons, setMyCoupons] = useState<any[]>([]);
 
@@ -203,7 +205,7 @@ export default function CheckoutPage() {
       const productSub  = productTotal();
       const warrantySub = warrantyTotal();
       const discount    = couponResult?.valid ? couponResult.discountAmount : 0;
-      const grand       = Math.max(0, productSub + warrantySub + shippingFee - discount - pointDiscount);
+      const grand       = Math.max(0, productSub + warrantySub + shippingFee - discount - pointDiscount - savedPointDiscount);
       const addr = addresses.find(a => String(a.id) === selectedAddressId) ?? null;
       const sa = user && addr
         ? { lastName: addr.name_last ?? "", firstName: addr.name_first ?? "", phone: addr.phone ?? "", postalCode: addr.postal_code, prefecture: addr.prefecture, city: addr.city, address1: addr.address1, address2: addr.address2 ?? "" }
@@ -227,37 +229,14 @@ export default function CheckoutPage() {
           discountAmount:   couponResult?.valid ? couponResult.discountAmount : 0,
           point_discount:   pointDiscount,
           used_points:      usePoints,
+          saved_point_discount: savedPointDiscount,
+          saved_points_used:    savedPointsUsed,
         }),
       });
       const data = await res.json();
       if (data.success) {
         clearCart();
         router.push(`/checkout/success?orderNumber=${encodeURIComponent(data.orderNumber ?? "")}`);
-        // ポイント付与
-        if (user?.id) {
-          fetch("/api/points/earn", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              customerId: user.id,
-              orderId: data.orderId,
-              orderTotal: grand,
-            }),
-          }).catch(() => {});
-          // ポイント使用履歴記録
-          if (usePoints > 0) {
-            fetch("/api/points/use", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                customerId: user.id,
-                points: usePoints,
-                orderId: data.orderId,
-                commit: true,
-              }),
-            }).catch(() => {});
-          }
-        }
         return;
       } else {
         setPlaceError(data.error ?? "注文処理に失敗しました。もう一度お試しください。");
@@ -290,7 +269,7 @@ export default function CheckoutPage() {
   const productSubtotal  = productTotal();
   const warrantySubtotal = warrantyTotal();
   const discount         = couponResult?.valid ? couponResult.discountAmount : 0;
-  const grandTotal       = Math.max(0, productSubtotal + warrantySubtotal + shippingFee - discount - pointDiscount);
+  const grandTotal       = Math.max(0, productSubtotal + warrantySubtotal + shippingFee - discount - pointDiscount - savedPointDiscount);
   const remaining        = Math.max(0, freeThreshold - productSubtotal);
 
   return (
@@ -510,10 +489,12 @@ export default function CheckoutPage() {
                       今回使う（{Math.floor(Math.floor(grandTotal / pointRate) * 0.5).toLocaleString()}円引き）
                     </button>
                     <button
-                      disabled
-                      style={{background:"#fff",color:"#666",border:"1px solid #ccc",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"default"}}
+                      onClick={() => {
+                        alert("ポイントは次回のお買い物でご利用いただけます。現在の保有ポイント：" + pointBalance.toLocaleString() + "pt（次回使用時：1pt=1円換算）");
+                      }}
+                      style={{background:"#fff",color:"#0ABAB5",border:"1px solid #0ABAB5",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"pointer",fontWeight:600}}
                     >
-                      次回に取っておく
+                      次回に取っておく（{pointBalance.toLocaleString()}pt保有中）
                     </button>
                   </div>
                 ) : (
@@ -524,6 +505,41 @@ export default function CheckoutPage() {
                       style={{background:"none",border:"1px solid #ccc",padding:"4px 12px",borderRadius:4,fontSize:12,cursor:"pointer",color:"#666"}}
                     >
                       取消して次回に取っておく
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 保有ポイント使用セクション */}
+            {pointBalance > 0 && (
+              <div style={{background:"#fff",border:"1px solid #0ABAB5",borderRadius:8,padding:16,marginBottom:8}}>
+                <div style={{fontSize:13,fontWeight:700,color:"#333",marginBottom:8}}>🎯 保有ポイントを使う</div>
+                <div style={{fontSize:12,color:"#888",marginBottom:12}}>
+                  現在の保有ポイント：<span style={{color:"#0ABAB5",fontWeight:700}}>{pointBalance.toLocaleString()}pt</span>
+                  （1pt = 1円で使用可能）
+                </div>
+                {savedPointsUsed === 0 ? (
+                  <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                    <button
+                      onClick={() => {
+                        const usable = Math.min(pointBalance, grandTotal);
+                        setSavedPointsUsed(usable);
+                        setSavedPointDiscount(usable);
+                      }}
+                      style={{background:"#ff6d00",color:"#fff",border:"none",padding:"8px 16px",borderRadius:4,fontSize:13,cursor:"pointer",fontWeight:700}}
+                    >
+                      全部使う（{Math.min(pointBalance, grandTotal).toLocaleString()}円引き）
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+                    <span style={{fontSize:13,color:"#ff6d00",fontWeight:700}}>{savedPointsUsed.toLocaleString()}pt使用 → {savedPointDiscount.toLocaleString()}円引き</span>
+                    <button
+                      onClick={() => { setSavedPointsUsed(0); setSavedPointDiscount(0); }}
+                      style={{background:"none",border:"1px solid #ccc",padding:"4px 12px",borderRadius:4,fontSize:12,cursor:"pointer",color:"#666"}}
+                    >
+                      取消
                     </button>
                   </div>
                 )}
@@ -588,6 +604,13 @@ export default function CheckoutPage() {
               <div style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#2e7d32"}}>
                 <span>ポイント割引（{usePoints.toLocaleString()}pt使用）</span>
                 <span>-¥{pointDiscount.toLocaleString()}</span>
+              </div>
+            )}
+
+            {savedPointDiscount > 0 && (
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#ff6d00"}}>
+                <span>保有ポイント割引（{savedPointsUsed.toLocaleString()}pt使用）</span>
+                <span>-¥{savedPointDiscount.toLocaleString()}</span>
               </div>
             )}
 

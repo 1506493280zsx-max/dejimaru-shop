@@ -19,6 +19,7 @@ export default function AccountPage() {
   const [mounted, setMounted] = useState(false);
   const [pointBalance, setPointBalance] = useState(0);
   const [orderCount, setOrderCount] = useState<number | null>(null);
+  const [notices, setNotices] = useState<{date:string, text:string, slug:string}[]>([]);
   useEffect(()=>setMounted(true),[]);
 
   useEffect(() => {
@@ -40,6 +41,20 @@ export default function AccountPage() {
       .then(d => setOrderCount((d.data || []).length))
       .catch(() => {});
   }, [user, token]);
+
+  useEffect(() => {
+    fetch("https://directus-production-2cfe.up.railway.app/items/Blog_Posts?sort=-date_published&limit=3&fields=title,date_published,slug&filter[status][_eq]=published")
+      .then(r => r.json())
+      .then(d => {
+        const posts = (d.data || []).map((p: any) => ({
+          date: p.date_published ? new Date(p.date_published).toLocaleDateString("ja-JP", {year:"numeric",month:"2-digit",day:"2-digit"}).replace(/\//g,".") : "",
+          text: p.title || "",
+          slug: p.slug || "",
+        }));
+        setNotices(posts);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleLogout = () => {
     clearAuth();
@@ -141,11 +156,11 @@ export default function AccountPage() {
             お知らせ
           </div>
           <div style={{padding:16}}>
-            {[
-              {date:"2024.12.01",text:"年末年始の営業・発送スケジュールのご案内"},
-              {date:"2024.11.15",text:"新着商品が多数入荷しました"},
-              {date:"2024.11.01",text:"ポイントサービス開始のお知らせ"},
-            ].map((n,i)=>(
+            {(notices.length > 0 ? notices : [
+              {date:"2024.12.01",text:"年末年始の営業・発送スケジュールのご案内",slug:""},
+              {date:"2024.11.15",text:"新着商品が多数入荷しました",slug:""},
+              {date:"2024.11.01",text:"ポイントサービス開始のお知らせ",slug:""},
+            ]).map((n,i)=>(
               <div key={i} style={{display:"flex",gap:12,padding:"10px 0",borderBottom:i<2?`1px solid ${C.border}`:"none",cursor:"pointer"}}
                 onMouseEnter={e=>(e.currentTarget.style.color=C.primary)}
                 onMouseLeave={e=>(e.currentTarget.style.color=C.text)}>

@@ -43,11 +43,11 @@ export default function AccountPage() {
   }, [user, token]);
 
   useEffect(() => {
-    fetch("https://directus-production-2cfe.up.railway.app/items/Blog_Posts?sort=-date_published&limit=3&fields=title,date_published,slug&filter[status][_eq]=published")
+    fetch("https://directus-production-2cfe.up.railway.app/items/Blog_Posts?sort=-date_published&limit=3&fields=title,date_published,date_created,slug&filter[status][_eq]=published")
       .then(r => r.json())
       .then(d => {
         const posts = (d.data || []).map((p: any) => ({
-          date: p.date_published ? new Date(p.date_published).toLocaleDateString("ja-JP", {year:"numeric",month:"2-digit",day:"2-digit"}).replace(/\//g,".") : "",
+          date: p.date_published ? new Date(p.date_published).toLocaleDateString("ja-JP", {year:"numeric",month:"2-digit",day:"2-digit"}).replace(/\//g,".") : p.date_created ? new Date(p.date_created).toLocaleDateString("ja-JP", {year:"numeric",month:"2-digit",day:"2-digit"}).replace(/\//g,".") : "—",
           text: p.title || "",
           slug: p.slug || "",
         }));
@@ -161,8 +161,10 @@ export default function AccountPage() {
               {date:"2024.11.15",text:"新着商品が多数入荷しました",slug:""},
               {date:"2024.11.01",text:"ポイントサービス開始のお知らせ",slug:""},
             ]).map((n,i)=>(
-              <div key={i} style={{display:"flex",gap:12,padding:"10px 0",borderBottom:i<2?`1px solid ${C.border}`:"none",cursor:"pointer"}}
-                onMouseEnter={e=>(e.currentTarget.style.color=C.primary)}
+              <div key={i}
+                style={{display:"flex",gap:12,padding:"10px 0",borderBottom:i<2?`1px solid ${C.border}`:"none",cursor:n.slug?"pointer":"default"}}
+                onClick={()=>n.slug&&router.push(`/blog/${n.slug}`)}
+                onMouseEnter={e=>{if(n.slug)e.currentTarget.style.color=C.primary}}
                 onMouseLeave={e=>(e.currentTarget.style.color=C.text)}>
                 <div style={{fontSize:11,color:C.textLight,flexShrink:0,paddingTop:1}}>{n.date}</div>
                 <div style={{fontSize:12,color:"inherit"}}>{n.text}</div>

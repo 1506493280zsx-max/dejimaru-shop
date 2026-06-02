@@ -6,77 +6,107 @@ const H = { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json"
 
 export async function POST(req: NextRequest) {
   try {
+    // STEP 1 — 認証校験
     const authHeader = req.headers.get("Authorization");
-    const userToken = authHeader?.replace("Bearer ", "");
-    if (!userToken) {
+    const token = authHeader?.replace("Bearer ", "");
+    if (token !== TOKEN) {
+      console.error("[points/use] unauthorized");
       return NextResponse.json({ error: "unauthorized" }, { status: 401 });
     }
-    const isAdminCall = userToken === process.env.ADMIN_TOKEN;
 
-    const body = await req.json();
-    const { customerId, points, commit, orderId, useFullRate } = body;
-    if (!customerId || !points) {
-      return NextResponse.json({ error: "customerId, points required" }, { status: 400 });
+    // STEP 2 — パラメータ受け取り与校験
+    const { customerId, pointsToUse: rawPointsToUse, orderId } = await req.json();
+    const pointsToUseInt = Math.floor(Number(rawPointsToUse));
+    if (!customerId || !pointsToUseInt || pointsToUseInt <= 0) {
+      console.error("[points/use] invalid params", { customerId, rawPointsToUse, pointsToUseInt });
+      return NextResponse.json({ error: "invalid params" }, { status: 400 });
     }
 
-    // customerId is a Directus auth UUID — look up email via users endpoint
-    let email: string | null = null;
-    if (isAdminCall) {
-      const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=email`, { headers: H });
-      email = (await userRes.json()).data?.email;
-    } else {
-      const meRes = await fetch(`${DIRECTUS}/users/me`, { headers: { Authorization: `Bearer ${userToken}` } });
-      if (!meRes.ok) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-      const me = (await meRes.json()).data;
-      if (me.id !== customerId) return NextResponse.json({ error: "unauthorized" }, { status: 403 });
-      email = me.email;
+    // STEP 3 — customerId からメール取得
+    const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=email`, { headers: H });
+    if (!userRes.ok) {
+      console.error("[points/use] user not found", customerId, userRes.status);
+      return NextResponse.json({ error: "user not found" }, { status: 404 });
     }
-    if (!email) return NextResponse.json({ error: "user not found" }, { status: 404 });
+    const userData = await userRes.json();
+    const email = userData.data?.email;
+    if (!email) {
+      console.error("[points/use] user not found", customerId);
+      return NextResponse.json({ error: "user not found" }, { status: 404 });
+    }
 
-    // Find customer by email (customers.id is integer, not UUID)
+    // STEP 4 — email から customers レコード取得
     const cusRes = await fetch(
       `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id,points&limit=1`,
       { headers: H }
     );
-    const customer = (await cusRes.json()).data?.[0];
-    if (!customer) return NextResponse.json({ error: "customer not found" }, { status: 404 });
-
-    const currentPoints = customer.points || 0;
-    if (currentPoints < points) {
-      return NextResponse.json({ error: "ポイントが不足しています" }, { status: 400 });
+    if (!cusRes.ok) {
+      console.error("[points/use] failed to fetch customer", email, cusRes.status);
+      return NextResponse.json({ error: "failed to fetch customer" }, { status: 500 });
+    }
+    const cusData = await cusRes.json();
+    const customer = cusData.data?.[0];
+    if (!customer) {
+      console.error("[points/use] customer not found", email);
+      return NextResponse.json({ error: "customer not found" }, { status: 404 });
     }
 
-    // 50%換算（300pt → 150円割引）or 100%換算（保有ポイント）
-    const discountAmount = useFullRate ? points : Math.floor(points * 0.5);
+    // STEP 5 — 余額校験
+    const currentPoints = customer.points || 0;
+    if (currentPoints < pointsToUseInt) {
+      console.error("[points/use] insufficient points", { currentPoints, pointsToUseInt });
+      return NextResponse.json({
+        error: "ポイント残高が不足しています",
+        currentPoints,
+        pointsToUse: pointsToUseInt
+      }, { status: 400 });
+    }
 
-    if (commit) {
-      const newPoints = currentPoints - points;
-      await fetch(`${DIRECTUS}/items/customers/${customer.id}`, {
-        method: "PATCH",
-        headers: H,
-        body: JSON.stringify({ points: newPoints }),
-      });
-      await fetch(`${DIRECTUS}/items/point_transactions`, {
+    // STEP 6 — ポイント余額を扣除
+    const newPoints = currentPoints - pointsToUseInt;
+    const patchRes = await fetch(`${DIRECTUS}/items/customers/${customer.id}`, {
+      method: "PATCH",
+      headers: H,
+      body: JSON.stringify({ points: newPoints }),
+    });
+    if (!patchRes.ok) {
+      console.error("[points/use] failed to update points", customer.id, patchRes.status);
+      return NextResponse.json({ error: "failed to update points" }, { status: 500 });
+    }
+
+    // STEP 7 — 積分流水を記録（失敗時も完了として返す）
+    try {
+      const txRes = await fetch(`${DIRECTUS}/items/point_transactions`, {
         method: "POST",
         headers: H,
         body: JSON.stringify({
           customer_id: customerId,
           order_id: orderId || null,
           type: "use",
-          points: -points,
-          description: `注文でポイント使用`,
+          points: -pointsToUseInt,
+          description: `注文#${orderId} ポイント使用 ${pointsToUseInt}pt → ¥${pointsToUseInt}割引`,
         }),
       });
+      if (!txRes.ok) {
+        console.error("[points/use] failed to write transaction", txRes.status);
+        // 流水記録失敗は非致命的、積分は既に扣かっているため
+      }
+    } catch (e) {
+      console.error("[points/use] failed to write transaction", e);
+      // 流水記録失敗は非致命的、積分は既に扣かっているため
     }
 
+    // STEP 8 — 成功応答
+    const discountAmount = pointsToUseInt; // 1pt = 1円
+    console.log("[points/use] done", { orderId, pointsToUseInt, remainingPoints: newPoints });
     return NextResponse.json({
       success: true,
-      usedPoints: points,
+      usedPoints: pointsToUseInt,
       discountAmount,
-      remainingPoints: currentPoints - points,
+      remainingPoints: newPoints,
     });
   } catch (e) {
-    console.error("[points/use]", e);
-    return NextResponse.json({ error: "failed" }, { status: 500 });
+    console.error("[points/use] unexpected error", e);
+    return NextResponse.json({ error: "internal server error" }, { status: 500 });
   }
 }

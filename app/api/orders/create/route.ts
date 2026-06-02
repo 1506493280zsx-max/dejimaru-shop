@@ -23,7 +23,11 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { items, total, email, subtotal, warrantySubtotal, shippingFee, shippingAddress, couponCode, discountAmount, customerId, pointsUsed, used_points, saved_point_discount, saved_points_used } = await req.json();
+    const {
+      items, total, email, subtotal, warrantySubtotal, shippingFee,
+      shippingAddress, couponCode, discountAmount, customerId,
+      points_used, points_discount
+    } = await req.json();
 
     // サーバー側で金額を再計算（フロントの値を信用しない）
     const itemsRes = await Promise.all(
@@ -59,16 +63,14 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // ポイント割引をサーバー側で検証（最大50%換算）
-    const pointsToUse = pointsUsed ?? used_points ?? 0;
-    const serverPointDiscount = Math.min(
-      Math.floor(pointsToUse * 0.5),
-      serverSubtotal
-    );
-
+    // ポイント割引をサーバー側で検証（1pt=1円）
+    const pointsToUse = Number(points_used) || 0;
+    const serverPointsDiscount = Math.min(pointsToUse, serverSubtotal);
     const serverShippingFee = serverSubtotal >= 5000 ? 0 : 800;
-    const serverSavedPointDiscount = Math.min(saved_point_discount ?? 0, serverSubtotal);
-    const serverTotal = Math.max(0, serverSubtotal + serverWarrantySubtotal + serverShippingFee - serverDiscount - serverPointDiscount - serverSavedPointDiscount);
+    const serverTotal = Math.max(0,
+      serverSubtotal + serverWarrantySubtotal + serverShippingFee
+      - serverDiscount - serverPointsDiscount
+    );
 
     const order_number = generateOrderNumber();
 
@@ -80,21 +82,19 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         order_number,
-        customer_id: customerId || null,
-        guest_email: email || null,
-        status: "pending",
-        subtotal:        serverSubtotal,
-        warranty_total:  serverWarrantySubtotal,
-        shipping_fee:    serverShippingFee,
-        discount_amount:    serverDiscount,
-        point_discount:     serverPointDiscount,
-        used_points:        pointsToUse,
-        saved_point_discount: serverSavedPointDiscount,
-        saved_points_used:    saved_points_used ?? 0,
-        coupon_code:        couponCode ?? null,
-        total:              serverTotal,
-        currency: "JPY",
-        shipping_address: shippingAddress ?? null,
+        customer_id:          customerId || null,
+        guest_email:          email || null,
+        status:               "pending",
+        subtotal:             serverSubtotal,
+        warranty_total:       serverWarrantySubtotal,
+        shipping_fee:         serverShippingFee,
+        discount_amount:      serverDiscount,
+        points_used:          pointsToUse,
+        points_discount:      serverPointsDiscount,
+        coupon_code:          couponCode ?? null,
+        total:                serverTotal,
+        currency:             "JPY",
+        shipping_address:     shippingAddress ?? null,
       }),
     });
 
@@ -106,22 +106,29 @@ export async function POST(req: NextRequest) {
 
     const orderId = (await orderRes.json()).data.id;
 
-    // 積分付与：使用了即時折現時不給積分
-    if (customerId && pointsToUse === 0) {
+    // 積分使用（1pt=1円、注文確定時に即座に控除）
+    if (customerId && pointsToUse > 0) {
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "https://aiacrossshop.co.jp"}/api/points/earn`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` },
-          body: JSON.stringify({
-            customerId,
-            orderId,
-            orderTotal: serverTotal,
-          }),
-        });
+        const useRes = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL || "https://aiacrossshop.co.jp"}/api/points/use`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` },
+            body: JSON.stringify({
+              customerId,
+              pointsToUse,
+              orderId,
+            }),
+          }
+        );
+        if (!useRes.ok) {
+          console.error("[orders/create] ポイント控除失敗", await useRes.text());
+        }
       } catch (e) {
-        console.error("[orders/create] points earn error", e);
+        console.error("[orders/create] ポイント控除エラー", e);
       }
     }
+    // 注意：積分付与（earn）は発送確定時（orders/ship）で行う。ここでは呼ばない。
 
     if (couponCode) {
       try {
@@ -271,43 +278,6 @@ export async function POST(req: NextRequest) {
         { success: false, error: "Order item creation failed" },
         { status: 500 }
       );
-    }
-
-    // ポイント使用を実際に控除
-    if (customerId && pointsToUse && pointsToUse > 0) {
-      try {
-        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "https://aiacrossshop.co.jp"}/api/points/use`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` },
-          body: JSON.stringify({
-            customerId,
-            points: pointsToUse,
-            orderId,
-            commit: true,
-            useFullRate: false,
-          }),
-        });
-      } catch (e) {
-        console.error("[orders/create] points use error", e);
-      }
-    }
-
-    if (customerId && saved_points_used && saved_points_used > 0) {
-      try {
-        await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || "https://aiacrossshop.co.jp"}/api/points/use`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` },
-          body: JSON.stringify({
-            customerId,
-            points: saved_points_used,
-            orderId,
-            commit: true,
-            useFullRate: true,
-          }),
-        });
-      } catch (e) {
-        console.error("[orders/create] saved points use error", e);
-      }
     }
 
     return NextResponse.json({ success: true, orderId, orderNumber: order_number });

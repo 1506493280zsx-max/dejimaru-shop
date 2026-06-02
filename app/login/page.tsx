@@ -38,7 +38,8 @@ function LoginContent() {
       const meRes = await fetch("/api/auth/me", {
         headers: { "Authorization": `Bearer ${data.token}` },
       });
-      const user = await meRes.json();
+      const meData = await meRes.json();
+      const user = meData.data || meData;
       setAuth(user, data.token, data.refresh_token);
       router.push(redirectTo);
     } catch {
@@ -63,7 +64,8 @@ function LoginContent() {
       const meRes = await fetch("/api/auth/me", {
         headers: { "Authorization": `Bearer ${data.token}` },
       });
-      const user = await meRes.json();
+      const meData = await meRes.json();
+      const user = meData.data || meData;
       setAuth(user, data.token, data.refresh_token);
       router.push(redirectTo);
     } catch {

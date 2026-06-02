@@ -36,76 +36,72 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "この注文はキャンセルできません" }, { status: 400 });
     }
 
-    // ポイント処理（不正防止）
-    // customer email: look up via directus_users UUID (customers.id is integer, not UUID)
-    let customerEmail = order.guest_email || "";
-    if (order.customer_id && !customerEmail) {
-      const userRes = await fetch(`${DIRECTUS}/users/${order.customer_id}?fields=email`, { headers: H });
-      customerEmail = (await userRes.json()).data?.email || "";
-    }
+    // ── 積分処理（キャンセル時）──────────────────────────────────
+    // この注文に紐づく全ての積分トランザクションを取得して逆転させる
+    if (order.customer_id) {
+      try {
+        // STEP A: この注文の全積分履歴を取得
+        const txRes = await fetch(
+          `${DIRECTUS}/items/point_transactions?filter[order_id][_eq]=${orderId}&limit=100`,
+          { headers: H }
+        );
+        const txData = await txRes.json();
+        const transactions = txData.data || [];
 
-    // 1. 獲得ポイントを取り消す
-    const earnTxRes = await fetch(
-      `${DIRECTUS}/items/point_transactions?filter[order_id][_eq]=${orderId}&filter[type][_eq]=earn&limit=1`,
-      { headers: H }
-    );
-    const earnTx = (await earnTxRes.json()).data?.[0];
-    if (earnTx && order.customer_id && customerEmail) {
-      const cusRes2 = await fetch(
-        `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(customerEmail)}&fields=id,points&limit=1`,
-        { headers: H }
-      );
-      const customer = (await cusRes2.json()).data?.[0];
-      if (customer) {
-        const newPoints = Math.max(0, (customer.points || 0) - earnTx.points);
-        await fetch(`${DIRECTUS}/items/customers/${customer.id}`, {
-          method: "PATCH",
-          headers: H,
-          body: JSON.stringify({ points: newPoints }),
-        });
-        await fetch(`${DIRECTUS}/items/point_transactions`, {
-          method: "POST",
-          headers: H,
-          body: JSON.stringify({
-            customer_id: order.customer_id,
-            order_id: orderId,
-            type: "earn",
-            points: -earnTx.points,
-            description: `注文キャンセルによるポイント取消`,
-          }),
-        });
-      }
-    }
-    // 2. 使用ポイントを返還する
-    const useTxRes = await fetch(
-      `${DIRECTUS}/items/point_transactions?filter[order_id][_eq]=${orderId}&filter[type][_eq]=use&limit=1`,
-      { headers: H }
-    );
-    const useTx = (await useTxRes.json()).data?.[0];
-    if (useTx && order.customer_id && customerEmail) {
-      const cusRes3 = await fetch(
-        `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(customerEmail)}&fields=id,points&limit=1`,
-        { headers: H }
-      );
-      const customer3 = (await cusRes3.json()).data?.[0];
-      if (customer3) {
-        const newPoints3 = (customer3.points || 0) + Math.abs(useTx.points);
-        await fetch(`${DIRECTUS}/items/customers/${customer3.id}`, {
-          method: "PATCH",
-          headers: H,
-          body: JSON.stringify({ points: newPoints3 }),
-        });
-        await fetch(`${DIRECTUS}/items/point_transactions`, {
-          method: "POST",
-          headers: H,
-          body: JSON.stringify({
-            customer_id: order.customer_id,
-            order_id: orderId,
-            type: "use",
-            points: Math.abs(useTx.points),
-            description: `注文キャンセルによるポイント返還`,
-          }),
-        });
+        if (transactions.length > 0) {
+          // STEP B: customerのemailを取得
+          const userRes = await fetch(
+            `${DIRECTUS}/users/${order.customer_id}?fields=email`,
+            { headers: H }
+          );
+          const email = (await userRes.json()).data?.email;
+          if (!email) throw new Error("customer email not found");
+
+          // STEP C: customersレコードを取得
+          const cusRes = await fetch(
+            `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id,points&limit=1`,
+            { headers: H }
+          );
+          const customer = (await cusRes.json()).data?.[0];
+          if (!customer) throw new Error("customer record not found");
+
+          // STEP D: 全トランザクションの合計を逆転させた値を計算
+          // earn(プラス)はマイナスに、use(マイナス)はプラスに戻す
+          const totalReverse = transactions.reduce(
+            (sum: number, tx: any) => sum - tx.points,
+            0
+          );
+
+          // STEP E: customers.pointsを更新（マイナスにならないようにガード）
+          const newPoints = Math.max(0, (customer.points || 0) + totalReverse);
+          await fetch(`${DIRECTUS}/items/customers/${customer.id}`, {
+            method: "PATCH",
+            headers: H,
+            body: JSON.stringify({ points: newPoints }),
+          });
+
+          // STEP F: キャンセル履歴を1件記録
+          await fetch(`${DIRECTUS}/items/point_transactions`, {
+            method: "POST",
+            headers: H,
+            body: JSON.stringify({
+              customer_id: order.customer_id,
+              order_id: orderId,
+              type: "cancel",
+              points: totalReverse,
+              description: `注文#${orderId} キャンセルによる積分調整（${totalReverse > 0 ? "+" : ""}${totalReverse}pt）`,
+            }),
+          });
+
+          console.log("[orders/cancel] 積分調整完了", {
+            orderId,
+            totalReverse,
+            newPoints,
+          });
+        }
+      } catch (e) {
+        // 積分処理失敗はログのみ。キャンセル自体は続行する。
+        console.error("[orders/cancel] 積分処理エラー", e);
       }
     }
 

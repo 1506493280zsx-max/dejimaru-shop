@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
     // 1. 注文情報を取得
     const orderRes = await fetch(
-      `${DIRECTUS}/items/orders/${orderId}?fields=id,order_number,guest_email,status,tracking_number,shipping_carrier,total,shipping_address,customer_id,shipped_at`,
+      `${DIRECTUS}/items/orders/${orderId}?fields=id,order_number,guest_email,status,tracking_number,shipping_carrier,total,subtotal,shipping_address,customer_id,shipped_at`,
       { headers: H() }
     );
     const order = (await orderRes.json()).data;
@@ -99,39 +99,39 @@ export async function POST(req: NextRequest) {
     }
     console.log("[orders/ship] mail sent:", mailData?.id, "to:", email);
 
-    // 6. ポイント付与（発送時に確定）
+    // ── 積分付与（発送確定時）──────────────────────────────────
+    // originalTotal = subtotal（商品原価、割引・積分使用・送料を含まない）
+    // /api/points/earn 内部で幂等チェック済み（二重付与防止）
     if (order.customer_id) {
-      const rateRes = await fetch(
-        `${DIRECTUS}/items/point_settings?filter[is_active][_eq]=true&limit=1&sort=-created_at`,
-        { headers: H() }
-      );
-      const rate = (await rateRes.json()).data?.[0]?.rate || 100;
-      const earnedPoints = Math.floor((order.total || 0) / rate);
-      if (earnedPoints > 0) {
-        const cusRes = await fetch(
-          `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id,points&limit=1`,
-          { headers: H() }
-        );
-        const customer = (await cusRes.json()).data?.[0];
-        if (customer) {
-          const newPoints = (customer.points || 0) + earnedPoints;
-          await fetch(`${DIRECTUS}/items/customers/${customer.id}`, {
-            method: "PATCH",
-            headers: H(),
-            body: JSON.stringify({ points: newPoints }),
-          });
-          await fetch(`${DIRECTUS}/items/point_transactions`, {
+      try {
+        console.log("[orders/ship] 積分計算基準", {
+          subtotal: order.subtotal,
+          total: order.total,
+          using: order.subtotal ?? order.total ?? 0
+        });
+        const earnRes = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL || "https://aiacrossshop.co.jp"}/api/points/earn`,
+          {
             method: "POST",
-            headers: H(),
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.ADMIN_TOKEN}`,
+            },
             body: JSON.stringify({
-              customer_id: order.customer_id,
-              order_id: order.id,
-              type: "earn",
-              points: earnedPoints,
-              description: `注文 #${order.order_number} 発送確定ポイント付与`,
+              customerId: order.customer_id,
+              orderId: order.id,
+              originalTotal: order.subtotal ?? order.total ?? 0,
             }),
-          });
+          }
+        );
+        if (!earnRes.ok) {
+          console.error("[orders/ship] ポイント付与失敗", await earnRes.text());
+        } else {
+          const earnData = await earnRes.json();
+          console.log("[orders/ship] ポイント付与完了", earnData);
         }
+      } catch (e) {
+        console.error("[orders/ship] ポイント付与エラー", e);
       }
     }
 

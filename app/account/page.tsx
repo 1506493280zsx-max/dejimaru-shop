@@ -18,6 +18,7 @@ export default function AccountPage() {
   const { count: wishCount } = useWishlistStore();
   const [mounted, setMounted] = useState(false);
   const [pointBalance, setPointBalance] = useState(0);
+  const [orderCount, setOrderCount] = useState<number | null>(null);
   useEffect(()=>setMounted(true),[]);
 
   useEffect(() => {
@@ -29,6 +30,16 @@ export default function AccountPage() {
       .then(d => setPointBalance(d.points || 0))
       .catch(() => {});
   }, [user]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    fetch(`/api/orders/list`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(r => r.json())
+      .then(d => setOrderCount((d.data || []).length))
+      .catch(() => {});
+  }, [user, token]);
 
   const handleLogout = () => {
     clearAuth();
@@ -85,7 +96,7 @@ export default function AccountPage() {
           {[
             {label:"カート",value:mounted?cartCount():0,unit:"点",path:"/cart",color:C.red},
             {label:"お気に入り",value:mounted?wishCount():0,unit:"件",path:"/account/wishlist",color:C.red},
-            {label:"注文履歴",value:"—",unit:"",path:"/account/orders",color:C.primary},
+            {label:"注文履歴",value:mounted && orderCount !== null ? orderCount : "—",unit:"件",path:"/account/orders",color:C.primary},
           ].map((s,i)=>(
             <div key={i} onClick={()=>router.push(s.path)}
               style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${s.color}`,borderRadius:"0 0 2px 2px",padding:16,textAlign:"center",cursor:"pointer"}}

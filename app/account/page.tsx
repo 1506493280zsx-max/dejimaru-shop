@@ -151,27 +151,6 @@ export default function AccountPage() {
           ))}
         </div>
 
-        <div style={{background:C.white,border:`1px solid ${C.border}`,borderRadius:2,overflow:"hidden"}}>
-          <div style={{background:"#555",color:"#fff",padding:"8px 16px",fontSize:13,fontWeight:700}}>
-            お知らせ
-          </div>
-          <div style={{padding:16}}>
-            {(notices.length > 0 ? notices : [
-              {date:"2024.12.01",text:"年末年始の営業・発送スケジュールのご案内",slug:""},
-              {date:"2024.11.15",text:"新着商品が多数入荷しました",slug:""},
-              {date:"2024.11.01",text:"ポイントサービス開始のお知らせ",slug:""},
-            ]).map((n,i)=>(
-              <div key={i}
-                style={{display:"flex",gap:12,padding:"10px 0",borderBottom:i<2?`1px solid ${C.border}`:"none",cursor:n.slug?"pointer":"default"}}
-                onClick={()=>n.slug&&router.push(`/blog/${n.slug}`)}
-                onMouseEnter={e=>{if(n.slug)e.currentTarget.style.color=C.primary}}
-                onMouseLeave={e=>(e.currentTarget.style.color=C.text)}>
-                <div style={{fontSize:11,color:C.textLight,flexShrink:0,paddingTop:1}}>{n.date}</div>
-                <div style={{fontSize:12,color:"inherit"}}>{n.text}</div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
 
     </div>

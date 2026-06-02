@@ -122,11 +122,7 @@ ${order.status === "cancelled" ? `<div class="cancel-notice">⚠️ この注文
     ${itemRows}
     ${(order.shipping_fee || 0) > 0 ? `<tr><td style="padding:10px;border-bottom:1px solid #eee;">送料</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">-</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:right;">¥${order.shipping_fee.toLocaleString("ja-JP")}</td></tr>` : ""}
     ${(order.discount_amount || 0) > 0 ? `<tr><td style="padding:10px;border-bottom:1px solid #eee;color:#2e7d32;">クーポン割引</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">-</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:right;color:#2e7d32;">-¥${order.discount_amount.toLocaleString("ja-JP")}</td></tr>` : ""}
-    ${(order.points_discount || 0) > 0 ? `
-<tr>
-  <td style="padding:6px 12px;color:#2e7d32;">ポイント割引</td>
-  <td style="padding:6px 12px;text-align:right;color:#2e7d32;">-¥${(order.points_discount || 0).toLocaleString()}</td>
-</tr>` : ""}
+    ${(order.points_discount || 0) > 0 ? `<tr><td style="padding:10px;border-bottom:1px solid #eee;color:#2e7d32;">ポイント割引</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">-</td><td style="padding:10px;border-bottom:1px solid #eee;text-align:right;color:#2e7d32;">-¥${(order.points_discount || 0).toLocaleString("ja-JP")}</td></tr>` : ""}
   </tbody>
 </table>
 <div class="stamp-area">

@@ -194,7 +194,7 @@ export async function POST(req: NextRequest) {
         warrantySubtotal: serverWarrantySubtotal,
         shippingFee: serverShippingFee,
         discountAmount: serverDiscount,
-        pointsDiscount: serverPointDiscount,
+        pointsDiscount: serverPointsDiscount,
         total: serverTotal,
       });
     } catch (mailErr) {

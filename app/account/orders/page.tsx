@@ -179,8 +179,7 @@ export default function OrdersPage() {
                       <div style={{fontSize:12}}>小計：¥{order.subtotal?.toLocaleString()}</div>
                       {(order.warranty_total||0)>0&&<div style={{fontSize:12,color:"#0ABAB5"}}>無期限保障：¥{order.warranty_total?.toLocaleString()}</div>}
                       {(order.discount_amount||0)>0&&<div style={{fontSize:12,color:"#2e7d32"}}>クーポン割引：-¥{order.discount_amount?.toLocaleString()}</div>}
-                      {(order.point_discount||0)>0&&<div style={{fontSize:12,color:"#0ABAB5"}}>ポイント割引：-¥{order.point_discount?.toLocaleString()}</div>}
-                      {(order.saved_point_discount||0)>0&&<div style={{fontSize:12,color:"#ff6d00"}}>保有ポイント割引：-¥{order.saved_point_discount?.toLocaleString()}</div>}
+                      {(order.points_discount||0)>0&&<div style={{fontSize:12,color:"#2e7d32"}}>ポイント割引：-¥{order.points_discount?.toLocaleString()}</div>}
                       <div style={{fontSize:12}}>送料：{order.shipping_fee===0?"無料":"¥"+order.shipping_fee?.toLocaleString()}</div>
                       <div style={{fontSize:13,fontWeight:700,color:"#CC2200",marginTop:4}}>合計：¥{order.total?.toLocaleString()}</div>
                     </div>

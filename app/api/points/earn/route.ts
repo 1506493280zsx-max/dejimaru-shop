@@ -113,7 +113,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ステップ7: point_transactions に記録
-    const description = `注文#${orderId}: 原価¥${originalTotal} × 汇率${rate} = ${earnedPoints}pt獲得`;
+    const description = `注文 #${orderId} のポイント付与`;
     console.log(`[points/earn] トランザクション記録: ${description}`);
     const txRes = await fetch(`${DIRECTUS}/items/point_transactions`, {
       method: "POST",

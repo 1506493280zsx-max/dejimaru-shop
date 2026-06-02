@@ -13,7 +13,7 @@ const C = {
 
 export default function AccountPage() {
   const router = useRouter();
-  const { user, clearAuth } = useAuthStore();
+  const { user, token, clearAuth } = useAuthStore();
   const { count: cartCount } = useCartStore();
   const { count: wishCount } = useWishlistStore();
   const [mounted, setMounted] = useState(false);
@@ -22,7 +22,9 @@ export default function AccountPage() {
 
   useEffect(() => {
     if (!user?.id) return;
-    fetch(`/api/points/balance?customerId=${user.id}`)
+    fetch(`/api/points/balance?customerId=${user.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
       .then(r => r.json())
       .then(d => setPointBalance(d.points || 0))
       .catch(() => {});

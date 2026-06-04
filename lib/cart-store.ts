@@ -12,6 +12,8 @@ export interface CartItem {
   grade: string | null;
   warrantySelected: boolean;
   warrantyPrice: number;
+  variant_id: number | null;
+  variant_snapshot: string;
 }
 
 interface CartStore {
@@ -31,11 +33,11 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       addItem: (item) => set((state) => {
-        const existing = state.items.find(i => i.id === item.id);
+        const existing = state.items.find(i => i.id === item.id && i.variant_id === item.variant_id);
         if (existing) {
-          return { items: state.items.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i) };
+          return { items: state.items.map(i => i.id === item.id && i.variant_id === item.variant_id ? { ...i, quantity: i.quantity + 1 } : i) };
         }
-        return { items: [...state.items, { ...item, quantity: 1 }] };
+        return { items: [...state.items, { ...item, quantity: 1, variant_id: item.variant_id ?? null, variant_snapshot: item.variant_snapshot ?? "" }] };
       }),
       removeItem: (id) => set((state) => ({ items: state.items.filter(i => i.id !== id) })),
       updateQty: (id, qty) => set((state) => ({

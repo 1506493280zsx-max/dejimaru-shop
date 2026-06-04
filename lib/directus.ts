@@ -213,3 +213,33 @@ export async function createReview(data: {
     return (await res.json()).data;
   } catch { return null; }
 }
+
+// ─── PRODUCT VARIANTS ─────────────────────────────────────────
+export interface ProductVariant {
+  id: number;
+  product_id: number;
+  sku: string;
+  price: number;
+  compare_at_price: number | null;
+  stock_quantity: number;
+  status: string;
+  color: string | null;
+  memory: string | null;
+  storage: string | null;
+  capacity: string | null;
+  sort_order: number;
+}
+
+export async function getProductVariants(productId: number | string): Promise<ProductVariant[]> {
+  try {
+    const res = await fetch(
+      `${DIRECTUS_URL}/items/product_variants?filter[product_id][_eq]=${productId}&filter[status][_eq]=active&sort[]=sort_order&limit=100`,
+      { headers: publicHeaders, next: { revalidate: 60 } }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return (await res.json()).data || [];
+  } catch (e) {
+    console.error("[getProductVariants]", e);
+    return [];
+  }
+}

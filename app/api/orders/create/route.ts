@@ -33,14 +33,53 @@ export async function POST(req: NextRequest) {
     const itemsRes = await Promise.all(
       items.map(async (item: any) => {
         const productId = item.product_id || item.id;
-        const pRes = await fetch(
-          `${DIRECTUS}/items/products?filter[id][_eq]=${productId}&fields=price,premium_warranty_price&limit=1`,
-          { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
-        );
-        const pData = await pRes.json();
-        const serverPrice = pData.data?.[0]?.price || 0;
-        const serverWarrantyPrice = pData.data?.[0]?.premium_warranty_price || 0;
-        return { ...item, unit_price: serverPrice, warranty_price: serverWarrantyPrice, warranty_selected: !!(item.warranty_selected || item.warrantySelected) };
+        const variantId = item.variant_id || null;
+
+        let serverPrice = 0;
+        let serverWarrantyPrice = 0;
+        let variantSnapshot = "";
+
+        // variant_idがあればvariantから価格取得、なければproductから取得（後方互換）
+        if (variantId) {
+          const vRes = await fetch(
+            `${DIRECTUS}/items/product_variants/${variantId}?fields=price,color,memory,storage,capacity`,
+            { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+          );
+          if (vRes.ok) {
+            const vData = await vRes.json();
+            const v = vData.data;
+            serverPrice = v?.price || 0;
+            const parts = [v?.color, v?.memory, v?.storage, v?.capacity].filter(Boolean);
+            variantSnapshot = parts.join(" / ");
+          }
+        }
+
+        // variantから価格が取れなかった場合はproductから取得
+        if (serverPrice === 0) {
+          const pRes = await fetch(
+            `${DIRECTUS}/items/products?filter[id][_eq]=${productId}&fields=price,premium_warranty_price&limit=1`,
+            { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+          );
+          const pData = await pRes.json();
+          serverPrice = pData.data?.[0]?.price || 0;
+          serverWarrantyPrice = pData.data?.[0]?.premium_warranty_price || 0;
+        } else {
+          const pRes = await fetch(
+            `${DIRECTUS}/items/products?filter[id][_eq]=${productId}&fields=premium_warranty_price&limit=1`,
+            { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+          );
+          const pData = await pRes.json();
+          serverWarrantyPrice = pData.data?.[0]?.premium_warranty_price || 0;
+        }
+
+        return {
+          ...item,
+          unit_price: serverPrice,
+          warranty_price: serverWarrantyPrice,
+          warranty_selected: !!(item.warranty_selected || item.warrantySelected),
+          variant_id: variantId,
+          variant_snapshot: variantSnapshot,
+        };
       })
     );
     const serverSubtotal = itemsRes.reduce((sum: number, item: any) => sum + item.unit_price * item.quantity, 0);
@@ -243,10 +282,12 @@ export async function POST(req: NextRequest) {
             product_name:      productName,
             product_id:        productId,
             quantity:          item.quantity,
-            unit_price:        item.price,
-            total_price:       (item.price + (item.warrantyPrice ?? 0)) * item.quantity,
-            warranty_selected: item.warrantySelected ?? false,
-            warranty_price:    item.warrantyPrice    ?? 0,
+            unit_price:        item.unit_price,
+            total_price:       (item.unit_price + (item.warranty_price ?? 0)) * item.quantity,
+            warranty_selected: item.warranty_selected ?? false,
+            warranty_price:    item.warranty_price    ?? 0,
+            variant_id:        item.variant_id        || null,
+            variant_snapshot:  item.variant_snapshot  || "",
             snapshot:          item,
           }),
         });

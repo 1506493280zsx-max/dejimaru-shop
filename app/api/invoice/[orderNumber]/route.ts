@@ -9,7 +9,7 @@ const H = { Authorization: `Bearer ${TOKEN}` };
 export async function GET(req: NextRequest, { params }: { params: Promise<{ orderNumber: string }> }) {
   const { orderNumber } = await params;
   const res = await fetch(
-    `${DIRECTUS}/items/orders?filter[order_number][_eq]=${orderNumber}&fields=*,order_items.*,points_discount,points_used&limit=1`,
+    `${DIRECTUS}/items/orders?filter[order_number][_eq]=${orderNumber}&fields=*,order_items.*,order_items.variant_snapshot,points_discount,points_used&limit=1`,
     { headers: H }
   );
   const order = (await res.json()).data?.[0];
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ orde
     const warrantyTotal = item.warranty_selected ? (item.warranty_price || 0) * item.quantity : 0;
     return `
     <tr>
-      <td style="padding:10px;border-bottom:1px solid #eee;">${item.product_name || ""}</td>
+      <td style="padding:10px;border-bottom:1px solid #eee;">${item.product_name || ""}${item.variant_snapshot ? `<br><span style="font-size:11px;color:#666;">${item.variant_snapshot}</span>` : ""}</td>
       <td style="padding:10px;border-bottom:1px solid #eee;text-align:center;">${item.quantity}</td>
       <td style="padding:10px;border-bottom:1px solid #eee;text-align:right;">¥${productTotal.toLocaleString("ja-JP")}</td>
     </tr>

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { getImageUrl } from "@/lib/directus";
@@ -29,6 +29,19 @@ function Stars({ rating, size = 13 }: { rating: number; size?: number }) {
   );
 }
 
+interface Variant {
+  id: number;
+  sku: string;
+  price: number;
+  compare_at_price: number | null;
+  stock_quantity: number;
+  color: string | null;
+  memory: string | null;
+  storage: string | null;
+  capacity: string | null;
+  sort_order: number;
+}
+
 export default function PurchasePanel({
   product, avgRating = 0, reviewCount = 0,
 }: { product: any; avgRating?: number; reviewCount?: number }) {
@@ -37,35 +50,121 @@ export default function PurchasePanel({
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [warrantySelected, setWarrantySelected] = useState(false);
+  const [variants, setVariants] = useState<Variant[]>([]);
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const [selectedMemory, setSelectedMemory] = useState<string | null>(null);
+  const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
+  const [selectedCapacity, setSelectedCapacity] = useState<string | null>(null);
 
   const warrantyEnabled = !!product.premium_warranty_enabled;
   const warrantyPrice = product.premium_warranty_price;
 
-  const disc = product.compare_at_price
-    ? Math.round((1 - product.price / product.compare_at_price) * 100) : 0;
+  // バリアント取得
+  useEffect(() => {
+    fetch(`/api/products/${product.id}/variants`)
+      .then(r => r.json())
+      .then(d => {
+        const vs: Variant[] = d.variants || [];
+        setVariants(vs);
+        if (vs.length === 1) {
+          setSelectedVariant(vs[0]);
+        }
+      })
+      .catch(() => setVariants([]));
+  }, [product.id]);
+
+  // 選択肢からバリアントを絞り込む
+  useEffect(() => {
+    if (variants.length === 0) return;
+    const matched = variants.find(v =>
+      (selectedColor === null || v.color === selectedColor) &&
+      (selectedMemory === null || v.memory === selectedMemory) &&
+      (selectedStorage === null || v.storage === selectedStorage) &&
+      (selectedCapacity === null || v.capacity === selectedCapacity)
+    );
+    setSelectedVariant(matched || null);
+  }, [selectedColor, selectedMemory, selectedStorage, selectedCapacity, variants]);
+
+  // ユニーク選択肢
+  const colors    = [...new Set(variants.map(v => v.color).filter(Boolean))] as string[];
+  const memories  = [...new Set(variants.map(v => v.memory).filter(Boolean))] as string[];
+  const storages  = [...new Set(variants.map(v => v.storage).filter(Boolean))] as string[];
+  const capacities = [...new Set(variants.map(v => v.capacity).filter(Boolean))] as string[];
+
+  const hasVariants = variants.length > 0;
+
+  // 表示価格：バリアントがあればバリアント価格、なければ商品価格
+  const displayPrice = selectedVariant?.price ?? (hasVariants ? null : product.price);
+  const displayCompare = selectedVariant?.compare_at_price ?? (hasVariants ? null : product.compare_at_price);
+  const disc = displayPrice && displayCompare
+    ? Math.round((1 - displayPrice / displayCompare) * 100) : 0;
   const gs = GRADE_STYLE[product.grade] || GRADE_STYLE.C;
 
   const handleAddToCart = () => {
+    if (hasVariants && !selectedVariant) return;
     const imgId = product.images?.[0]?.image_file_id;
+    const parts = [selectedVariant?.color, selectedVariant?.memory, selectedVariant?.storage, selectedVariant?.capacity].filter(Boolean);
+    const snapshot = parts.join(" / ");
+    const cartId = selectedVariant ? `${product.id}-${selectedVariant.id}` : String(product.id);
     for (let i = 0; i < qty; i++) {
       addItem({
-        id: String(product.id), slug: product.slug, name: product.name,
-        price: product.price,
+        id: cartId,
+        slug: product.slug,
+        name: product.name,
+        price: displayPrice ?? 0,
         imageUrl: imgId ? getImageUrl(imgId, 200, 150) : null,
-        brand: product.brand_id?.name || "", grade: product.grade,
+        brand: product.brand_id?.name || "",
+        grade: product.grade,
         warrantySelected,
-        warrantyPrice: warrantySelected ? (warrantyPrice ?? 0) : 0,
+        warrantyPrice: warrantySelected ? (warrantyPrice || 0) : 0,
+        variant_id: selectedVariant?.id ?? null,
+        variant_snapshot: snapshot,
       });
     }
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
 
+  const SelectorRow = ({ label, options, selected, onSelect }: {
+    label: string;
+    options: string[];
+    selected: string | null;
+    onSelect: (v: string) => void;
+  }) => (
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: C.textSub, marginBottom: 6 }}>
+        {label}：<span style={{ color: C.text, fontWeight: 400 }}>{selected || "選択してください"}</span>
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {options.map(opt => (
+          <button
+            key={opt}
+            onClick={() => onSelect(opt)}
+            style={{
+              padding: "6px 14px",
+              border: `1px solid ${selected === opt ? C.primary : C.border}`,
+              background: selected === opt ? C.primaryBg : C.white,
+              color: selected === opt ? C.primary : C.text,
+              borderRadius: 2,
+              fontSize: 12,
+              fontWeight: selected === opt ? 700 : 400,
+              cursor: "pointer",
+              fontFamily: "inherit",
+            }}
+          >
+            {opt}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div style={{ flex: 1 }}>
       <div style={{ background: C.white, border: `1px solid ${C.border}`, borderRadius: 2, padding: 16, marginBottom: 10 }}>
         <div style={{ fontSize: 11, color: C.textLight, marginBottom: 4 }}>{product.brand_id?.name}</div>
-        <h1 style={{ fontSize: 16, fontWeight: 700, color: C.text, lineHeight: 1.5, margin: "0 0 8px 0" }}>{product.name}</h1>
+        <h1 style={{ fontSize: 16, fontWeight: 700, lineHeight: 1.5, margin: "0 0 8px 0" }}>{product.name}</h1>
 
         {reviewCount > 0 && (
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
@@ -87,16 +186,41 @@ export default function PurchasePanel({
           <span style={{ background: "#F0FFF4", color: "#22AA44", border: "1px solid #88DD88", borderRadius: 2, fontSize: 11, padding: "3px 10px" }}>在庫あり</span>
         </div>
 
-        {/* Price */}
-        <div style={{ marginBottom: 14, padding: 12, background: C.primaryBg, borderRadius: 2, border: `1px solid ${C.primaryBorder}` }}>
-          {product.compare_at_price && (
-            <div style={{ fontSize: 11, color: C.textLight, textDecoration: "line-through", marginBottom: 2 }}>定価 ¥{product.compare_at_price.toLocaleString()}</div>
-          )}
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
-            <div style={{ fontSize: 26, fontWeight: 900, color: C.red }}>¥{product.price.toLocaleString()}</div>
-            <div style={{ fontSize: 11, color: C.textSub }}>（税込）</div>
-            {disc >= 5 && <div style={{ background: C.red, color: "#fff", fontSize: 12, fontWeight: 700, padding: "2px 8px", borderRadius: 2 }}>{disc}%OFF</div>}
+        {/* バリアント選択器 */}
+        {hasVariants && (
+          <div style={{ marginBottom: 14, padding: 12, background: "#FAFAFA", borderRadius: 2, border: `1px solid ${C.border}` }}>
+            {colors.length > 0 && (
+              <SelectorRow label="カラー" options={colors} selected={selectedColor} onSelect={setSelectedColor} />
+            )}
+            {memories.length > 0 && (
+              <SelectorRow label="メモリ" options={memories} selected={selectedMemory} onSelect={setSelectedMemory} />
+            )}
+            {storages.length > 0 && (
+              <SelectorRow label="ストレージ" options={storages} selected={selectedStorage} onSelect={setSelectedStorage} />
+            )}
+            {capacities.length > 0 && (
+              <SelectorRow label="容量" options={capacities} selected={selectedCapacity} onSelect={setSelectedCapacity} />
+            )}
+            {hasVariants && !selectedVariant && (
+              <div style={{ fontSize: 12, color: C.red, marginTop: 4 }}>※ 上記の仕様を選択してください</div>
+            )}
           </div>
+        )}
+
+        {/* 価格 */}
+        <div style={{ marginBottom: 14, padding: 12, background: C.primaryBg, borderRadius: 2, border: `1px solid ${C.primaryBorder}` }}>
+          {displayCompare && (
+            <div style={{ fontSize: 11, color: C.textLight, textDecoration: "line-through", marginBottom: 2 }}>定価 ¥{displayCompare.toLocaleString()}</div>
+          )}
+          {displayPrice !== null ? (
+            <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+              <div style={{ fontSize: 26, fontWeight: 900, color: C.red }}>¥{displayPrice.toLocaleString()}</div>
+              <div style={{ fontSize: 11, color: C.textSub }}>（税込）</div>
+              {disc >= 5 && <div style={{ background: C.red, color: "#fff", fontSize: 12, fontWeight: 700, padding: "2px 8px", borderRadius: 2 }}>{disc}%OFF</div>}
+            </div>
+          ) : (
+            <div style={{ fontSize: 14, color: C.textSub }}>仕様を選択すると価格が表示されます</div>
+          )}
         </div>
 
         {product.short_description && (
@@ -108,41 +232,58 @@ export default function PurchasePanel({
         {/* Premium 保証 */}
         {warrantyEnabled && warrantyPrice > 0 && (
           <label style={{
-            display:"flex", alignItems:"center", gap:10, cursor:"pointer",
-            padding:"10px 12px", marginBottom:12,
+            display: "flex", alignItems: "center", gap: 10, cursor: "pointer",
+            padding: "10px 12px", marginBottom: 12,
             background: warrantySelected ? C.primaryBg : "#FAFAFA",
             border: `1px solid ${warrantySelected ? C.primary : C.border}`,
-            borderRadius:2, userSelect:"none",
+            borderRadius: 2, userSelect: "none",
           }}>
             <input
               type="checkbox"
               checked={warrantySelected}
               onChange={e => setWarrantySelected(e.target.checked)}
-              style={{ accentColor: C.primary, width:16, height:16, flexShrink:0 }}
+              style={{ accentColor: C.primary }}
             />
             <div>
-              <div style={{fontSize:12, fontWeight:700, color:C.text}}>
-                無期限保障
-              </div>
-              <div style={{fontSize:11, color:C.primary, fontWeight:700}}>
-                +¥{warrantyPrice.toLocaleString()}
-              </div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: C.text }}>無期限保障</div>
+              <div style={{ fontSize: 11, color: C.primary, fontWeight: 700 }}>+¥{warrantyPrice.toLocaleString()}</div>
             </div>
           </label>
         )}
 
-        {/* Qty + Cart */}
+        {/* 数量 + カート */}
         <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10 }}>
           <div style={{ display: "flex", alignItems: "center", border: `1px solid ${C.border}`, borderRadius: 2 }}>
             <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ width: 32, height: 36, background: "#F5F5F5", border: "none", fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}>－</button>
             <div style={{ width: 40, height: 36, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700 }}>{qty}</div>
             <button onClick={() => setQty(q => q + 1)} style={{ width: 32, height: 36, background: "#F5F5F5", border: "none", fontSize: 16, cursor: "pointer", fontFamily: "inherit" }}>＋</button>
           </div>
-          <button onClick={handleAddToCart} style={{ flex: 1, background: added ? "#227700" : C.primary, color: "#fff", border: "none", padding: "10px 20px", borderRadius: 2, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "background 0.2s" }}>
+          <button
+            onClick={handleAddToCart}
+            disabled={hasVariants && !selectedVariant}
+            style={{
+              flex: 1, background: added ? "#227700" : (hasVariants && !selectedVariant ? "#AAA" : C.primary),
+              color: "#fff", border: "none", padding: "10px 20px", borderRadius: 2,
+              fontSize: 14, fontWeight: 700,
+              cursor: hasVariants && !selectedVariant ? "not-allowed" : "pointer",
+              fontFamily: "inherit", transition: "background 0.2s"
+            }}
+          >
             {added ? "✓ カートに追加しました！" : "🛒 カートに入れる"}
           </button>
         </div>
-        <button onClick={() => { handleAddToCart(); router.push("/cart"); }} style={{ width: "100%", background: "#FF6600", color: "#fff", border: "none", padding: "10px", borderRadius: 2, fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", marginBottom: 8 }}>
+
+        <button
+          onClick={() => { handleAddToCart(); router.push("/cart"); }}
+          disabled={hasVariants && !selectedVariant}
+          style={{
+            width: "100%", background: hasVariants && !selectedVariant ? "#AAA" : "#FF6600",
+            color: "#fff", border: "none", padding: "10px", borderRadius: 2,
+            fontSize: 14, fontWeight: 700,
+            cursor: hasVariants && !selectedVariant ? "not-allowed" : "pointer",
+            fontFamily: "inherit", marginBottom: 10
+          }}
+        >
           ⚡ 今すぐ購入
         </button>
 
@@ -152,7 +293,7 @@ export default function PurchasePanel({
           ))}
         </div>
 
-        {/* Payment icons */}
+        {/* 決済アイコン */}
         <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${C.border}` }}>
           <div style={{ fontSize: 11, color: C.textSub, marginBottom: 6 }}>対応決済方法</div>
           <div style={{ padding: 0, margin: 0, background: "transparent", border: "none", boxShadow: "none", borderRadius: 0, overflow: "hidden" }}>

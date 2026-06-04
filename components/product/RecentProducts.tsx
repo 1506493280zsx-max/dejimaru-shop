@@ -72,7 +72,7 @@ export default function RecentProducts({ currentProductId }: { currentProductId:
                     <span style={{ background: gs.bg, color: gs.color, border: `1px solid ${gs.border}`, borderRadius: 2, fontSize: 10, fontWeight: 700, padding: "1px 5px", marginBottom: 4, display: "inline-block" }}>{gs.label}</span>
                   )}
                   <div style={{ fontSize: 11, color: C.text, lineHeight: 1.4, marginBottom: 4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" as any, overflow: "hidden" }}>{item.name}</div>
-                  <div style={{ fontSize: 13, fontWeight: 900, color: C.red }}>¥{item.price.toLocaleString()}</div>
+                  <div style={{ fontSize: 13, fontWeight: 900, color: C.red }}>¥{(item.price ?? 0).toLocaleString()}</div>
                 </div>
               </div>
             );

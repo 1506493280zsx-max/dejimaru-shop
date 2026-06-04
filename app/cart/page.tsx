@@ -51,7 +51,7 @@ export default function CartPage() {
                     <div style={{fontSize:12,fontWeight:600,color:C.text,lineHeight:1.4,cursor:"pointer"}}
                       onClick={()=>router.push(`/products/${item.slug}`)}>{item.name}</div>
                     {item.grade&&<div style={{fontSize:10,color:"#007A76",marginTop:2}}>{GRADE_LABEL[item.grade]||item.grade}</div>}
-                    <div style={{fontSize:14,fontWeight:700,color:C.red,marginTop:4}}>¥{item.price.toLocaleString()}</div>
+                    <div style={{fontSize:14,fontWeight:700,color:C.red,marginTop:4}}>¥{(item.price ?? 0).toLocaleString()}</div>
                   </div>
                   <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
                     <div style={{display:"flex",alignItems:"center",border:`1px solid ${C.border}`,borderRadius:2}}>

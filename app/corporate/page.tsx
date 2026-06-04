@@ -74,8 +74,8 @@ function CorpProductCard({p}:{p:typeof CORP_PRODUCTS[0]}) {
         {GRADE_LABEL[p.grade]||p.grade}
       </span>
       <div style={{marginTop:2}}>
-        <div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>定価 ¥{p.compare_at_price.toLocaleString()}</div>
-        <div style={{fontSize:16,fontWeight:700,color:C.red}}>¥{p.price.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>（税込）</span></div>
+        <div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>定価 ¥{(p.compare_at_price ?? 0).toLocaleString()}</div>
+        <div style={{fontSize:16,fontWeight:700,color:C.red}}>¥{(p.price ?? 0).toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>（税込）</span></div>
       </div>
       <button onClick={()=>router.push(`/products/${p.slug}`)}
         style={{marginTop:"auto",background:hov?C.primaryDark:C.primary,color:"#fff",border:"none",borderRadius:2,padding:"6px 8px",fontSize:11,fontWeight:700,cursor:"pointer",width:"100%",fontFamily:"inherit"}}>

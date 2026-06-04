@@ -80,7 +80,7 @@ export default function WishlistPage() {
                   <div style={{display:"flex",gap:6,marginTop:"auto"}}>
                     <button
                       onClick={()=>{
-                        addItem({id:item.id,slug:item.slug,name:item.name,price:item.price,imageUrl:item.imageUrl,brand:item.brand,grade:item.grade,warrantySelected:false,warrantyPrice:0});
+                        addItem({id:item.id,slug:item.slug,name:item.name,price:item.price,imageUrl:item.imageUrl,brand:item.brand,grade:item.grade,warrantySelected:false,warrantyPrice:0,variant_id:null,variant_snapshot:""});
                         router.push("/cart");
                       }}
                       style={{flex:1,background:C.primary,color:"#fff",border:"none",borderRadius:2,padding:"7px 4px",fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>

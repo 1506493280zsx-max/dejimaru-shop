@@ -103,19 +103,6 @@ export default function SearchFilter({
             overflowY: "auto",
           }}
         >
-      <div
-        style={{
-          fontSize: 12,
-          fontWeight: 700,
-          color: C.text,
-          marginBottom: 8,
-          paddingBottom: 8,
-          borderBottom: `1px solid ${C.primaryBorder}`,
-        }}
-      >
-        🔍 検索フィルター
-      </div>
-
       {/* 商品名 */}
       <div style={{ marginBottom: 10 }}>
         <label

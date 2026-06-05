@@ -220,7 +220,7 @@ export interface ProductVariant {
   product_id: number;
   sku: string;
   price: number;
-  compare_at_price: number | null;
+  compare_price: number | null;
   stock_quantity: number;
   status: string;
   color: string | null;

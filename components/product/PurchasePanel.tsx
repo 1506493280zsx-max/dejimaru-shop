@@ -33,7 +33,7 @@ interface Variant {
   id: number;
   sku: string;
   price: number;
-  compare_at_price: number | null;
+  compare_price: number | null;
   stock_quantity: number;
   color: string | null;
   memory: string | null;
@@ -96,7 +96,7 @@ export default function PurchasePanel({
 
   // 表示価格：バリアントがあればバリアント価格、なければ商品価格
   const displayPrice = selectedVariant?.price ?? (hasVariants ? null : product.price);
-  const displayCompare = selectedVariant?.compare_at_price ?? (hasVariants ? null : product.compare_at_price);
+  const displayCompare = selectedVariant?.compare_price ?? (hasVariants ? null : product.compare_at_price);
   const disc = displayPrice && displayCompare
     ? Math.round((1 - displayPrice / displayCompare) * 100) : 0;
   const gs = GRADE_STYLE[product.grade] || GRADE_STYLE.C;

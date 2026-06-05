@@ -55,7 +55,7 @@ function ProductCard({product}: {product:any}) {
       style={{background:C.white,border:`1px solid ${hov?C.primary:C.border}`,borderRadius:2,padding:10,cursor:"pointer",display:"flex",flexDirection:"column",gap:4,transition:"border-color 0.15s"}}>
       <div style={{width:"100%",padding:8,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden",background:"#fff",position:"relative"}}>
         {imgUrl?<img src={imgUrl} alt={product.name} style={{width:"100%",height:"auto",maxHeight:220,objectFit:"contain",objectPosition:"center",display:"block"}}/>:<span style={{fontSize:40}}>💻</span>}
-        {disc>=10&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
+        {disc>=1&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
       </div>
       <div style={{fontSize:10,color:C.textLight}}>{product.brand_id?.name||"—"}</div>
       <div style={{fontSize:12,color:hov?C.primary:C.text,lineHeight:1.5,display:"-webkit-box" as any,WebkitLineClamp:3,WebkitBoxOrient:"vertical" as any,overflow:"hidden",transition:"color 0.15s"}}>{product.name}</div>

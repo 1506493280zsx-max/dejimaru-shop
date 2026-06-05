@@ -61,7 +61,7 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
           ? <img src={imgUrl} alt={product.name} style={{width:"100%",height:"auto",maxHeight:220,objectFit:"contain",objectPosition:"center",display:"block"}}/>
           : <span style={{fontSize:size==="small"?10:11,color:C.textLight}}>NO IMAGE</span>
         }
-        {disc>=10&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
+        {disc>=1&&<div style={{position:"absolute",top:4,right:4,background:C.red,color:"#fff",fontSize:9,fontWeight:700,padding:"2px 5px",borderRadius:1}}>{disc}%OFF</div>}
         <div onClick={e=>{e.stopPropagation();toggle({id:String(product.id),slug:product.slug,name:product.name,price:product.price,imageUrl:imgUrl,brand:product.brand_id?.name||"",grade:product.grade});}}
           style={{position:"absolute",top:6,left:6,width:26,height:26,background:"rgba(255,255,255,0.9)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:14,boxShadow:"0 1px 4px rgba(0,0,0,0.15)"}}>
           {liked?"♥":"♡"}

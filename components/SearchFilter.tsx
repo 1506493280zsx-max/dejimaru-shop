@@ -322,7 +322,7 @@ export default function SearchFilter({
         >
           クリア
         </button>
-        </div>
+      </div>
       )}
     </>
   );

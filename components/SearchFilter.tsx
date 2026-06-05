@@ -28,7 +28,7 @@ export default function SearchFilter({
   brands = [],
   initialValues = {},
 }: {
-  brands: Array<{ id: number; name: string; slug: string }>;
+  brands: Array<{ id: number | string; name: string; slug: string }>;
   initialValues?: {
     q?: string;
     brand?: string;

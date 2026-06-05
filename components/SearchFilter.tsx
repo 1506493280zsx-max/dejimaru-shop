@@ -38,6 +38,7 @@ export default function SearchFilter({
   };
 }) {
   const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
   const [q, setQ] = useState(String(initialValues.q || ""));
   const [brand, setBrand] = useState(String(initialValues.brand || ""));
   const [grade, setGrade] = useState(String(initialValues.grade || ""));
@@ -65,18 +66,43 @@ export default function SearchFilter({
   };
 
   return (
-    <div
-      style={{
-        background: C.primaryBg,
-        border: `1px solid ${C.primaryBorder}`,
-        borderRadius: 2,
-        padding: 10,
-        marginBottom: 12,
-        boxSizing: "border-box",
-        maxHeight: "350px",
-        overflowY: "auto",
-      }}
-    >
+    <>
+      <div
+        onClick={() => setIsOpen(!isOpen)}
+        style={{
+          background: C.primaryBg,
+          border: `1px solid ${C.primaryBorder}`,
+          borderRadius: 2,
+          padding: "8px 10px",
+          marginBottom: 12,
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <span style={{ fontSize: 12, fontWeight: 700, color: C.text }}>
+          🔍 検索フィルター
+        </span>
+        <span style={{ fontSize: 11, color: C.primary, fontWeight: 700 }}>
+          {isOpen ? "▲" : "▼"}
+        </span>
+      </div>
+      {isOpen && (
+        <div
+          style={{
+            background: C.primaryBg,
+            border: `1px solid ${C.primaryBorder}`,
+            borderTop: "none",
+            borderRadius: "0 0 2px 2px",
+            padding: 10,
+            marginBottom: 12,
+            marginTop: "-12px",
+            boxSizing: "border-box",
+            maxHeight: "500px",
+            overflowY: "auto",
+          }}
+        >
       <div
         style={{
           fontSize: 12,
@@ -296,7 +322,8 @@ export default function SearchFilter({
         >
           クリア
         </button>
-      </div>
-    </div>
+        </div>
+      )}
+    </>
   );
 }

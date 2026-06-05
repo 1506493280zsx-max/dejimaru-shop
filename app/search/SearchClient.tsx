@@ -34,9 +34,8 @@ function GradeBadge({grade}: {grade:string|null}) {
 function ProductCard({product}: {product:any}) {
   const [hov,setHov]=useState(false);
   const router=useRouter();
-  const variantPrices = (product.variants || []).map((v: any) => v.price).filter((p: any) => p != null);
-  const minPrice = variantPrices.length > 0 ? Math.min(...variantPrices) : (product.price ?? 0);
-  const maxPrice = variantPrices.length > 0 ? Math.max(...variantPrices) : (product.price ?? 0);
+  const minPrice = product.min_price ?? product.price ?? 0;
+  const maxPrice = product.max_price ?? product.price ?? 0;
   const disc=product.compare_at_price?Math.round((1-minPrice/product.compare_at_price)*100):0;
   const imgId=product.images?.[0]?.image_file_id;
   const imgUrl=imgId?getImageUrl(imgId,300,225):null;

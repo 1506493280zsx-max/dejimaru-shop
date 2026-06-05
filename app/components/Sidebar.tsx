@@ -1,13 +1,14 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import SearchFilter from "@/components/SearchFilter";
 
 const C = {
   primary:"#0ABAB5", primaryDark:"#089490", primaryBg:"#E8F8F8",
   primaryBorder:"#B0E0DE", text:"#333", textSub:"#666", textLight:"#999",
 };
 
-export default function Sidebar({categories}: {categories:any[]}) {
+export default function Sidebar({categories, brands=[]}: {categories:any[], brands?:any[]}) {
   const router = useRouter();
   const roots = categories.filter(c=>!c.parent_id);
   const [openCats, setOpenCats] = useState(roots.length>0?[String(roots[0]?.id)]:["1"]);
@@ -51,6 +52,7 @@ export default function Sidebar({categories}: {categories:any[]}) {
           </div>
         );
       })}
+      <SearchFilter brands={brands} />
       <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
         {[{title:"送料について",sub:"全国一律無料"},{title:"30日間保証",sub:"全商品保証付き"},{title:"お問い合わせ",sub:"メールにて受付"}].map((item,i)=>(
           <div key={i} style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>

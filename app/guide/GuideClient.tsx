@@ -40,7 +40,7 @@ function Row({label,value}:{label:string,value:any}) {
 
 const hiddenSidebarRoutes = ["/guide", "/faq", "/shipping"];
 
-export default function GuideClient({categories}:{categories:any[]}) {
+export default function GuideClient({categories, brands = []}:{categories:any[], brands?:any[]}) {
   const router = useRouter();
   const pathname = usePathname();
   const hideSidebar = hiddenSidebarRoutes.includes(pathname);
@@ -54,7 +54,7 @@ export default function GuideClient({categories}:{categories:any[]}) {
 
       <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px 40px"}}>
         <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-          {!hideSidebar && <Sidebar categories={categories}/>}
+          {!hideSidebar && <Sidebar categories={categories} brands={brands}/>}
           <div style={{flex:1,minWidth:0}}>
             <h1 style={{fontSize:18,fontWeight:700,color:C.text,marginBottom:16,paddingBottom:8,borderBottom:`2px solid ${C.primary}`}}>ショッピングガイド</h1>
 

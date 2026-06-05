@@ -11,6 +11,8 @@ export default async function SearchPage({
     brand?:string
     category?:string
     grade?:string
+    price_min?:string
+    price_max?:string
   }>
 }){
 
@@ -18,7 +20,9 @@ const {
   q,
   brand,
   category,
-  grade
+  grade,
+  price_min,
+  price_max
 }=await searchParams;
 
   // 构建 Directus 搜索过滤器
@@ -61,6 +65,8 @@ const {
       brandFilter={brand || ""}
       categoryFilter={category || ""}
       gradeFilter={grade || ""}
+      priceMinFilter={price_min || ""}
+      priceMaxFilter={price_max || ""}
     />
   );
 }

@@ -75,14 +75,14 @@ const CENTERS = [
   },
 ];
 
-export default function CompanyClient({ categories }: { categories: any[] }) {
+export default function CompanyClient({ categories, brands = [] }: { categories: any[]; brands?: any[] }) {
   const router = useRouter();
   return (
     <div style={{ background: C.bg, minHeight: "100vh", fontFamily: "'Meiryo','ＭＳ Ｐゴシック','Hiragino Kaku Gothic ProN',sans-serif", fontSize: 13, color: C.text }}>
 
       <div style={{ width: "100%", maxWidth: "1800px", margin: "0 auto", padding: "0 12px 40px" }}>
         <div style={{ display: "flex", gap: 10, alignItems: "flex-start" }}>
-          <Sidebar categories={categories} />
+          <Sidebar categories={categories} brands={brands} />
           <div style={{ flex: 1, minWidth: 0 }}>
             <h1 style={{ fontSize: 18, fontWeight: 700, color: C.text, marginBottom: 16, paddingBottom: 8, borderBottom: `2px solid ${C.primary}` }}>会社概要</h1>
 

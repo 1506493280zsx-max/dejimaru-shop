@@ -134,9 +134,10 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
   );
 }
 
-export default function SearchClient({initialProducts,brands,categories,query,brandFilter,categoryFilter,gradeFilter,pageTitle}:{
+export default function SearchClient({initialProducts,brands,categories,query,brandFilter,categoryFilter,gradeFilter,priceMinFilter,priceMaxFilter,pageTitle}:{
   initialProducts:any[], brands:any[], categories:any[],
   query:string, brandFilter:string, categoryFilter:string, gradeFilter:string,
+  priceMinFilter?:string, priceMaxFilter?:string,
   pageTitle?:string
 }) {
   const router=useRouter();
@@ -160,7 +161,10 @@ export default function SearchClient({initialProducts,brands,categories,query,br
       !categoryFilter
       || p.category_id?.slug === categoryFilter
       || p.category_id?.name === categoryFilter;
-    return matchQ&&matchG&&matchB&&matchC;
+    const minPrice = p.min_price ?? p.price ?? 0;
+    const matchPMin = !priceMinFilter || minPrice >= parseInt(priceMinFilter);
+    const matchPMax = !priceMaxFilter || minPrice <= parseInt(priceMaxFilter);
+    return matchQ&&matchG&&matchB&&matchC&&matchPMin&&matchPMax;
   }).sort((a,b)=>{
     if(sort==="price-asc") return a.price-b.price;
     if(sort==="price-desc") return b.price-a.price;

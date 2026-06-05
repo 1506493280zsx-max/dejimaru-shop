@@ -70,7 +70,7 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
       <div onClick={()=>router.push(`/products/${product.slug}`)}>
         <div style={{fontSize:10,color:C.textLight}}>{product.brand_id?.name||"―"}</div>
         <div style={{fontSize:size==="small"?11:12,color:hov?C.primary:C.text,lineHeight:1.5,display:"-webkit-box" as any,WebkitLineClamp:3,WebkitBoxOrient:"vertical" as any,overflow:"hidden"}}>{product.name}</div>
-        {product.grade&&<div style={{marginTop:2}}><GradeBadge grade={product.grade}/></div>}
+        {(product.is_new||product.grade)&&<div style={{marginTop:2}}><GradeBadge grade={product.is_new?"NEW":product.grade}/></div>}
         <div style={{marginTop:4}}>
           {comparePrice&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>{"定価"} &yen;{comparePrice.toLocaleString()}</div>}
           <div style={{fontSize:size==="small"?14:16,fontWeight:700,color:C.red}}>

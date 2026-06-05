@@ -59,7 +59,7 @@ function ProductCard({product}: {product:any}) {
       </div>
       <div style={{fontSize:10,color:C.textLight}}>{product.brand_id?.name||"—"}</div>
       <div style={{fontSize:12,color:hov?C.primary:C.text,lineHeight:1.5,display:"-webkit-box" as any,WebkitLineClamp:3,WebkitBoxOrient:"vertical" as any,overflow:"hidden",transition:"color 0.15s"}}>{product.name}</div>
-      {product.grade&&<GradeBadge grade={product.grade}/>}
+      {(product.is_new||product.grade)&&<GradeBadge grade={product.is_new?"NEW":product.grade}/>}
       <div style={{marginTop:"auto",paddingTop:6}}>
         {comparePrice&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>定価 ¥{comparePrice.toLocaleString()}</div>}
         <div style={{fontSize:16,fontWeight:700,color:C.red}}>

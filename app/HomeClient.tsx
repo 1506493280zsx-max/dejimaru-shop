@@ -7,6 +7,7 @@ import { getBrandsForCategory } from "@/lib/category-brands";
 
 import HomeBlogModule from "@/components/HomeBlogModule";
 import CategoryBannerSwiper from "@/components/CategoryBannerSwiper";
+import SearchFilter from "@/components/SearchFilter";
 import { useWishlistStore } from "@/lib/wishlist-store";
 
 const C = {
@@ -140,6 +141,7 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
           </div>
         );
       })}
+      <SearchFilter brands={brands} />
       <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
         <div style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,overflow:"hidden"}}>
           <div onClick={()=>setShippingOpen(o=>!o)} style={{padding:"6px 8px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"space-between"}}>

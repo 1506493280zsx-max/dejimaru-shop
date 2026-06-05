@@ -216,7 +216,7 @@ export default function PurchasePanel({
             <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
               <div style={{ fontSize: 26, fontWeight: 900, color: C.red }}>¥{displayPrice.toLocaleString()}</div>
               <div style={{ fontSize: 11, color: C.textSub }}>（税込）</div>
-              {disc >= 5 && <div style={{ background: C.red, color: "#fff", fontSize: 12, fontWeight: 700, padding: "2px 8px", borderRadius: 2 }}>{disc}%OFF</div>}
+              {disc >= 1 && <div style={{ background: C.red, color: "#fff", fontSize: 12, fontWeight: 700, padding: "2px 8px", borderRadius: 2 }}>{disc}%OFF</div>}
             </div>
           ) : (
             <div style={{ fontSize: 14, color: C.textSub }}>仕様を選択すると価格が表示されます</div>

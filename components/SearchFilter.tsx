@@ -72,6 +72,7 @@ export default function SearchFilter({
         borderRadius: 2,
         padding: 10,
         marginBottom: 12,
+        boxSizing: "border-box",
       }}
     >
       <div

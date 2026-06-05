@@ -73,6 +73,8 @@ export default function SearchFilter({
         padding: 10,
         marginBottom: 12,
         boxSizing: "border-box",
+        maxHeight: "350px",
+        overflowY: "auto",
       }}
     >
       <div

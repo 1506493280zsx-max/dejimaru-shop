@@ -27,7 +27,7 @@ export async function getProducts(options: {
   const params = new URLSearchParams({
     limit: String(limit),
     sort: sort.join(","),
-    "fields[]": "id,slug,name,short_description,price,compare_at_price,min_price,max_price,grade,condition,is_featured,is_new,published_at,cpu,cpu_generation,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,premium_warranty_enabled,premium_warranty_price,brand_id.name,brand_id.slug,category_id.name,category_id.slug,category_id.id,images.image_file_id",
+    "fields[]": "id,slug,name,short_description,price,compare_at_price,min_price,max_price,grade,condition,is_featured,is_new,published_at,cpu,cpu_generation,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,premium_warranty_enabled,premium_warranty_price,brand_id.name,brand_id.slug,category_id.name,category_id.slug,category_id.id,images.image_file_id,product_variants.id,product_variants.price,product_variants.compare_price,product_variants.status",
   });
   if (Object.keys(filter).length > 0) params.append("filter", JSON.stringify(filter));
   try {

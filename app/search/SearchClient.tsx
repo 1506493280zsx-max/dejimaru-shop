@@ -36,7 +36,16 @@ function ProductCard({product}: {product:any}) {
   const router=useRouter();
   const minPrice = product.min_price ?? product.price ?? 0;
   const maxPrice = product.max_price ?? product.price ?? 0;
-  const disc=product.compare_at_price?Math.round((1-minPrice/product.compare_at_price)*100):0;
+
+  // 从变体中取最高的 compare_price，或使用产品的 compare_at_price
+  const variantComparePrices = (product.product_variants || [])
+    .filter((v: any) => v.status === "active")
+    .map((v: any) => v.compare_price)
+    .filter(Boolean) as number[];
+  const maxVariantComparePrice = variantComparePrices.length > 0 ? Math.max(...variantComparePrices) : null;
+  const comparePrice = maxVariantComparePrice ?? product.compare_at_price;
+
+  const disc = comparePrice ? Math.round((1 - minPrice / comparePrice) * 100) : 0;
   const imgId=product.images?.[0]?.image_file_id;
   const imgUrl=imgId?getImageUrl(imgId,300,225):null;
 
@@ -52,7 +61,7 @@ function ProductCard({product}: {product:any}) {
       <div style={{fontSize:12,color:hov?C.primary:C.text,lineHeight:1.5,display:"-webkit-box" as any,WebkitLineClamp:3,WebkitBoxOrient:"vertical" as any,overflow:"hidden",transition:"color 0.15s"}}>{product.name}</div>
       {product.grade&&<GradeBadge grade={product.grade}/>}
       <div style={{marginTop:"auto",paddingTop:6}}>
-        {product.compare_at_price&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>定価 ¥{(product.compare_at_price ?? 0).toLocaleString()}</div>}
+        {comparePrice&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>定価 ¥{comparePrice.toLocaleString()}</div>}
         <div style={{fontSize:16,fontWeight:700,color:C.red}}>
           ¥{minPrice.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>（税込）</span>
         </div>

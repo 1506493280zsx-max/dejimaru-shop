@@ -40,7 +40,7 @@ const {
 
   // 获取搜索结果
   const res = await fetch(
-    `${DIRECTUS}/items/products?filter=${encodeURIComponent(JSON.stringify(filter))}&fields=id,slug,name,short_description,price,min_price,max_price,compare_at_price,grade,condition,is_featured,is_new,published_at,cpu,cpu_generation,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,premium_warranty_enabled,premium_warranty_price,brand_id.name,brand_id.slug,category_id.name,category_id.slug,category_id.id,images.image_file_id&limit=100&sort=-published_at`,
+    `${DIRECTUS}/items/products?filter=${encodeURIComponent(JSON.stringify(filter))}&fields=id,slug,name,short_description,price,min_price,max_price,compare_at_price,grade,condition,is_featured,is_new,published_at,cpu,cpu_generation,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,premium_warranty_enabled,premium_warranty_price,brand_id.name,brand_id.slug,category_id.name,category_id.slug,category_id.id,images.image_file_id,product_variants.id,product_variants.price,product_variants.compare_price,product_variants.status&limit=100&sort=-published_at`,
     { cache: "no-store" }
   );
   const productsData = await res.json();

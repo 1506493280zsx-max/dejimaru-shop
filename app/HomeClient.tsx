@@ -38,7 +38,16 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
   useEffect(()=>setMounted(true),[]);
   const minPrice = product.min_price ?? product.price ?? 0;
   const maxPrice = product.max_price ?? product.price ?? 0;
-  const disc=product.compare_at_price?Math.round((1-minPrice/product.compare_at_price)*100):0;
+
+  // 从变体中取最高的 compare_price，或使用产品的 compare_at_price
+  const variantComparePrices = (product.product_variants || [])
+    .filter((v: any) => v.status === "active")
+    .map((v: any) => v.compare_price)
+    .filter(Boolean) as number[];
+  const maxVariantComparePrice = variantComparePrices.length > 0 ? Math.max(...variantComparePrices) : null;
+  const comparePrice = maxVariantComparePrice ?? product.compare_at_price;
+
+  const disc = comparePrice ? Math.round((1 - minPrice / comparePrice) * 100) : 0;
   const imgId=product.images?.[0]?.image_file_id;
   const imgUrl=imgId?getImageUrl(imgId,300,225):null;
   const liked=mounted&&hasItem(String(product.id));
@@ -63,7 +72,7 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
         <div style={{fontSize:size==="small"?11:12,color:hov?C.primary:C.text,lineHeight:1.5,display:"-webkit-box" as any,WebkitLineClamp:3,WebkitBoxOrient:"vertical" as any,overflow:"hidden"}}>{product.name}</div>
         {product.grade&&<div style={{marginTop:2}}><GradeBadge grade={product.grade}/></div>}
         <div style={{marginTop:4}}>
-          {product.compare_at_price&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>{"定価"} &yen;{(product.compare_at_price ?? 0).toLocaleString()}</div>}
+          {comparePrice&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>{"定価"} &yen;{comparePrice.toLocaleString()}</div>}
           <div style={{fontSize:size==="small"?14:16,fontWeight:700,color:C.red}}>
             ¥{minPrice.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>(税込)</span>
           </div>

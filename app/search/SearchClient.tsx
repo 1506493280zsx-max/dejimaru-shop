@@ -54,10 +54,7 @@ function ProductCard({product}: {product:any}) {
       <div style={{marginTop:"auto",paddingTop:6}}>
         {product.compare_at_price&&<div style={{fontSize:10,color:C.textLight,textDecoration:"line-through"}}>定価 ¥{(product.compare_at_price ?? 0).toLocaleString()}</div>}
         <div style={{fontSize:16,fontWeight:700,color:C.red}}>
-          {minPrice === maxPrice
-            ? `¥${minPrice.toLocaleString()}`
-            : `¥${minPrice.toLocaleString()} ～ ¥${maxPrice.toLocaleString()}`
-          }<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>（税込）</span>
+          ¥{minPrice.toLocaleString()}<span style={{fontSize:10,fontWeight:400,color:C.textSub}}>（税込）</span>
         </div>
       </div>
       <button style={{marginTop:4,background:hov?C.primaryDark:C.primary,color:"#fff",border:"none",borderRadius:2,padding:"6px 8px",fontSize:11,fontWeight:700,cursor:"pointer",width:"100%",fontFamily:"inherit"}}>詳細を見る →</button>

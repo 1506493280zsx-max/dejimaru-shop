@@ -347,7 +347,7 @@ const ACCESSORY_PRODUCTS = [
 export default function HomeClient({featured,newArrivals,categories,brands,blogPosts,ads}: {featured:any[],newArrivals:any[],categories:any[],brands:any[],blogPosts:any[],ads:any[]}) {
   const router=useRouter();
   const roots=categories.filter(c=>!c.parent_id);
-  const [openCats,setOpenCats]=useState(roots.length>0?[String(roots[0]?.id)]:["1"]);
+  const [openCats,setOpenCats]=useState([]);
 
   const adsFor = (prefix: string) =>
     ads.filter(a => a.position === prefix || (a.position && a.position.startsWith(prefix + '-')));

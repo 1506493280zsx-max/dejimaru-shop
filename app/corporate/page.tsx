@@ -161,8 +161,9 @@ export default function CorporatePage() {
           <PointLabel num={1} title="全商品30日間動作保証" sub="納品されたすべての商品に動作保証が付きます。万が一の初期不良はすぐに代替品を手配いたします。"/>
           <div style={{display:"flex",gap:28,alignItems:"center",flexWrap:"wrap"}}>
             <div style={{flex:"0 0 46%",minWidth:260}}>
-              {/* /public/corporate/points/point1.webp */}
-              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2}}/>
+              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src="/corporate/points/point1.webp" alt="全商品30日間動作保証" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+              </div>
             </div>
             <div style={{flex:1,minWidth:220}}>
               <BulletList items={[
@@ -190,8 +191,9 @@ export default function CorporatePage() {
               ]}/>
             </div>
             <div style={{flex:"0 0 46%",minWidth:260}}>
-              {/* /public/corporate/points/point2.webp */}
-              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2}}/>
+              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src="/corporate/points/point2.webp" alt="専任担当者による手厚いサポート" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+              </div>
             </div>
           </div>
         </div>
@@ -217,10 +219,11 @@ export default function CorporatePage() {
               </div>
             </div>
             <div style={{flex:"0 0 46%",minWidth:260}}>
-              {/* /public/corporate/points/point3-{1-4}.webp */}
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
-                {[0,1,2,3].map(i=>(
-                  <div key={i} style={{height:120,background:"#D4E4E3",borderRadius:2}}/>
+                {[1,2,3,4].map(i=>(
+                  <div key={i} style={{height:120,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <img src={`/corporate/points/point3-${i}.webp`} alt={`品質チェック工程 ${i}`} style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+                  </div>
                 ))}
               </div>
             </div>
@@ -242,8 +245,9 @@ export default function CorporatePage() {
               ]}/>
             </div>
             <div style={{flex:"0 0 38%",minWidth:240}}>
-              {/* /public/corporate/points/point4.webp */}
-              <div style={{width:"100%",height:260,background:"#D4E4E3",borderRadius:2}}/>
+              <div style={{width:"100%",height:260,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src="/corporate/points/point4.webp" alt="スピーディーな一括納品" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+              </div>
             </div>
           </div>
         </div>
@@ -255,8 +259,9 @@ export default function CorporatePage() {
           <PointLabel num={5} title="プレミアムプラン生涯保証" sub="プレミアムプラン加入時は、生涯保証に対応いたします。通常保証期間終了後も長期サポートをご提供します。"/>
           <div style={{display:"flex",gap:28,alignItems:"center",flexWrap:"wrap"}}>
             <div style={{flex:"0 0 46%",minWidth:260}}>
-              {/* /public/corporate/points/point5.webp */}
-              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2}}/>
+              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src="/corporate/points/point5.webp" alt="プレミアムプラン生涯保証" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+              </div>
             </div>
             <div style={{flex:1,minWidth:220}}>
               <BulletList items={[
@@ -292,8 +297,9 @@ export default function CorporatePage() {
               </div>
             ))}
           </div>
-          {/* /public/corporate/points/point6.webp */}
-          <div style={{width:"100%",height:180,background:"rgba(255,255,255,0.07)",borderRadius:2}}/>
+          <div style={{width:"100%",height:180,background:"rgba(255,255,255,0.07)",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <img src="/corporate/points/point6.webp" alt="圧倒的なコストパフォーマンス" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+          </div>
         </div>
       </div>
 

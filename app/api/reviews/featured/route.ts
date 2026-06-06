@@ -8,7 +8,7 @@ export async function GET() {
     const res = await fetch(
       `${DIRECTUS_URL}/items/product_reviews?filter[status][_eq]=published&sort[]=sort&limit=10&fields[]=id,company_name,title,content,product,date_published`,
       {
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${ADMIN_TOKEN}` },
+        headers: { "Content-Type": "application/json" },
         cache: "no-store",
       }
     );

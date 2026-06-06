@@ -100,7 +100,7 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
   const [shippingOpen,setShippingOpen]=useState(false);
 
   return (
-    <div style={{width:185,flexShrink:0,position:"sticky",top:20,alignSelf:"flex-start",height:"fit-content"}}>
+    <div style={{width:185,flexShrink:0,position:"sticky",top:0,alignSelf:"flex-start",height:"100vh",overflowY:"auto",boxSizing:"border-box"}}>
       <div style={{background:C.primary,color:"#fff",padding:"7px 10px",fontSize:12,fontWeight:700,borderBottom:`1px solid ${C.primaryDark}`,display:"flex",alignItems:"center",gap:6}}>
         <span>&#9632;</span> {"カテゴリ"} <span style={{fontSize:9,fontWeight:400,marginLeft:2,opacity:0.8}}>category</span>
       </div>

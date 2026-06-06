@@ -145,8 +145,6 @@ export default function SearchFilter({ brands }: SearchFilterProps) {
         padding: 12,
         marginBottom: 12,
         boxSizing: "border-box",
-        maxHeight: "calc(100vh - 500px)",
-        overflowY: "auto",
       }}
     >
       <div style={{ fontSize: 13, fontWeight: 700, color: "#0ABAB5", marginBottom: 12 }}>

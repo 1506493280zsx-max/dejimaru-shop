@@ -161,8 +161,8 @@ export default function CorporatePage() {
           <PointLabel num={1} title="全商品30日間動作保証" sub="納品されたすべての商品に動作保証が付きます。万が一の初期不良はすぐに代替品を手配いたします。"/>
           <div style={{display:"flex",gap:28,alignItems:"center",flexWrap:"wrap"}}>
             <div style={{flex:"0 0 46%",minWidth:260}}>
-              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                <img src="/corporate/points/point1.png" alt="全商品30日間動作保証" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+              <div style={{width:"100%",aspectRatio:"4/3",borderRadius:12,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src="/corporate/points/point1.png" alt="全商品30日間動作保証" loading="eager" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
               </div>
             </div>
             <div style={{flex:1,minWidth:220}}>
@@ -191,8 +191,8 @@ export default function CorporatePage() {
               ]}/>
             </div>
             <div style={{flex:"0 0 46%",minWidth:260}}>
-              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                <img src="/corporate/points/point2.png" alt="専任担当者による手厚いサポート" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+              <div style={{width:"100%",aspectRatio:"4/3",borderRadius:12,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src="/corporate/points/point2.png" alt="専任担当者による手厚いサポート" loading="eager" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
               </div>
             </div>
           </div>
@@ -219,12 +219,8 @@ export default function CorporatePage() {
               </div>
             </div>
             <div style={{flex:"0 0 46%",minWidth:260}}>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6}}>
-                {[1,2,3,4].map(i=>(
-                  <div key={i} style={{height:120,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                    <img src={`/corporate/points/point3-${i}.png`} alt={`品質チェック工程 ${i}`} style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
-                  </div>
-                ))}
+              <div style={{width:"100%",borderRadius:12,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src="/corporate/points/point3-1.png" alt="品質管理プロセス" loading="eager" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" style={{width:"100%",height:"auto",display:"block"}}/>
               </div>
             </div>
           </div>
@@ -245,8 +241,8 @@ export default function CorporatePage() {
               ]}/>
             </div>
             <div style={{flex:"0 0 38%",minWidth:240}}>
-              <div style={{width:"100%",height:260,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                <img src="/corporate/points/point4.png" alt="スピーディーな一括納品" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+              <div style={{width:"100%",aspectRatio:"4/3",borderRadius:12,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src="/corporate/points/point4.png" alt="スピーディーな一括納品" loading="eager" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" style={{width:"100%",height:"100%",objectFit:"contain",display:"block"}}/>
               </div>
             </div>
           </div>
@@ -259,8 +255,8 @@ export default function CorporatePage() {
           <PointLabel num={5} title="プレミアムプラン生涯保証" sub="プレミアムプラン加入時は、生涯保証に対応いたします。通常保証期間終了後も長期サポートをご提供します。"/>
           <div style={{display:"flex",gap:28,alignItems:"center",flexWrap:"wrap"}}>
             <div style={{flex:"0 0 46%",minWidth:260}}>
-              <div style={{width:"100%",height:280,background:"#D4E4E3",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
-                <img src="/corporate/points/point5.png" alt="プレミアムプラン生涯保証" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+              <div style={{width:"100%",aspectRatio:"4/3",borderRadius:12,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                <img src="/corporate/points/point5.png" alt="プレミアムプラン生涯保証" loading="eager" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
               </div>
             </div>
             <div style={{flex:1,minWidth:220}}>
@@ -297,8 +293,8 @@ export default function CorporatePage() {
               </div>
             ))}
           </div>
-          <div style={{width:"100%",height:180,background:"rgba(255,255,255,0.07)",borderRadius:2,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
-            <img src="/corporate/points/point6.png" alt="圧倒的なコストパフォーマンス" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+          <div style={{width:"100%",aspectRatio:"21/9",borderRadius:12,border:"2px solid rgba(255,255,255,0.3)",overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
+            <img src="/corporate/points/point6.png" alt="圧倒的なコストパフォーマンス" loading="eager" sizes="(max-width: 768px) 100vw, 1200px" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
           </div>
         </div>
       </div>

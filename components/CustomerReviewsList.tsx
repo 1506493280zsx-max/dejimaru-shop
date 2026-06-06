@@ -1,6 +1,5 @@
 "use client";
 import { CustomerReview } from "@/lib/directus";
-import { getImageUrl } from "@/lib/directus";
 
 const C = {
   primary: "#0ABAB5", primaryBg: "#E8F8F8",
@@ -25,44 +24,17 @@ function formatDate(s: string | null) {
 }
 
 function ReviewCard({ review }: { review: CustomerReview }) {
-  const imgId = review.product?.images?.[0]?.image_file_id;
-  const imgUrl = imgId ? getImageUrl(imgId, 160, 120) : null;
-
   return (
-    <>
-      <style>{`
-        .cr-card { display: flex; gap: 16px; background: #fff; border: 1px solid #B0E0DE; border-radius: 4px; padding: 14px; }
-        .cr-product { width: 25%; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; align-items: center; }
-        .cr-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-        @media (max-width: 640px) {
-          .cr-card { flex-direction: column; }
-          .cr-product { width: 100%; flex-direction: row; align-items: center; }
-        }
-      `}</style>
-      <div className="cr-card">
-        <div className="cr-product">
-          <div style={{ width: "100%", maxWidth: 120, aspectRatio: "4/3", background: "#F5FAFA", border: `1px solid ${C.primaryBorder}`, borderRadius: 2, overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            {imgUrl
-              ? <img src={imgUrl} alt={review.product?.name || ""} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              : <span style={{ fontSize: 28 }}>💻</span>
-            }
-          </div>
-          {review.product?.name && (
-            <div style={{ fontSize: 10, color: C.textSub, textAlign: "center", lineHeight: 1.4, wordBreak: "break-all" }}>
-              {review.product.name}
-            </div>
-          )}
-        </div>
-        <div className="cr-body">
-          <Stars rating={review.rating} />
-          <div style={{ fontSize: 13, color: C.text, lineHeight: 1.7 }}>{review.comment}</div>
-          <div style={{ marginTop: "auto", display: "flex", alignItems: "center", justifyContent: "space-between", fontSize: 11, color: C.textSub, paddingTop: 8, borderTop: `1px solid ${C.border}` }}>
-            <span>— {review.customer_name}</span>
-            <span>{formatDate(review.created_at)}</span>
-          </div>
-        </div>
+    <div style={{ background: "#fff", border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 14 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <Stars rating={review.rating} />
+        <span style={{ fontSize: 11, color: C.textSub, marginLeft: "auto" }}>{formatDate(review.created_at)}</span>
       </div>
-    </>
+      <div style={{ fontSize: 13, color: C.text, lineHeight: 1.7, marginBottom: 10 }}>{review.comment}</div>
+      <div style={{ fontSize: 11, color: C.textSub, borderTop: `1px solid ${C.border}`, paddingTop: 8 }}>
+        — {review.customer_name}
+      </div>
+    </div>
   );
 }
 

@@ -154,20 +154,15 @@ export type CustomerReview = {
   customer_name: string;
   rating: number;
   comment: string;
+  status: string;
   created_at: string | null;
-  product: {
-    id: number;
-    name: string;
-    slug: string;
-    images: { image_file_id: string }[];
-  } | null;
 };
 
 export async function getCustomerReviews(limit = 20): Promise<CustomerReview[]> {
   try {
     const res = await fetch(
-      `${DIRECTUS_URL}/items/customer_reviews?filter[status][_eq]=published&sort[]=-created_at&limit=${limit}&fields[]=id,customer_name,rating,comment,created_at,product.id,product.name,product.slug,product.images.image_file_id`,
-      { headers: adminHeaders, next: { revalidate: 0 } }
+      `${DIRECTUS_URL}/items/customer_reviews?filter[status][_eq]=published&sort[]=-created_at&limit=${limit}&fields[]=id,customer_name,rating,comment,status,created_at`,
+      { headers: publicHeaders, next: { revalidate: 0 } }
     );
     if (!res.ok) return [];
     return (await res.json()).data || [];

@@ -2,59 +2,61 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const C = {
-  primary: "#0ABAB5",
-  primaryBg: "#E8F8F8",
-  primaryBorder: "#B0E0DE",
-  text: "#333",
-  textSub: "#666",
-  textLight: "#999",
-  border: "#DDD",
-  orange: "#FF6600",
-};
-
-const PRICE_MIN_OPTIONS = [1000, 3000, 5000, 10000, 30000, 50000, 100000, 150000];
-const PRICE_MAX_OPTIONS = [3000, 5000, 10000, 30000, 50000, 100000, 150000, 200000];
-const GRADE_OPTIONS = [
-  { value: "", label: "すべて" },
-  { value: "NEW", label: "新品" },
-  { value: "S", label: "S品" },
-  { value: "A", label: "A品" },
-  { value: "B", label: "B品" },
-  { value: "C", label: "C品" },
+const PRICE_MIN_OPTIONS = [
+  { label: "指定なし", value: "" },
+  { label: "1,000円～", value: "1000" },
+  { label: "3,000円～", value: "3000" },
+  { label: "5,000円～", value: "5000" },
+  { label: "10,000円～", value: "10000" },
+  { label: "30,000円～", value: "30000" },
+  { label: "50,000円～", value: "50000" },
+  { label: "100,000円～", value: "100000" },
+  { label: "150,000円～", value: "150000" },
 ];
 
-export default function SearchFilter({
-  brands = [],
-  initialValues = {},
-}: {
+const PRICE_MAX_OPTIONS = [
+  { label: "指定なし", value: "" },
+  { label: "～3,000円", value: "3000" },
+  { label: "～5,000円", value: "5000" },
+  { label: "～10,000円", value: "10000" },
+  { label: "～30,000円", value: "30000" },
+  { label: "～50,000円", value: "50000" },
+  { label: "～100,000円", value: "100000" },
+  { label: "～150,000円", value: "150000" },
+  { label: "～200,000円", value: "200000" },
+];
+
+const GRADE_OPTIONS = [
+  { label: "すべて", value: "" },
+  { label: "新品", value: "新品" },
+  { label: "S品", value: "S" },
+  { label: "A品", value: "A" },
+  { label: "B品", value: "B" },
+  { label: "C品", value: "C" },
+  { label: "ジャンク", value: "ジャンク" },
+];
+
+interface SearchFilterProps {
   brands: Array<{ id: number | string; name: string; slug: string }>;
-  initialValues?: {
-    q?: string;
-    brand?: string;
-    grade?: string;
-    price_min?: string | number;
-    price_max?: string | number;
-  };
-}) {
+}
+
+export default function SearchFilter({ brands }: SearchFilterProps) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [q, setQ] = useState(String(initialValues.q || ""));
-  const [brand, setBrand] = useState(String(initialValues.brand || ""));
-  const [grade, setGrade] = useState(String(initialValues.grade || ""));
-  const [priceMin, setPriceMin] = useState(String(initialValues.price_min || ""));
-  const [priceMax, setPriceMax] = useState(String(initialValues.price_max || ""));
+  const [q, setQ] = useState("");
+  const [brand, setBrand] = useState("");
+  const [grade, setGrade] = useState("");
+  const [priceMin, setPriceMin] = useState("");
+  const [priceMax, setPriceMax] = useState("");
 
   const handleSearch = () => {
     const params = new URLSearchParams();
-    if (q.trim()) params.append("q", q.trim());
-    if (brand) params.append("brand", brand);
-    if (grade) params.append("grade", grade);
-    if (priceMin) params.append("price_min", priceMin);
-    if (priceMax) params.append("price_max", priceMax);
-
-    const queryString = params.toString();
-    router.push(`/search${queryString ? "?" + queryString : ""}`);
+    if (q) params.set("q", q);
+    if (brand) params.set("brand", brand);
+    if (grade) params.set("grade", grade);
+    if (priceMin) params.set("price_min", priceMin);
+    if (priceMax) params.set("price_max", priceMax);
+    router.push(`/search?${params.toString()}`);
   };
 
   const handleClear = () => {
@@ -65,252 +67,132 @@ export default function SearchFilter({
     setPriceMax("");
   };
 
+  const selectStyle: React.CSSProperties = {
+    width: "100%",
+    padding: "4px 6px",
+    fontSize: 12,
+    border: "1px solid #ccc",
+    borderRadius: 2,
+    boxSizing: "border-box",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: 11,
+    color: "#555",
+    marginBottom: 2,
+    display: "block",
+  };
+
   return (
-    <>
+    <div style={{ marginBottom: 12, boxSizing: "border-box" }}>
       <div
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen((o) => !o)}
         style={{
-          background: C.primaryBg,
-          border: `1px solid ${C.primaryBorder}`,
+          background: "#e8f4f8",
+          border: "1px solid #b0d4e0",
           borderRadius: 2,
-          padding: "8px 10px",
-          marginBottom: 12,
+          padding: "6px 10px",
           cursor: "pointer",
           display: "flex",
-          alignItems: "center",
           justifyContent: "space-between",
+          alignItems: "center",
+          fontSize: 13,
+          fontWeight: 700,
+          color: "#0d7a8a",
         }}
       >
-        <span style={{ fontSize: 12, fontWeight: 700, color: C.text }}>
-          🔍 検索フィルター
-        </span>
-        <span style={{ fontSize: 11, color: C.primary, fontWeight: 700 }}>
-          {isOpen ? "▲" : "▼"}
-        </span>
+        <span>🔍 検索フィルター</span>
+        <span>{isOpen ? "▲" : "▼"}</span>
       </div>
       {isOpen && (
         <div
           style={{
-            background: C.primaryBg,
-            border: `1px solid ${C.primaryBorder}`,
+            border: "1px solid #b0d4e0",
             borderTop: "none",
             borderRadius: "0 0 2px 2px",
             padding: 10,
-            marginBottom: 12,
-            marginTop: "-12px",
-            boxSizing: "border-box",
-            maxHeight: "500px",
+            background: "#fff",
+            maxHeight: 500,
             overflowY: "auto",
-          }}
-        >
-      {/* 商品名 */}
-      <div style={{ marginBottom: 10 }}>
-        <label
-          style={{
-            fontSize: 11,
-            fontWeight: 700,
-            color: C.textSub,
-            display: "block",
-            marginBottom: 4,
-          }}
-        >
-          商品名
-        </label>
-        <input
-          type="text"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="キーワード入力"
-          style={{
-            width: "100%",
-            padding: "6px 8px",
-            fontSize: 11,
-            border: `1px solid ${C.border}`,
-            borderRadius: 2,
             boxSizing: "border-box",
-            fontFamily: "inherit",
-            outline: "none",
           }}
-        />
-      </div>
-
-      {/* メーカー */}
-      {brands.length > 0 && (
-        <div style={{ marginBottom: 10 }}>
-          <label
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              color: C.textSub,
-              display: "block",
-              marginBottom: 4,
-            }}
-          >
-            メーカー
-          </label>
-          <select
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
-            style={{
-              width: "100%",
-              padding: "6px 8px",
-              fontSize: 11,
-              border: `1px solid ${C.border}`,
-              borderRadius: 2,
-              fontFamily: "inherit",
-              outline: "none",
-            }}
-          >
-            <option value="">すべて</option>
-            {brands.map((b) => (
-              <option key={b.id} value={b.slug}>
-                {b.name}
-              </option>
-            ))}
-          </select>
+        >
+          <div style={{ marginBottom: 8 }}>
+            <label style={labelStyle}>商品名</label>
+            <input
+              type="text"
+              placeholder="キーワード入力"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              style={{ ...selectStyle }}
+            />
+          </div>
+          <div style={{ marginBottom: 8 }}>
+            <label style={labelStyle}>メーカー</label>
+            <select value={brand} onChange={(e) => setBrand(e.target.value)} style={selectStyle}>
+              <option value="">すべて</option>
+              {brands.map((b) => (
+                <option key={b.id} value={b.slug}>{b.name}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ marginBottom: 8 }}>
+            <label style={labelStyle}>グレード</label>
+            <select value={grade} onChange={(e) => setGrade(e.target.value)} style={selectStyle}>
+              {GRADE_OPTIONS.map((g) => (
+                <option key={g.value} value={g.value}>{g.label}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ marginBottom: 8 }}>
+            <label style={labelStyle}>価格範囲（下限）</label>
+            <select value={priceMin} onChange={(e) => setPriceMin(e.target.value)} style={selectStyle}>
+              {PRICE_MIN_OPTIONS.map((p) => (
+                <option key={p.value} value={p.value}>{p.label}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ marginBottom: 12 }}>
+            <label style={labelStyle}>価格範囲（上限）</label>
+            <select value={priceMax} onChange={(e) => setPriceMax(e.target.value)} style={selectStyle}>
+              {PRICE_MAX_OPTIONS.map((p) => (
+                <option key={p.value} value={p.value}>{p.label}</option>
+              ))}
+            </select>
+          </div>
+          <div style={{ display: "flex", gap: 6 }}>
+            <button
+              onClick={handleSearch}
+              style={{
+                flex: 1,
+                background: "#FF6600",
+                color: "#fff",
+                border: "none",
+                borderRadius: 2,
+                padding: "6px 0",
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
+            >
+              🔍 検索
+            </button>
+            <button
+              onClick={handleClear}
+              style={{
+                padding: "6px 10px",
+                background: "#fff",
+                border: "1px solid #ccc",
+                borderRadius: 2,
+                fontSize: 12,
+                cursor: "pointer",
+              }}
+            >
+              クリア
+            </button>
+          </div>
         </div>
       )}
-
-      {/* グレード */}
-      <div style={{ marginBottom: 10 }}>
-        <label
-          style={{
-            fontSize: 11,
-            fontWeight: 700,
-            color: C.textSub,
-            display: "block",
-            marginBottom: 4,
-          }}
-        >
-          グレード
-        </label>
-        <select
-          value={grade}
-          onChange={(e) => setGrade(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "6px 8px",
-            fontSize: 11,
-            border: `1px solid ${C.border}`,
-            borderRadius: 2,
-            fontFamily: "inherit",
-            outline: "none",
-          }}
-        >
-          {GRADE_OPTIONS.map((g) => (
-            <option key={g.value} value={g.value}>
-              {g.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* 価格範囲 */}
-      <div style={{ marginBottom: 10 }}>
-        <label
-          style={{
-            fontSize: 11,
-            fontWeight: 700,
-            color: C.textSub,
-            display: "block",
-            marginBottom: 4,
-          }}
-        >
-          価格範囲（下限）
-        </label>
-        <select
-          value={priceMin}
-          onChange={(e) => setPriceMin(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "6px 8px",
-            fontSize: 11,
-            border: `1px solid ${C.border}`,
-            borderRadius: 2,
-            fontFamily: "inherit",
-            outline: "none",
-          }}
-        >
-          <option value="">指定なし</option>
-          {PRICE_MIN_OPTIONS.map((p) => (
-            <option key={p} value={p}>
-              ¥{p.toLocaleString()}～
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div style={{ marginBottom: 10 }}>
-        <label
-          style={{
-            fontSize: 11,
-            fontWeight: 700,
-            color: C.textSub,
-            display: "block",
-            marginBottom: 4,
-          }}
-        >
-          価格範囲（上限）
-        </label>
-        <select
-          value={priceMax}
-          onChange={(e) => setPriceMax(e.target.value)}
-          style={{
-            width: "100%",
-            padding: "6px 8px",
-            fontSize: 11,
-            border: `1px solid ${C.border}`,
-            borderRadius: 2,
-            fontFamily: "inherit",
-            outline: "none",
-          }}
-        >
-          <option value="">指定なし</option>
-          {PRICE_MAX_OPTIONS.map((p) => (
-            <option key={p} value={p}>
-              ～¥{p.toLocaleString()}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* ボタン */}
-      <div style={{ display: "flex", gap: 8 }}>
-        <button
-          onClick={handleSearch}
-          style={{
-            flex: 1,
-            background: C.orange,
-            color: "#fff",
-            border: "none",
-            padding: "8px 0",
-            borderRadius: 2,
-            fontSize: 12,
-            fontWeight: 700,
-            cursor: "pointer",
-            fontFamily: "inherit",
-          }}
-        >
-          🔍 検索
-        </button>
-        <button
-          onClick={handleClear}
-          style={{
-            flex: 0,
-            background: "#fff",
-            color: C.textSub,
-            border: `1px solid ${C.border}`,
-            padding: "8px 12px",
-            borderRadius: 2,
-            fontSize: 11,
-            cursor: "pointer",
-            fontFamily: "inherit",
-          }}
-        >
-          クリア
-        </button>
-      </div>
-      )}
-    </>
+    </div>
   );
 }

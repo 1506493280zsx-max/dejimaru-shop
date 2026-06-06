@@ -160,12 +160,12 @@ export default function CorporatePage() {
         <div style={{maxWidth:960,margin:"0 auto",padding:"0 20px"}}>
           <PointLabel num={1} title="全商品30日間動作保証" sub="納品されたすべての商品に動作保証が付きます。万が一の初期不良はすぐに代替品を手配いたします。"/>
           <div style={{display:"flex",gap:28,alignItems:"center",flexWrap:"wrap"}}>
-            <div style={{flex:"0 0 46%",minWidth:260}}>
+            <div style={{flex:"0 0 40%",minWidth:0}}>
               <div style={{width:"100%",aspectRatio:"4/3",borderRadius:12,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
                 <img src="/corporate/points/point1.png" alt="全商品30日間動作保証" loading="eager" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
               </div>
             </div>
-            <div style={{flex:1,minWidth:220}}>
+            <div style={{flex:1,minWidth:0}}>
               <BulletList items={[
                 "全商品に標準で30日間の動作保証を付与",
                 "初期不良は即時に代替品を手配",
@@ -182,7 +182,7 @@ export default function CorporatePage() {
         <div style={{maxWidth:960,margin:"0 auto",padding:"0 20px"}}>
           <PointLabel num={2} title="専任担当者による手厚いサポート" sub="ご注文から納品後まで、専任担当者が一貫してサポートします。"/>
           <div style={{display:"flex",gap:28,alignItems:"center",flexWrap:"wrap"}}>
-            <div style={{flex:1,minWidth:220}}>
+            <div style={{flex:1,minWidth:0}}>
               <BulletList items={[
                 "法人専用窓口で迅速・丁寧に対応",
                 "電話・メール・チャットで相談を受付",
@@ -190,7 +190,7 @@ export default function CorporatePage() {
                 "インボイス対応（適格請求書）に対応",
               ]}/>
             </div>
-            <div style={{flex:"0 0 46%",minWidth:260}}>
+            <div style={{flex:"0 0 40%",minWidth:0}}>
               <div style={{width:"100%",aspectRatio:"4/3",borderRadius:12,overflow:"hidden",position:"relative",display:"flex",alignItems:"center",justifyContent:"center"}}>
                 <img src="/corporate/points/point2.png" alt="専任担当者による手厚いサポート" loading="eager" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
               </div>

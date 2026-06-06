@@ -145,7 +145,7 @@ export default function SearchFilter({ brands }: SearchFilterProps) {
         padding: 12,
         marginBottom: 12,
         boxSizing: "border-box",
-        maxHeight: "calc(100vh - 200px)",
+        maxHeight: "calc(100vh - 500px)",
         overflowY: "auto",
       }}
     >

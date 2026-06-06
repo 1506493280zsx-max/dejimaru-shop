@@ -13,6 +13,9 @@ export default async function SearchPage({
     grade?:string
     price_min?:string
     price_max?:string
+    cpu?:string
+    cpu_generation?:string
+    screen_size?:string
   }>
 }){
 
@@ -22,7 +25,10 @@ const {
   category,
   grade,
   price_min,
-  price_max
+  price_max,
+  cpu,
+  cpu_generation,
+  screen_size
 }=await searchParams;
 
   // 构建 Directus 搜索过滤器
@@ -67,6 +73,9 @@ const {
       gradeFilter={grade || ""}
       priceMinFilter={price_min || ""}
       priceMaxFilter={price_max || ""}
+      cpuFilter={cpu || ""}
+      cpuGenerationFilter={cpu_generation || ""}
+      screenSizeFilter={screen_size || ""}
     />
   );
 }

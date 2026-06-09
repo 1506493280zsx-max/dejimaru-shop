@@ -10,7 +10,7 @@ const C = {
   red:"#CC2200", text:"#333", textSub:"#666", textLight:"#999",
   border:"#DDD", bg:"#F0F5F5", white:"#FFF",
 };
-const GRADE_LABEL: Record<string,string> = {NEW:"新品",S:"S品",A:"A品",B:"B品",C:"C品"};
+const GRADE_LABEL: Record<string,string> = {NEW:"新品",A:"中古Aランク",B:"中古Bランク",C:"中古Cランク"};
 
 const inp: React.CSSProperties = {
   border:"1px solid #DDD", borderRadius:2, padding:"5px 8px",

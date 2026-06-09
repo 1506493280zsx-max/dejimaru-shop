@@ -56,6 +56,7 @@ export default function PurchasePanel({
   const [selectedMemory, setSelectedMemory] = useState<string | null>(null);
   const [selectedStorage, setSelectedStorage] = useState<string | null>(null);
   const [selectedCapacity, setSelectedCapacity] = useState<string | null>(null);
+  const [stockQty, setStockQty] = useState<number | null>(null);
 
   const warrantyEnabled = !!product.premium_warranty_enabled;
   const warrantyPrice = product.premium_warranty_price;
@@ -73,6 +74,16 @@ export default function PurchasePanel({
       })
       .catch(() => setVariants([]));
   }, [product.id]);
+
+  // 库存查询
+  useEffect(() => {
+    const filterField = selectedVariant ? 'variant_id' : 'product_id';
+    const filterValue = selectedVariant ? selectedVariant.id : product.id;
+    fetch(`/api/inventory/stock?filterField=${filterField}&filterValue=${filterValue}`)
+      .then(r => r.json())
+      .then(d => setStockQty(d.available ?? null))
+      .catch(() => setStockQty(null));
+  }, [selectedVariant, product.id]);
 
   // 選択肢からバリアントを絞り込む
   useEffect(() => {
@@ -251,6 +262,13 @@ export default function PurchasePanel({
           </label>
         )}
 
+        {/* 库存显示 */}
+        {stockQty !== null && (
+          <div style={{fontSize:12, color: stockQty === 0 ? '#e53e3e' : '#38a169', marginBottom:8}}>
+            {stockQty === 0 ? '売り切れ' : `残り${stockQty}点`}
+          </div>
+        )}
+
         {/* 数量 + カート */}
         <div style={{ display: "flex", gap: 8, alignItems: "center", marginBottom: 10 }}>
           <div style={{ display: "flex", alignItems: "center", border: `1px solid ${C.border}`, borderRadius: 2 }}>
@@ -260,12 +278,12 @@ export default function PurchasePanel({
           </div>
           <button
             onClick={handleAddToCart}
-            disabled={hasVariants && !selectedVariant}
+            disabled={(hasVariants && !selectedVariant) || stockQty === 0}
             style={{
-              flex: 1, background: added ? "#227700" : (hasVariants && !selectedVariant ? "#AAA" : C.primary),
+              flex: 1, background: added ? "#227700" : ((hasVariants && !selectedVariant) || stockQty === 0 ? "#AAA" : C.primary),
               color: "#fff", border: "none", padding: "10px 20px", borderRadius: 2,
               fontSize: 14, fontWeight: 700,
-              cursor: hasVariants && !selectedVariant ? "not-allowed" : "pointer",
+              cursor: (hasVariants && !selectedVariant) || stockQty === 0 ? "not-allowed" : "pointer",
               fontFamily: "inherit", transition: "background 0.2s"
             }}
           >
@@ -275,12 +293,12 @@ export default function PurchasePanel({
 
         <button
           onClick={() => { handleAddToCart(); router.push("/cart"); }}
-          disabled={hasVariants && !selectedVariant}
+          disabled={(hasVariants && !selectedVariant) || stockQty === 0}
           style={{
-            width: "100%", background: hasVariants && !selectedVariant ? "#AAA" : "#FF6600",
+            width: "100%", background: ((hasVariants && !selectedVariant) || stockQty === 0) ? "#AAA" : "#FF6600",
             color: "#fff", border: "none", padding: "10px", borderRadius: 2,
             fontSize: 14, fontWeight: 700,
-            cursor: hasVariants && !selectedVariant ? "not-allowed" : "pointer",
+            cursor: ((hasVariants && !selectedVariant) || stockQty === 0) ? "not-allowed" : "pointer",
             fontFamily: "inherit", marginBottom: 10
           }}
         >

@@ -12,7 +12,7 @@ const C = {
   dark:"#1B2E2D",
 };
 
-const GRADE_LABEL: Record<string,string> = {NEW:"新品同様",S:"S評価",A:"A評価",B:"B評価",C:"C評価"};
+const GRADE_LABEL: Record<string,string> = {NEW:"新品",A:"中古Aランク",B:"中古Bランク",C:"中古Cランク"};
 
 const CORP_FAQS = [
   {q:"いつからの注文ができますか？", a:"1台からご注文いただけます。法人向けサービスは10台以上を対象としたプランです。台数に応じた費用をご提示いたします。"},

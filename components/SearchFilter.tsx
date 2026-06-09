@@ -28,12 +28,10 @@ const PRICE_MAX_OPTIONS = [
 
 const GRADE_OPTIONS = [
   { label: "すべて", value: "" },
-  { label: "新品", value: "新品" },
-  { label: "S品", value: "S" },
-  { label: "A品", value: "A" },
-  { label: "B品", value: "B" },
-  { label: "C品", value: "C" },
-  { label: "ジャンク", value: "ジャンク" },
+  { label: "新品", value: "NEW" },
+  { label: "中古Aランク", value: "A" },
+  { label: "中古Bランク", value: "B" },
+  { label: "中古Cランク", value: "C" },
 ];
 
 const CPU_OPTIONS = [

@@ -145,6 +145,30 @@ export async function POST(req: NextRequest) {
 
     const orderId = (await orderRes.json()).data.id;
 
+    // ── 库存检查：验证库存充足 ──
+    for (const item of itemsRes) {
+      try {
+        const filterField = item.variant_id ? 'variant_id' : 'product_id';
+        const filterValue = item.variant_id ?? item.product_id;
+        const invRes = await fetch(
+          `${DIRECTUS}/items/inventory?filter[${filterField}][_eq]=${filterValue}&limit=1`,
+          { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+        );
+        const invData = await invRes.json();
+        const inv = invData.data?.[0];
+        if (!inv) continue;
+        const available = (inv.quantity ?? 0) - (inv.reserved ?? 0);
+        if (available < (item.quantity ?? 1)) {
+          return NextResponse.json(
+            { success: false, error: `${item.name || '商品'}の在庫が不足しています。残り${available}点です。` },
+            { status: 400 }
+          );
+        }
+      } catch (e) {
+        console.error('[orders/create] stock check error', e);
+      }
+    }
+
     // ── 库存扣减：从 inventory 表扣减 ──
     for (const item of itemsRes) {
       try {

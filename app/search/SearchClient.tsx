@@ -195,7 +195,7 @@ export default function SearchClient({initialProducts,brands,categories,query,br
             </div>
             <div style={{background:C.white,border:`1px solid ${C.border}`,padding:"8px 12px",marginBottom:10,display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
               <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>グレード：</span>
-              {[{v:"",l:"すべて"},{v:"NEW",l:"新品"},{v:"S",l:"S品"},{v:"A",l:"A品"},{v:"B",l:"B品"},{v:"C",l:"C品"}].map(({v,l})=>(
+              {[{v:"",l:"すべて"},{v:"NEW",l:"新品"},{v:"A",l:"中古Aランク"},{v:"B",l:"中古Bランク"},{v:"C",l:"中古Cランク"}].map(({v,l})=>(
                 <button key={v} onClick={()=>setGrade(v)} style={{padding:"3px 10px",borderRadius:2,fontSize:11,cursor:"pointer",fontFamily:"inherit",
                   background:grade===v?C.primary:C.white,
                   color:grade===v?"#fff":C.textSub,

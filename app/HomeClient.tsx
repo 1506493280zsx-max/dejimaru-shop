@@ -18,11 +18,10 @@ const C = {
 };
 
 const GRADE_STYLE: Record<string,{label:string,color:string,bg:string,border:string}> = {
-  NEW:{label:"新品",color:"#CC0000",bg:"#FFF0F0",border:"#CC0000"},
-  S:  {label:"S級", color:"#007A76",bg:"#E8F8F8",border:"#0ABAB5"},
-  A:  {label:"A級", color:"#227700",bg:"#F0FFF0",border:"#44AA44"},
-  B:  {label:"B級", color:"#555",   bg:"#F5F5F5",border:"#AAA"},
-  C:  {label:"C級", color:"#333",   bg:"#EEEEEE",border:"#888"},
+  NEW:{label:"新品",color:"#C41717",bg:"#FFF0F0",border:"#C41717"},
+  A:  {label:"中古Aランク",color:"#2563EB",bg:"#EFF6FF",border:"#2563EB"},
+  B:  {label:"中古Bランク",color:"#D97706",bg:"#FEF3C7",border:"#D97706"},
+  C:  {label:"中古Cランク",color:"#DC2626",bg:"#FEE2E2",border:"#DC2626"},
 };
 
 function GradeBadge({grade}: {grade:string|null}) {
@@ -379,7 +378,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
 
             <div style={{background:C.white,border:`1px solid ${C.border}`,padding:"6px 10px",marginBottom:10,display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
               <span style={{fontSize:11,fontWeight:700,color:C.textSub}}>{"グレードガイド："}</span>
-              {[{g:"NEW",l:"未開封・未使用"},{g:"S",l:"新品とほぼ同じ状態"},{g:"A",l:"わずかな使用痕あり"},{g:"B",l:"使用痕が比較的目立つ"},{g:"C",l:"傷あり"}].map(({g,l})=>(
+              {[{g:"NEW",l:"未開封・未使用"},{g:"A",l:"わずかな使用痕あり"},{g:"B",l:"使用痕が比較的目立つ"},{g:"C",l:"傷あり"}].map(({g,l})=>(
                 <span key={g} style={{display:"flex",alignItems:"center",gap:4}}>
                   <GradeBadge grade={g}/><span style={{fontSize:10,color:C.textSub}}>{l}</span>
                 </span>

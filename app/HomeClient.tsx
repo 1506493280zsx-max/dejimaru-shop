@@ -182,7 +182,7 @@ function AdColumn({ads}: {ads:any[]}) {
         const imgUrl = ad.image_desktop ? getImageUrl(ad.image_desktop, 90, 400) : null;
         return (
           <div key={ad.id??i} onClick={()=>router.push(ad.link_url||"/")}
-            style={{width:90,height:400,background:"#E8E8E8",border:"1px dashed #AAA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"opacity 0.15s",writingMode:"vertical-rl",textOrientation:"mixed",overflow:"hidden",position:"relative"}}
+            style={{width:90,aspectRatio:"9/44",height:"auto",background:"#E8E8E8",border:"1px dashed #AAA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"opacity 0.15s",writingMode:"vertical-rl",textOrientation:"mixed",overflow:"hidden",position:"relative"}}
             onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
             onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
             {imgUrl
@@ -243,7 +243,7 @@ function FeaturedBannerSlider({ads}:{ads:any[]}) {
     <div style={{marginBottom:10,position:"relative"}}
       onMouseEnter={()=>setPaused(true)}
       onMouseLeave={()=>setPaused(false)}>
-      <style>{`.fb-banner{width:100%;height:350px;border-radius:2px;overflow:hidden;position:relative;background:linear-gradient(135deg,#E8F8F8,#B8EAE8);border:1px solid #B0E0DE;cursor:pointer;display:flex;align-items:center;justify-content:center}@media(max-width:640px){.fb-banner{height:auto;aspect-ratio:4/1;min-height:120px}}`}</style>
+      <style>{`.fb-banner{width:100%;height:auto;aspect-ratio:4/1;border-radius:2px;overflow:hidden;position:relative;background:linear-gradient(135deg,#E8F8F8,#B8EAE8);border:1px solid #B0E0DE;cursor:pointer;display:flex;align-items:center;justify-content:center}@media(max-width:640px){.fb-banner{height:auto;aspect-ratio:4/1;min-height:120px}}`}</style>
       <div className="fb-banner" onClick={()=>router.push(ad.link_url||"/")}>
         {imgUrl&&<img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover",objectPosition:"center"}}/>}
         {imgUrl&&<div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.25)"}}/>}

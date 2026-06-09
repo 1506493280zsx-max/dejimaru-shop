@@ -145,6 +145,36 @@ export async function POST(req: NextRequest) {
 
     const orderId = (await orderRes.json()).data.id;
 
+    // ── 库存扣减：从 inventory 表扣减 ──
+    for (const item of itemsRes) {
+      try {
+        const filterField = item.variant_id ? 'variant_id' : 'product_id';
+        const filterValue = item.variant_id ?? item.product_id;
+        const invRes = await fetch(
+          `${DIRECTUS}/items/inventory?filter[${filterField}][_eq]=${filterValue}&limit=1`,
+          { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+        );
+        const invData = await invRes.json();
+        const inv = invData.data?.[0];
+        if (!inv) continue;
+        const newQty = Math.max(0, (inv.quantity ?? 0) - (item.quantity ?? 1));
+        await fetch(
+          `${DIRECTUS}/items/inventory/${inv.id}`,
+          {
+            method: "PATCH",
+            headers: {
+              Authorization: `Bearer ${TOKEN}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ quantity: newQty }),
+          }
+        );
+        console.log(`[orders/create] inventory扣减: id=${inv.id}, quantity=${item.quantity}, new_qty=${newQty}`);
+      } catch (e) {
+        console.error("[orders/create] inventory扣减错误", e);
+      }
+    }
+
     // 積分使用（1pt=1円、注文確定時に即座に控除）
     if (customerId && pointsToUse > 0) {
       try {

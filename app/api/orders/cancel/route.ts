@@ -105,6 +105,41 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    // ── 库存恢复：取消时还原 inventory 表 ──
+    try {
+      const orderItemsRes = await fetch(
+        `${DIRECTUS}/items/order_items?filter[order_id][_eq]=${orderId}&fields=variant_id,quantity,product_id`,
+        { headers: H }
+      );
+      const orderItemsData = await orderItemsRes.json();
+      for (const item of orderItemsData.data ?? []) {
+        try {
+          const filterField = item.variant_id ? 'variant_id' : 'product_id';
+          const filterValue = item.variant_id ?? item.product_id;
+          const invRes = await fetch(
+            `${DIRECTUS}/items/inventory?filter[${filterField}][_eq]=${filterValue}&limit=1`,
+            { headers: H }
+          );
+          const invData = await invRes.json();
+          const inv = invData.data?.[0];
+          if (!inv) continue;
+          await fetch(
+            `${DIRECTUS}/items/inventory/${inv.id}`,
+            {
+              method: "PATCH",
+              headers: H,
+              body: JSON.stringify({ quantity: (inv.quantity ?? 0) + (item.quantity ?? 1) }),
+            }
+          );
+          console.log(`[orders/cancel] inventory恢复: id=${inv.id}, quantity=${item.quantity}, new_qty=${(inv.quantity ?? 0) + (item.quantity ?? 1)}`);
+        } catch (e) {
+          console.error("[orders/cancel] inventory恢复错误", e);
+        }
+      }
+    } catch (e) {
+      console.error("[orders/cancel] inventory恢复流程错误", e);
+    }
+
     // ステータス更新
     await fetch(`${DIRECTUS}/items/orders/${orderId}`, {
       method: "PATCH",

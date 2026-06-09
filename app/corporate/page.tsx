@@ -47,7 +47,7 @@ function FaqItem({q,a}:{q:string,a:string}) {
   );
 }
 
-function CorpProductCard({p}:{p:typeof CORP_PRODUCTS[0]}) {
+function CorpProductCard({p}:{p:any}) {
   const [hov,setHov]=useState(false);
   const router=useRouter();
   const displayPrice = p.price || p.min_price || 0;

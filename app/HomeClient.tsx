@@ -280,7 +280,7 @@ function AutoSwitchGridCard({ad}:{ad:any}) {
   return (
     <div onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
       onClick={()=>router.push(ad.link_url||"/")}
-      style={{position:"relative",height:160,borderRadius:2,overflow:"hidden",cursor:"pointer",background:`linear-gradient(135deg,${C.primaryDeep},#0ABAB5)`,border:`2px solid ${hov?C.primary:C.primaryBorder}`,transition:"border-color 0.15s"}}>
+      style={{position:"relative",aspectRatio:"5/3",height:"auto",borderRadius:2,overflow:"hidden",cursor:"pointer",background:`linear-gradient(135deg,${C.primaryDeep},#0ABAB5)`,border:`2px solid ${hov?C.primary:C.primaryBorder}`,transition:"border-color 0.15s"}}>
       {imgUrl&&<img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>}
       <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:hov?"rgba(0,0,0,0.18)":"rgba(0,0,0,0.35)",transition:"background 0.2s"}}/>
       <div style={{position:"absolute",top:0,left:0,right:0,bottom:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:5,padding:"0 12px",textAlign:"center"}}>

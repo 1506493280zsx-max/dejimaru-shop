@@ -47,7 +47,7 @@ export default function Header() {
           <div style={{display:"flex",alignItems:"center",gap:12}}>
             <div style={{flexShrink:0,cursor:"pointer"}} onClick={()=>router.push("/")}>
               <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",lineHeight:1,fontFamily:"Arial Black,sans-serif"}}>AI Across ショップ</div>
-              <div style={{fontSize:9,color:C.textLight}}>中古PC・スマホならAI Across ショップ！</div>
+              <div style={{fontSize:9,color:C.textLight}}>中古PC・スマホならAI Across ！</div>
             </div>
             <div style={{flex:1,display:"flex",maxWidth:500}}>
               <input value={search} onChange={e=>setSearch(e.target.value)}
@@ -57,8 +57,8 @@ export default function Header() {
               <button onClick={handleSearch} style={{background:C.primary,color:"#fff",border:`2px solid ${C.primary}`,padding:"7px 18px",fontSize:13,fontWeight:700,cursor:"pointer",borderRadius:"0 2px 2px 0",fontFamily:"inherit"}}>検索</button>
             </div>
             <div style={{fontSize:11,textAlign:"center",flexShrink:0}}>
-              <div style={{fontSize:9,color:C.textLight}}>価格.com評価</div>
-              <div style={{fontSize:13,fontWeight:900,color:C.primary}}>★★★★☆ 97%</div>
+              <div style={{fontSize:9,color:C.textLight}}>創業以来</div>
+              <div style={{fontSize:13,fontWeight:900,color:C.primary}}>35万台の販売実績</div>
             </div>
             <div style={{display:"flex",gap:6,marginLeft:"auto",flexShrink:0,alignItems:"center"}}>
               {mounted && user ? (
@@ -135,7 +135,7 @@ export default function Header() {
             {label:"BLOG",path:"/blog"},
           ].map((item,i)=>(
             <div key={i} onClick={()=>router.push(item.path)}
-              style={{padding:"7px 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap"}}
+              style={{padding:"7px 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap",display:"flex",alignItems:"center"}}
               onMouseEnter={e=>(e.currentTarget.style.background=C.primaryDark)}
               onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>
               {item.label}

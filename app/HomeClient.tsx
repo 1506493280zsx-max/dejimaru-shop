@@ -211,7 +211,7 @@ function BannerAd({ad}:{ad:any}) {
   const imgUrl = ad.image_desktop ? getImageUrl(ad.image_desktop, 800, 260) : null;
   return (
     <div onClick={()=>router.push(ad.link_url||"/")}
-      style={{width:"100%",height:260,minHeight:260,maxHeight:260,borderRadius:2,overflow:"hidden",position:"relative",background:`linear-gradient(135deg,${C.primaryBg},#B8EAE8)`,border:`1px solid ${C.primaryBorder}`,marginBottom:10,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}
+      style={{width:"100%",aspectRatio:"4/3",borderRadius:2,overflow:"hidden",position:"relative",background:`linear-gradient(135deg,${C.primaryBg},#B8EAE8)`,border:`1px solid ${C.primaryBorder}`,marginBottom:10,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}
       onMouseEnter={e=>(e.currentTarget.style.opacity="0.9")}
       onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
       {imgUrl&&(

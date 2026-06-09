@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import { useRouter } from "next/navigation";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
@@ -13,16 +13,26 @@ export default function CategoryBannerSwiper({ ads }: { ads: any[] }) {
   return (
     <>
       <style>{`
-        .cat-swiper-slide { cursor: pointer; }
-        .cat-swiper-bg {
+        .cat-swiper-slide {
+          cursor: pointer;
+          background: #078b83;
+        }
+
+        .cat-swiper-media {
           transition: transform 0.5s ease;
           position: absolute;
           inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          display: block;
         }
-        .cat-swiper-slide:hover .cat-swiper-bg {
-          transform: scale(1.06);
+
+        .cat-swiper-slide:hover .cat-swiper-media {
+          transform: scale(1.02);
         }
       `}</style>
+
       <div style={{ marginBottom: 0, margin: 0, overflow: "hidden" }}>
         <Swiper
           modules={[Autoplay]}
@@ -39,7 +49,8 @@ export default function CategoryBannerSwiper({ ads }: { ads: any[] }) {
           style={{ padding: 0, margin: 0 }}
         >
           {ads.map((ad, i) => {
-            const imgUrl = ad.image_desktop ? getImageUrl(ad.image_desktop, 800, 300) : null;
+            const imgUrl = ad.image_desktop ? getImageUrl(ad.image_desktop, 1200, 900) : null;
+
             return (
               <SwiperSlide key={ad.id ?? i}>
                 <div
@@ -49,71 +60,78 @@ export default function CategoryBannerSwiper({ ads }: { ads: any[] }) {
                     borderRadius: 0,
                     overflow: "hidden",
                     width: "100%",
-                    height: "300px",
+                    aspectRatio: "4 / 3",
+                    height: "auto",
                     position: "relative",
-                    background: "linear-gradient(135deg, #007a76 0%, #0abab5 100%)",
+                    background: "#078b83",
                   }}
                 >
                   {imgUrl ? (
                     <img
                       src={imgUrl}
                       alt={ad.title || ""}
-                      className="cat-swiper-bg"
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      className="cat-swiper-media"
                     />
                   ) : (
-                    <div className="cat-swiper-bg" style={{ background: "linear-gradient(135deg, #007a76 0%, #0abab5 100%)" }} />
-                  )}
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: "rgba(0,0,0,0.22)",
-                      zIndex: 1,
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 6,
-                      padding: "0 16px",
-                      textAlign: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontSize: 20,
-                        fontWeight: 900,
-                        color: "#fff",
-                        lineHeight: 1.3,
-                        textShadow: "0 1px 6px rgba(0,0,0,0.6)",
-                      }}
-                    >
-                      {ad.title}
-                    </div>
-                    {ad.subtitle && (
+                    <>
+                      <div
+                        className="cat-swiper-media"
+                        style={{ background: "linear-gradient(135deg, #007a76 0%, #0abab5 100%)" }}
+                      />
                       <div
                         style={{
-                          fontSize: 12,
-                          color: "rgba(255,255,255,0.88)",
-                          textShadow: "0 1px 3px rgba(0,0,0,0.5)",
+                          position: "absolute",
+                          inset: 0,
+                          background: "rgba(0,0,0,0.22)",
+                          zIndex: 1,
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: 6,
+                          padding: "0 16px",
+                          textAlign: "center",
                         }}
                       >
-                        {ad.subtitle}
+                        <div
+                          style={{
+                            fontSize: 20,
+                            fontWeight: 900,
+                            color: "#fff",
+                            lineHeight: 1.3,
+                            textShadow: "0 1px 6px rgba(0,0,0,0.6)",
+                          }}
+                        >
+                          {ad.title}
+                        </div>
+
+                        {ad.subtitle && (
+                          <div
+                            style={{
+                              fontSize: 12,
+                              color: "rgba(255,255,255,0.88)",
+                              textShadow: "0 1px 3px rgba(0,0,0,0.5)",
+                            }}
+                          >
+                            {ad.subtitle}
+                          </div>
+                        )}
+
+                        <div
+                          style={{
+                            marginTop: 4,
+                            fontSize: 11,
+                            color: "rgba(255,255,255,0.8)",
+                            border: "1px solid rgba(255,255,255,0.5)",
+                            padding: "3px 12px",
+                            borderRadius: 20,
+                          }}
+                        >
+                          特集を見る →
+                        </div>
                       </div>
-                    )}
-                    <div
-                      style={{
-                        marginTop: 4,
-                        fontSize: 11,
-                        color: "rgba(255,255,255,0.8)",
-                        border: "1px solid rgba(255,255,255,0.5)",
-                        padding: "3px 12px",
-                        borderRadius: 20,
-                      }}
-                    >
-                      特集を見る →
-                    </div>
-                  </div>
+                    </>
+                  )}
                 </div>
               </SwiperSlide>
             );

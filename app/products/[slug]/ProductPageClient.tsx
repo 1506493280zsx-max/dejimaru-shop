@@ -33,7 +33,8 @@ export default function ProductPageClient({ product }: { product: any }) {
 
   useEffect(() => {
     if (!product?.category_id) return;
-    const url = `/api/coupons/by-category?category_id=${product.category_id}${user ? `&email=${encodeURIComponent(user.email)}` : ""}`;
+    const catId = typeof product.category_id === 'object' && product.category_id !== null ? product.category_id.id : product.category_id;
+    const url = `/api/coupons/by-category?category_id=${catId}${user ? `&email=${encodeURIComponent(user.email)}` : ""}`;
     fetch(url).then(r => r.json()).then(d => { console.log('[coupons]', d); setCoupons(d.data || []); });
   }, [product?.category_id, user?.email]);
 

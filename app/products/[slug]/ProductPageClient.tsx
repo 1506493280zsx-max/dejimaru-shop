@@ -35,7 +35,7 @@ export default function ProductPageClient({ product }: { product: any }) {
     if (!product?.category_id) return;
     const catId = typeof product.category_id === 'object' && product.category_id !== null ? product.category_id.id : product.category_id;
     const url = `/api/coupons/by-category?category_id=${catId}${user ? `&email=${encodeURIComponent(user.email)}` : ""}`;
-    fetch(url).then(r => r.json()).then(d => { console.log('[coupons]', d); setCoupons(d.data || []); });
+    fetch(url).then(r => r.json()).then(d => setCoupons(d.data || []));
   }, [product?.category_id, user?.email]);
 
   const handleClaim = async (coupon: any) => {

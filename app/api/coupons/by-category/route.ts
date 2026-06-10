@@ -20,9 +20,6 @@ export async function GET(req: NextRequest) {
       const r2 = await fetch(`${DIRECTUS}/items/coupons?${base}&filter[category_slug][_eq]=${slug}`, { headers: H(), cache: "no-store" });
       catC = (await r2.json()).data ?? [];
     }
-    console.log('[by-category] slug:', slug);
-    console.log('[by-category] catC:', JSON.stringify(catC));
-    console.log('[by-category] globalC:', JSON.stringify(globalC));
     const coupons = [...globalC, ...catC];
     if (coupons.length === 0) return NextResponse.json({ data: [] });
     let claimedIds: number[] = [];

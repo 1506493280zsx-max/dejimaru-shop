@@ -38,7 +38,7 @@ const NAV = [
   {
     title: "サービス", en: "Services",
     links: [
-      { label: "法人様向けソリューション", href: "https://aiacross.com/services/", external: true },
+      { label: "法人様向けソリューション", href: "/services" },
       { label: "PODカスタムサービス",   href: "/pod-service" },
     ],
   },

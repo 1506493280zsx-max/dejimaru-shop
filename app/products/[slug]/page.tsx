@@ -9,7 +9,7 @@ const BASE_URL = "https://aiacrossshop.co.jp";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   try {
-    const res = await fetch(`${DIRECTUS}/items/products?filter[slug][_eq]=${slug}&fields=name,description,price,images&limit=1`);
+    const res = await fetch(`${DIRECTUS}/items/products?filter[slug][_eq]=${slug}&fields=name,description,price,images,category_id&limit=1`);
     const data = await res.json();
     const product = data.data?.[0];
     if (!product) return { title: "商品が見つかりません" };

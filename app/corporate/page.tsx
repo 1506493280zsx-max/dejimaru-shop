@@ -111,9 +111,7 @@ function ReviewCarousel() {
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    fetch('https://directus-production-2cfe.up.railway.app/items/product_reviews?fields=id,company_name,title,content,product,image&limit=20', {
-      headers: { Authorization: 'Bearer pXxPbSnyGQECc8o37G4MfVbhq6JIt-X6' }
-    })
+    fetch('/api/business-reviews')
       .then(r => r.json())
       .then(d => setReviews(d.data || []))
       .catch(e => console.error('Failed to load reviews:', e));

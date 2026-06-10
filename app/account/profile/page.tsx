@@ -17,6 +17,9 @@ export default function ProfilePage() {
   const [pwMsg, setPwMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [pwLoading, setPwLoading] = useState(false);
+  const [emailForm, setEmailForm] = useState({ current_password:"", new_email:"" });
+  const [emailMsg, setEmailMsg] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -51,6 +54,20 @@ export default function ProfilePage() {
     setPwMsg(d.success ? "✅ パスワードを変更しました" : `❌ ${d.error}`);
     if (d.success) setPwForm({ current_password:"", new_password:"", confirm_password:"" });
     setPwLoading(false);
+  };
+
+  const handleEmail = async () => {
+    if (!emailForm.current_password || !emailForm.new_email) { setEmailMsg("❌ 入力内容を確認してください"); return; }
+    setEmailLoading(true); setEmailMsg("");
+    const r = await fetch("/api/account/email", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify(emailForm)
+    });
+    const d = await r.json();
+    setEmailMsg(d.success ? "✅ メールアドレスを変更しました。再ログインしてください。" : `❌ ${d.error}`);
+    if (d.success) setEmailForm({ current_password:"", new_email:"" });
+    setEmailLoading(false);
   };
 
   if (!user) return <div style={{padding:40,textAlign:"center"}}>ログインが必要です</div>;
@@ -89,6 +106,18 @@ export default function ProfilePage() {
             {pwMsg && <div style={{marginBottom:12, fontSize:12, color: pwMsg.startsWith("✅") ? "#227700" : C.red}}>{pwMsg}</div>}
             <button onClick={handlePassword} disabled={pwLoading} style={{background:C.primary, color:"#fff", border:"none", padding:"10px 28px", borderRadius:2, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit"}}>
               {pwLoading ? "変更中..." : "パスワードを変更する"}
+            </button>
+          </div>
+        </div>
+
+        <div style={{background:C.white, border:`1px solid ${C.border}`, borderRadius:2, marginTop:16}}>
+          <div style={{background:C.primary, color:"#fff", padding:"8px 16px", fontSize:13, fontWeight:700}}>メールアドレスの変更</div>
+          <div style={{padding:20}}>
+            <div style={{marginBottom:12}}><label style={labelStyle}>現在のパスワード（確認用）</label><input type="password" style={inputStyle} value={emailForm.current_password} onChange={e=>setEmailForm(f=>({...f,current_password:e.target.value}))} /></div>
+            <div style={{marginBottom:16}}><label style={labelStyle}>新しいメールアドレス</label><input type="email" style={inputStyle} value={emailForm.new_email} onChange={e=>setEmailForm(f=>({...f,new_email:e.target.value}))} /></div>
+            {emailMsg && <div style={{marginBottom:12, fontSize:12, color: emailMsg.startsWith("✅") ? "#227700" : C.red}}>{emailMsg}</div>}
+            <button onClick={handleEmail} disabled={emailLoading} style={{background:C.primary, color:"#fff", border:"none", padding:"10px 28px", borderRadius:2, fontSize:13, fontWeight:700, cursor:"pointer", fontFamily:"inherit"}}>
+              {emailLoading ? "変更中..." : "メールアドレスを変更する"}
             </button>
           </div>
         </div>

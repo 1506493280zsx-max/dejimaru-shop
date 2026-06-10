@@ -287,7 +287,14 @@ export default function PurchasePanel({
         </div>
 
         <button
-          onClick={() => { handleAddToCart(); router.push("/cart"); }}
+          onClick={() => {
+            const cartId = selectedVariant ? `${product.id}-${selectedVariant.id}` : String(product.id);
+            const alreadyInCart = useCartStore.getState().items.some((i: any) => i.id === cartId);
+            if (!alreadyInCart) {
+              handleAddToCart();
+            }
+            router.push("/cart");
+          }}
           disabled={(hasVariants && !selectedVariant) || stockQty === 0}
           style={{
             width: "100%", background: ((hasVariants && !selectedVariant) || stockQty === 0) ? "#AAA" : "#FF6600",

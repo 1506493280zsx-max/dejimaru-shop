@@ -60,7 +60,7 @@ const NAV = [
 const SOCIALS = [
   { name: "X",         Icon: FaXTwitter,  href: "https://x.com/AiAcrossshop",                                bg: "#000000" },
   { name: "Facebook",  Icon: FaFacebook,  href: "https://www.facebook.com/profile.php?id=61586262204119",   bg: "#1877F2" },
-  { name: "Instagram", Icon: FaInstagram, href: "https://www.instagram.com/aiacross_shop/",                 bg: "#E1306C" },
+  { name: "Instagram", Icon: FaInstagram, href: "https://www.instagram.com/aiacrossllc/",                 bg: "#E1306C" },
   { name: "YouTube",   Icon: FaYoutube,   href: "https://www.youtube.com/channel/UCQuNgDZhGp47dKZH9rSK-DQ",bg: "#FF0000" },
   { name: "LINE",      Icon: FaLine,      href: "https://line.me/ti/p/WupEgxNYTQ",                          bg: "#00B900" },
   { name: "WhatsApp",  Icon: FaWhatsapp,  href: "https://wa.me/817092607341",                               bg: "#25D366" },

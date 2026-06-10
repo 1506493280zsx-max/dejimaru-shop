@@ -87,9 +87,9 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
 }
 
 const SHIPPING_RATES = [
-  {r:"北海道",p:1980},{r:"東北",p:1200},{r:"関東",p:980},
-  {r:"中部",p:980},{r:"関西",p:1200},{r:"中国",p:1400},
-  {r:"四国",p:1400},{r:"九州",p:1600},{r:"沖縄・離島",p:1980},
+  {r:"北海道",p:1430},{r:"東北",p:880},{r:"関東",p:880},
+  {r:"中部",p:880},{r:"関西",p:880},{r:"中国",p:880},
+  {r:"四国",p:880},{r:"九州",p:880},{r:"沖縄・離島",p:1980},
 ];
 
 function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:any[],openCats:string[],setOpenCats:any,brands:Brand[]}) {

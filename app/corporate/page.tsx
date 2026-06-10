@@ -123,7 +123,9 @@ function ReviewCarousel() {
     return () => clearInterval(timer);
   }, [reviews.length, paused]);
 
-  const displayReviews = reviews.slice(page, page + 3);
+  const displayReviews = reviews.length > 0
+    ? [0, 1, 2].map(i => reviews[(page + i) % reviews.length])
+    : [];
   const cardsPerPage = 3;
 
   return (

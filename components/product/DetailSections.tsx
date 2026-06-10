@@ -104,7 +104,7 @@ export default function DetailSections({ product }: { product: any }) {
             { t: "初期不良保証", d: "商品到着後30日間の初期不良保証が付いています。" },
             { t: "動作確認済み", d: "発送前に全商品の動作確認・初期化を実施しています。" },
             { t: "保証対象外",   d: "お客様の過失・改造・水没による故障は対象外です。" },
-            { t: "延長保証",     d: "オプションで最長1年の延長保証プランもご用意しています。" },
+            { t: "プレミアム保証",     d: "プレミアム保証プランに加入いただくと、対象機器の修理を生涯にわたって保証いたします。" },
           ].map((item, i) => (
             <div key={i} style={{ background: C.primaryBg, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 12 }}>
               <div style={{ fontWeight: 700, color: C.text, marginBottom: 4 }}>{item.t}</div>
@@ -162,7 +162,7 @@ export default function DetailSections({ product }: { product: any }) {
       <SH title="返品・交換ポリシー" icon="↩️" />
       <Panel>
         <div style={{ marginBottom: 10, padding: "10px 14px", background: "#FFF8E8", border: "1px solid #F0D080", borderRadius: 2, fontSize: 12 }}>
-          <strong>返品受付期間：</strong>商品到着後7日以内にご連絡ください
+          <strong>返品受付期間：</strong>商品到着後30日以内にご連絡ください
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
           <div>
@@ -177,7 +177,7 @@ export default function DetailSections({ product }: { product: any }) {
             <div style={{ fontWeight: 700, color: C.red, marginBottom: 6, fontSize: 12 }}>返品不可な場合</div>
             <ul style={{ paddingLeft: 16, margin: 0, fontSize: 12 }}>
               <li>お客様都合による返品</li>
-              <li>到着後8日以降のご連絡</li>
+              <li>到着後30日以降のご連絡</li>
               <li>お客様による破損・改造</li>
             </ul>
           </div>

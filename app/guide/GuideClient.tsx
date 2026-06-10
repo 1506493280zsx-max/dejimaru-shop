@@ -101,7 +101,7 @@ export default function GuideClient({categories, brands = []}:{categories:any[],
             <Section id="defect" title="初期不良について">
               <p>万が一初期不良があった場合の対応です。</p><br/>
               <ol style={{paddingLeft:20}}>
-                <li style={{marginBottom:6}}>商品到着後5日以内にご連絡ください</li>
+                <li style={{marginBottom:6}}>商品到着後30日以内にご連絡ください</li>
                 <li style={{marginBottom:6}}>当ショップにて状況を確認いたします</li>
                 <li style={{marginBottom:6}}>代替品の発送またはご返金にて対応いたします</li>
               </ol>
@@ -109,7 +109,6 @@ export default function GuideClient({categories, brands = []}:{categories:any[],
 
             <Section id="products" title="掲載商品について">
               <Row label="NEW（新品）" value="未開封・未使用"/>
-              <Row label="S（S品）"   value="新品とほぼ同じ状態・目立つ使用痕跡なし"/>
               <Row label="A（A品）"   value="軽微な使用痕跡あり"/>
               <Row label="B（B品）"   value="使用痕跡が比較的目立つ"/>
               <Row label="C（C品）"   value="訳あり品・研究や部品取り向け"/>

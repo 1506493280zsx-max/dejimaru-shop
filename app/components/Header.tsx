@@ -124,7 +124,7 @@ export default function Header() {
       </div>
 
       <div style={{background:C.primary,borderBottom:`2px solid ${C.primaryDark}`}}>
-        <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px",boxSizing:"border-box",display:"flex",justifyContent:"center",alignItems:"stretch",gap:"24px"}}>
+        <div style={{width:"100%",maxWidth:"1800px",margin:"0 auto",padding:"0 12px",boxSizing:"border-box",display:"flex",justifyContent:"center",alignItems:"stretch",height:"40px"}}>
           {[
             {label:"ホーム",path:"/"},
             {label:"ショッピングガイド",path:"/guide"},
@@ -135,14 +135,14 @@ export default function Header() {
             {label:"BLOG",path:"/blog"},
           ].map((item,i)=>(
             <div key={i} onClick={()=>router.push(item.path)}
-              style={{padding:"0 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap",display:"flex",alignItems:"center",height:"100%",boxSizing:"border-box",background:"transparent"}}
+              style={{padding:"0 20px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",display:"flex",alignItems:"center",height:"100%",boxSizing:"border-box",background:"transparent"}}
               onMouseEnter={e=>(e.currentTarget.style.background=C.primaryDark)}
               onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>
               {item.label}
             </div>
           ))}
           <div onClick={()=>router.push("/customer-reviews")}
-            style={{padding:"0 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap",display:"flex",alignItems:"center",height:"100%",boxSizing:"border-box",background:"transparent"}}
+            style={{padding:"0 20px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",display:"flex",alignItems:"center",height:"100%",boxSizing:"border-box",background:"transparent"}}
             onMouseEnter={e=>(e.currentTarget.style.background=C.primaryDark)}
             onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>
             お客様の声

@@ -433,7 +433,40 @@ export default function CorporatePage() {
               {num:"プレミアム保証プラン",label:"購入後も長く使える安心",body:"プレミアム保証プランに加入いただくと、対象機器の修理を生涯にわたって保証。日常業務で長く使い続けたい方に最適なプランです。"},
             ].map(({num,label,body},i)=>(
               <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,borderRadius:"0 0 2px 2px",padding:20,textAlign:"center"}}>
-                <div style={{width:80,height:80,background:"#D4E4E3",borderRadius:"50%",margin:"0 auto 14px"}}/>
+                {i===0&&<div style={{width:'80px',height:'80px',margin:'0 auto 1rem'}}>
+<svg viewBox="0 0 80 80" width="80" height="80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="40" cy="40" r="40" fill="#e8f4f4"/>
+  <rect x="18" y="38" width="44" height="26" rx="3" stroke="#2a9d8f" strokeWidth="2.5" fill="#f0fafa"/>
+  <rect x="22" y="32" width="36" height="22" rx="3" stroke="#2a9d8f" strokeWidth="2" fill="#e0f5f3"/>
+  <rect x="26" y="26" width="28" height="18" rx="3" stroke="#2a9d8f" strokeWidth="2" fill="white"/>
+  <line x1="28" y1="57" x2="52" y2="57" stroke="#2a9d8f" strokeWidth="2.5" strokeLinecap="round"/>
+</svg>
+</div>}
+                {i===1&&<div style={{width:'80px',height:'80px',margin:'0 auto 1rem'}}>
+<svg viewBox="0 0 80 80" width="80" height="80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="40" cy="40" r="40" fill="#e8f4f4"/>
+  <rect x="22" y="36" width="36" height="26" rx="3" stroke="#2a9d8f" strokeWidth="2.5" fill="#f0fafa"/>
+  <path d="M22 42h36" stroke="#2a9d8f" strokeWidth="2"/>
+  <path d="M34 36v-6h12v6" stroke="#2a9d8f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+  <line x1="32" y1="50" x2="48" y2="50" stroke="#2a9d8f" strokeWidth="2" strokeLinecap="round"/>
+  <line x1="36" y1="55" x2="44" y2="55" stroke="#2a9d8f" strokeWidth="1.5" strokeLinecap="round"/>
+</svg>
+</div>}
+                {i===2&&<div style={{width:'80px',height:'80px',margin:'0 auto 1rem'}}>
+<svg viewBox="0 0 80 80" width="80" height="80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="40" cy="40" r="40" fill="#e8f4f4"/>
+  <path d="M40 20 L58 27 L58 42 C58 52 40 62 40 62 C40 62 22 52 22 42 L22 27 Z" stroke="#2a9d8f" strokeWidth="2.5" fill="#f0fafa" strokeLinejoin="round"/>
+  <polyline points="31,40 37,47 50,34" stroke="#2a9d8f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+</svg>
+</div>}
+                {i===3&&<div style={{width:'80px',height:'80px',margin:'0 auto 1rem'}}>
+<svg viewBox="0 0 80 80" width="80" height="80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="40" cy="40" r="40" fill="#e8f4f4"/>
+  <path d="M50 22 C56 24 60 30 58 37 C57 41 54 44 50 45 L32 58 C30 60 27 60 25 58 C23 56 23 53 25 51 L38 33 C34 27 36 20 42 19 C44 18 47 19 50 22 Z" stroke="#2a9d8f" strokeWidth="2.5" fill="#f0fafa" strokeLinejoin="round"/>
+  <circle cx="28" cy="55" r="2" fill="#2a9d8f"/>
+  <line x1="44" y1="28" x2="52" y2="28" stroke="#2a9d8f" strokeWidth="2" strokeLinecap="round"/>
+</svg>
+</div>}
                 <div style={{fontSize:18,fontWeight:900,color:C.primary,marginBottom:4}}>{num}</div>
                 <div style={{fontSize:12,fontWeight:700,color:C.text,marginBottom:8}}>{label}</div>
                 <div style={{fontSize:12,color:C.textSub,lineHeight:1.75}}>{body}</div>

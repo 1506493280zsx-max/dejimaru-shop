@@ -38,9 +38,7 @@ const NAV = [
   {
     title: "サービス", en: "Services",
     links: [
-      { label: "法人・卸販売",          href: "/wholesale" },
-      { label: "買取サービス",          href: "/buyback" },
-      { label: "修理サービス",          href: "/repair" },
+      { label: "法人様向けソリューション", href: "https://aiacross.com/services/", external: true },
       { label: "PODカスタムサービス",   href: "/pod-service" },
     ],
   },
@@ -100,17 +98,32 @@ export default function Footer() {
                   {col.title}&nbsp;
                   <span style={{ fontSize: 9, color: "#5A8A8A", fontWeight: 400 }}>{col.en}</span>
                 </div>
-                {col.links.map((link) => (
-                  <div
-                    key={link.label}
-                    onClick={() => router.push(link.href)}
-                    style={{ fontSize: 12, color: FC.textSub, cursor: "pointer", marginBottom: 7, display: "flex", alignItems: "center", gap: 4 }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = FC.primary; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = FC.textSub; }}
-                  >
-                    <span style={{ fontSize: 8, color: "#3A6A6A" }}>›</span>
-                    {link.label}
-                  </div>
+                {col.links.map((link: any) => (
+                  link.external ? (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ fontSize: 12, color: FC.textSub, cursor: "pointer", marginBottom: 7, display: "flex", alignItems: "center", gap: 4, textDecoration: "none" }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = FC.primary; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = FC.textSub; }}
+                    >
+                      <span style={{ fontSize: 8, color: "#3A6A6A" }}>›</span>
+                      {link.label}
+                    </a>
+                  ) : (
+                    <div
+                      key={link.label}
+                      onClick={() => router.push(link.href)}
+                      style={{ fontSize: 12, color: FC.textSub, cursor: "pointer", marginBottom: 7, display: "flex", alignItems: "center", gap: 4 }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = FC.primary; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = FC.textSub; }}
+                    >
+                      <span style={{ fontSize: 8, color: "#3A6A6A" }}>›</span>
+                      {link.label}
+                    </div>
+                  )
                 ))}
               </div>
             ))}

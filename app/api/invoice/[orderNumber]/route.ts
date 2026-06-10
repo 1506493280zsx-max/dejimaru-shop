@@ -7,6 +7,17 @@ const TOKEN = process.env.ADMIN_TOKEN!;
 const H = { Authorization: `Bearer ${TOKEN}` };
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ orderNumber: string }> }) {
+  const authHeader = req.headers.get("Authorization");
+  const userToken = authHeader?.replace("Bearer ", "");
+  if (!userToken) {
+    return new NextResponse("認証が必要です", { status: 401 });
+  }
+  const meRes = await fetch(`${DIRECTUS}/users/me`, {
+    headers: { Authorization: `Bearer ${userToken}` }
+  });
+  if (!meRes.ok) {
+    return new NextResponse("認証が必要です", { status: 401 });
+  }
   const { orderNumber } = await params;
   const res = await fetch(
     `${DIRECTUS}/items/orders?filter[order_number][_eq]=${orderNumber}&fields=*,order_items.*,order_items.variant_snapshot,points_discount,points_used&limit=1`,

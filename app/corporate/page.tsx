@@ -432,38 +432,41 @@ export default function CorporatePage() {
               {num:"プレミアム保証",label:"さらに長く安心",body:"長期利用をサポートする保証プランをご用意。業務利用や法人利用にも安心してご利用いただけます。"},
             ].map(({num,label,body},i)=>(
               <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,borderRadius:"0 0 2px 2px",padding:20,textAlign:"center"}}>
-                {i===0&&<div style={{width:'80px',height:'80px',margin:'0 auto 1rem'}}>
-<svg viewBox="0 0 80 80" width="80" height="80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="40" cy="40" r="40" fill="#e8f4f4"/>
-  <rect x="18" y="38" width="44" height="26" rx="3" stroke="#2a9d8f" strokeWidth="2.5" fill="#f0fafa"/>
-  <rect x="22" y="32" width="36" height="22" rx="3" stroke="#2a9d8f" strokeWidth="2" fill="#e0f5f3"/>
-  <rect x="26" y="26" width="28" height="18" rx="3" stroke="#2a9d8f" strokeWidth="2" fill="white"/>
-  <line x1="28" y1="57" x2="52" y2="57" stroke="#2a9d8f" strokeWidth="2.5" strokeLinecap="round"/>
+                {i===0&&<div style={{width:'90px',height:'90px',margin:'0 auto 1.2rem',display:'flex',alignItems:'center',justifyContent:'center'}}>
+<svg viewBox="0 0 90 90" width="90" height="90" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="45" cy="45" r="45" fill="#EAF7F5"/>
+  <rect x="20" y="44" width="50" height="22" rx="4" fill="#B2E4DC" stroke="#2a9d8f" strokeWidth="2"/>
+  <rect x="25" y="37" width="40" height="20" rx="4" fill="#CBF0EA" stroke="#2a9d8f" strokeWidth="1.8"/>
+  <rect x="30" y="30" width="30" height="18" rx="4" fill="white" stroke="#2a9d8f" strokeWidth="1.8"/>
+  <rect x="34" y="34" width="22" height="10" rx="2" fill="#EAF7F5"/>
+  <line x1="37" y1="62" x2="53" y2="62" stroke="#2a9d8f" strokeWidth="2.5" strokeLinecap="round"/>
 </svg>
 </div>}
-                {i===1&&<div style={{width:'80px',height:'80px',margin:'0 auto 1rem'}}>
-<svg viewBox="0 0 80 80" width="80" height="80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="40" cy="40" r="40" fill="#e8f4f4"/>
-  <rect x="22" y="36" width="36" height="26" rx="3" stroke="#2a9d8f" strokeWidth="2.5" fill="#f0fafa"/>
-  <path d="M22 42h36" stroke="#2a9d8f" strokeWidth="2"/>
-  <path d="M34 36v-6h12v6" stroke="#2a9d8f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-  <line x1="32" y1="50" x2="48" y2="50" stroke="#2a9d8f" strokeWidth="2" strokeLinecap="round"/>
-  <line x1="36" y1="55" x2="44" y2="55" stroke="#2a9d8f" strokeWidth="1.5" strokeLinecap="round"/>
+                {i===1&&<div style={{width:'90px',height:'90px',margin:'0 auto 1.2rem',display:'flex',alignItems:'center',justifyContent:'center'}}>
+<svg viewBox="0 0 90 90" width="90" height="90" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="45" cy="45" r="45" fill="#EAF7F5"/>
+  <rect x="22" y="42" width="46" height="28" rx="4" fill="#B2E4DC" stroke="#2a9d8f" strokeWidth="2"/>
+  <path d="M22 52 L68 52" stroke="#2a9d8f" strokeWidth="1.8"/>
+  <path d="M36 42 L36 34 L54 34 L54 42" stroke="#2a9d8f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="#CBF0EA"/>
+  <circle cx="33" cy="72" r="3" fill="#2a9d8f"/>
+  <circle cx="57" cy="72" r="3" fill="#2a9d8f"/>
+  <line x1="38" y1="58" x2="52" y2="58" stroke="#2a9d8f" strokeWidth="2" strokeLinecap="round"/>
+  <line x1="41" y1="63" x2="49" y2="63" stroke="#2a9d8f" strokeWidth="1.5" strokeLinecap="round"/>
 </svg>
 </div>}
-                {i===2&&<div style={{width:'80px',height:'80px',margin:'0 auto 1rem'}}>
-<svg viewBox="0 0 80 80" width="80" height="80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="40" cy="40" r="40" fill="#e8f4f4"/>
-  <path d="M40 20 L58 27 L58 42 C58 52 40 62 40 62 C40 62 22 52 22 42 L22 27 Z" stroke="#2a9d8f" strokeWidth="2.5" fill="#f0fafa" strokeLinejoin="round"/>
-  <polyline points="31,40 37,47 50,34" stroke="#2a9d8f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                {i===2&&<div style={{width:'90px',height:'90px',margin:'0 auto 1.2rem',display:'flex',alignItems:'center',justifyContent:'center'}}>
+<svg viewBox="0 0 90 90" width="90" height="90" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="45" cy="45" r="45" fill="#EAF7F5"/>
+  <path d="M45 18 L65 26 L65 46 C65 58 45 68 45 68 C45 68 25 58 25 46 L25 26 Z" fill="#CBF0EA" stroke="#2a9d8f" strokeWidth="2" strokeLinejoin="round"/>
+  <path d="M45 18 L65 26 L65 46 C65 58 45 68 45 68" fill="#B2E4DC" stroke="#2a9d8f" strokeWidth="2" strokeLinejoin="round"/>
+  <polyline points="35,44 41,51 56,37" stroke="#2a9d8f" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/>
 </svg>
 </div>}
-                {i===3&&<div style={{width:'80px',height:'80px',margin:'0 auto 1rem'}}>
-<svg viewBox="0 0 80 80" width="80" height="80" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="40" cy="40" r="40" fill="#e8f4f4"/>
-  <path d="M50 22 C56 24 60 30 58 37 C57 41 54 44 50 45 L32 58 C30 60 27 60 25 58 C23 56 23 53 25 51 L38 33 C34 27 36 20 42 19 C44 18 47 19 50 22 Z" stroke="#2a9d8f" strokeWidth="2.5" fill="#f0fafa" strokeLinejoin="round"/>
-  <circle cx="28" cy="55" r="2" fill="#2a9d8f"/>
-  <line x1="44" y1="28" x2="52" y2="28" stroke="#2a9d8f" strokeWidth="2" strokeLinecap="round"/>
+                {i===3&&<div style={{width:'90px',height:'90px',margin:'0 auto 1.2rem',display:'flex',alignItems:'center',justifyContent:'center'}}>
+<svg viewBox="0 0 90 90" width="90" height="90" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="45" cy="45" r="45" fill="#EAF7F5"/>
+  <path d="M45 28 L50 38 L62 40 L53 49 L55 62 L45 56 L35 62 L37 49 L28 40 L40 38 Z" fill="#CBF0EA" stroke="#2a9d8f" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round"/>
+  <path d="M45 28 L50 38 L62 40 L53 49 L55 62 L45 56" fill="#B2E4DC" stroke="#2a9d8f" strokeWidth="2" strokeLinejoin="round"/>
 </svg>
 </div>}
                 <div style={{fontSize:18,fontWeight:900,color:C.primary,marginBottom:4}}>{num}</div>

@@ -33,7 +33,7 @@ function InfoBox({ children }: { children: React.ReactNode }) {
 const FEES = [
   { region: "本州・四国・九州", standard: "¥880（税込）", over: "¥15,000以上で送料無料" },
   { region: "北海道",           standard: "¥1,430（税込）", over: "¥15,000以上で送料無料" },
-  { region: "沖縄・離島",       standard: "¥1,980（税込）", over: "¥16,100以上で送料無料" },
+  { region: "沖縄・離島",       standard: "¥1,980（税込）", over: "―" },
 ];
 
 const TIMES = [

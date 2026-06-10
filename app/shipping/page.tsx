@@ -31,9 +31,9 @@ function InfoBox({ children }: { children: React.ReactNode }) {
 }
 
 const FEES = [
-  { region: "本州・四国・九州", standard: "¥880（税込）", over: "¥10,000以上で送料無料" },
-  { region: "北海道",           standard: "¥1,430（税込）", over: "¥10,000以上で送料無料" },
-  { region: "沖縄・離島",       standard: "¥1,980（税込）", over: "¥15,000以上で送料無料" },
+  { region: "本州・四国・九州", standard: "¥880（税込）", over: "¥15,000以上で送料無料" },
+  { region: "北海道",           standard: "¥1,430（税込）", over: "¥15,000以上で送料無料" },
+  { region: "沖縄・離島",       standard: "¥1,980（税込）", over: "¥16,100以上で送料無料" },
 ];
 
 const TIMES = [
@@ -85,6 +85,7 @@ export default function ShippingPage() {
             {[
               { name: "ヤマト運輸（クロネコヤマト）", note: "主力配送業者。宅急便コンパクト対応。追跡・時間指定・再配達が可能です。" },
               { name: "日本郵便（ゆうパック）",         note: "一部商品・地域で利用。追跡番号発行。郵便局への持ち込み受け取りも可能です。" },
+              { name: "佐川急便", note: "一部商品・地域で利用。追跡番号発行。集荷サービスにも対応しています。" },
             ].map(({ name, note }) => (
               <div key={name} style={{ background: C.primaryBg, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 12 }}>
                 <div style={{ fontWeight: 700, color: C.text, marginBottom: 4, fontSize: 13 }}>{name}</div>
@@ -124,7 +125,7 @@ export default function ShippingPage() {
             {[
               { label: "在庫あり商品",   days: "1～3営業日",  note: "平日12時までのご注文は当日発送" },
               { label: "取り寄せ商品",   days: "3～7営業日",  note: "商品ページに別途納期を記載" },
-              { label: "カスタム・修理", days: "5～14営業日", note: "内容により異なります" },
+              { label: "カスタム・修理", days: "3～14営業日", note: "内容により異なります" },
             ].map(({ label, days, note }) => (
               <div key={label} style={{ border: `1px solid ${C.border}`, borderTop: `3px solid ${C.primary}`, background: C.white, padding: 12, borderRadius: "0 0 2px 2px" }}>
                 <div style={{ fontWeight: 700, color: C.text, marginBottom: 2 }}>{label}</div>

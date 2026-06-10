@@ -111,6 +111,59 @@ export async function POST(req: NextRequest) {
       - serverDiscount - serverPointsDiscount
     );
 
+    // ── クーポン事前マーク（注文作成前に実行、二重使用防止） ──
+    let markedUcId: number | null = null;
+    if (couponCode && (customerId || email)) {
+      try {
+        const targetEmail = email;
+        let cusId: number | null = null;
+
+        if (customerId) {
+          cusId = customerId;
+        } else if (targetEmail) {
+          const cusRes = await fetch(
+            `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(targetEmail)}&fields=id&limit=1`,
+            { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+          );
+          cusId = (await cusRes.json()).data?.[0]?.id ?? null;
+        }
+
+        if (cusId) {
+          const cpRes = await fetch(
+            `${DIRECTUS}/items/coupons?filter[code][_eq]=${encodeURIComponent(couponCode)}&fields=id&limit=1`,
+            { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+          );
+          const couponId = (await cpRes.json()).data?.[0]?.id;
+
+          if (couponId) {
+            const ucRes = await fetch(
+              `${DIRECTUS}/items/user_coupons?filter[customer_id][_eq]=${cusId}&filter[coupon_id][_eq]=${couponId}&filter[used_at][_null]=true&limit=1`,
+              { headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" } }
+            );
+            const uc = (await ucRes.json()).data?.[0];
+
+            if (!uc) {
+              return NextResponse.json({ success: false, error: "クーポンはすでに使用済みか無効です" }, { status: 400 });
+            }
+
+            const markRes = await fetch(`${DIRECTUS}/items/user_coupons/${uc.id}`, {
+              method: "PATCH",
+              headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
+              body: JSON.stringify({ used_at: new Date().toISOString() }),
+            });
+
+            if (!markRes.ok) {
+              return NextResponse.json({ success: false, error: "クーポンの処理に失敗しました" }, { status: 500 });
+            }
+
+            markedUcId = uc.id;
+          }
+        }
+      } catch (e) {
+        console.error("[orders/create] クーポン事前マークエラー", e);
+      }
+    }
+
     const order_number = generateOrderNumber();
 
     const orderRes = await fetch(`${DIRECTUS}/items/orders`, {
@@ -140,6 +193,18 @@ export async function POST(req: NextRequest) {
     if (!orderRes.ok) {
       const err = await orderRes.json().catch(() => ({}));
       const msg = err?.errors?.[0]?.message ?? "Order creation failed";
+      // クーポンのロールバック
+      if (markedUcId) {
+        try {
+          await fetch(`${DIRECTUS}/items/user_coupons/${markedUcId}`, {
+            method: "PATCH",
+            headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ used_at: null }),
+          });
+        } catch (e) {
+          console.error("[orders/create] クーポンロールバックエラー", e);
+        }
+      }
       return NextResponse.json({ success: false, error: msg }, { status: 500 });
     }
 
@@ -222,42 +287,6 @@ export async function POST(req: NextRequest) {
       }
     }
     // 注意：積分付与（earn）は発送確定時（orders/ship）で行う。ここでは呼ばない。
-
-    if (couponCode) {
-      try {
-        const cusRes = await fetch(
-          `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(email)}&fields=id&limit=1`,
-          { headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` } }
-        );
-        const cusData = await cusRes.json();
-        const customerId = cusData.data?.[0]?.id;
-        if (customerId) {
-          const cpRes = await fetch(
-            `${DIRECTUS}/items/coupons?filter[code][_eq]=${encodeURIComponent(couponCode)}&fields=id&limit=1`,
-            { headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` } }
-          );
-          const cpData = await cpRes.json();
-          const couponId = cpData.data?.[0]?.id;
-          if (couponId) {
-            const ucRes = await fetch(
-              `${DIRECTUS}/items/user_coupons?filter[customer_id][_eq]=${customerId}&filter[coupon_id][_eq]=${couponId}&filter[used_at][_null]=true&limit=1`,
-              { headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` } }
-            );
-            const ucData = await ucRes.json();
-            const ucId = ucData.data?.[0]?.id;
-            if (ucId) {
-              await fetch(`${DIRECTUS}/items/user_coupons/${ucId}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json", Authorization: `Bearer ${TOKEN}` },
-                body: JSON.stringify({ used_at: new Date().toISOString(), order_id: orderId }),
-              });
-            }
-          }
-        }
-      } catch (e) {
-        console.error("[orders/create] coupon mark error", e);
-      }
-    }
 
     // 確認メール送信
     try {

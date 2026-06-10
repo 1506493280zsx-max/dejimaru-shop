@@ -140,6 +140,59 @@ export async function POST(req: NextRequest) {
       console.error("[orders/cancel] inventory恢复流程错误", e);
     }
 
+    // ── クーポン還元：キャンセル時にused_atをnullに戻す ──
+    try {
+      const orderDetailRes = await fetch(
+        `${DIRECTUS}/items/orders/${orderId}?fields=coupon_code,customer_id,guest_email`,
+        { headers: H }
+      );
+      const orderDetail = (await orderDetailRes.json()).data;
+      const couponCode = orderDetail?.coupon_code;
+      const orderEmail = orderDetail?.guest_email;
+      const orderCustomerId = orderDetail?.customer_id;
+
+      if (couponCode) {
+        // couponのIDを取得
+        const cpRes = await fetch(
+          `${DIRECTUS}/items/coupons?filter[code][_eq]=${encodeURIComponent(couponCode)}&fields=id&limit=1`,
+          { headers: H }
+        );
+        const couponId = (await cpRes.json()).data?.[0]?.id;
+
+        if (couponId) {
+          // customer_idかemailでuser_couponsを検索
+          let ucFilter = `filter[coupon_id][_eq]=${couponId}&filter[used_at][_nnull]=true&limit=1`;
+          if (orderCustomerId) {
+            ucFilter = `filter[customer_id][_eq]=${orderCustomerId}&filter[coupon_id][_eq]=${couponId}&filter[used_at][_nnull]=true&limit=1`;
+          } else if (orderEmail) {
+            const cusRes = await fetch(
+              `${DIRECTUS}/items/customers?filter[email][_eq]=${encodeURIComponent(orderEmail)}&fields=id&limit=1`,
+              { headers: H }
+            );
+            const cusId = (await cusRes.json()).data?.[0]?.id;
+            if (cusId) ucFilter = `filter[customer_id][_eq]=${cusId}&filter[coupon_id][_eq]=${couponId}&filter[used_at][_nnull]=true&limit=1`;
+          }
+
+          const ucRes = await fetch(
+            `${DIRECTUS}/items/user_coupons?${ucFilter}`,
+            { headers: H }
+          );
+          const ucId = (await ucRes.json()).data?.[0]?.id;
+
+          if (ucId) {
+            await fetch(`${DIRECTUS}/items/user_coupons/${ucId}`, {
+              method: "PATCH",
+              headers: H,
+              body: JSON.stringify({ used_at: null }),
+            });
+            console.log(`[orders/cancel] クーポン還元完了: coupon=${couponCode}, ucId=${ucId}`);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("[orders/cancel] クーポン還元エラー", e);
+    }
+
     // ステータス更新
     await fetch(`${DIRECTUS}/items/orders/${orderId}`, {
       method: "PATCH",

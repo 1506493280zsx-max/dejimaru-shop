@@ -105,6 +105,97 @@ function BulletList({items}:{items:string[]}) {
   );
 }
 
+function ReviewCarousel() {
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [page, setPage] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    fetch('https://directus-production-2cfe.up.railway.app/items/product_reviews?fields=id,company_name,title,content,product,image&limit=20', {
+      headers: { Authorization: 'Bearer pXxPbSnyGQECc8o37G4MfVbhq6JIt-X6' }
+    })
+      .then(r => r.json())
+      .then(d => setReviews(d.data || []))
+      .catch(e => console.error('Failed to load reviews:', e));
+  }, []);
+
+  useEffect(() => {
+    if (reviews.length <= 3 || paused) return;
+    const timer = setInterval(() => setPage(p => (p + 1) % reviews.length), 4000);
+    return () => clearInterval(timer);
+  }, [reviews.length, paused]);
+
+  const displayReviews = reviews.slice(page, page + 3);
+  const cardsPerPage = 3;
+
+  return (
+    <div style={{background:C.white,padding:"44px 0"}}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}>
+      <div style={{maxWidth:960,margin:"0 auto",padding:"0 20px"}}>
+        <div style={{textAlign:"center",marginBottom:24}}>
+          <div style={{fontSize:18,fontWeight:900,color:C.text,marginBottom:6}}>ご利用者の声</div>
+          <div style={{fontSize:13,color:C.textSub}}>実際にご利用いただい法人のお客様からのご意見をご紹介します。</div>
+        </div>
+
+        <style>{`
+          .review-carousel { position: relative; overflow: hidden; }
+          .review-slides { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; transition: transform 0.5s ease; }
+          @media(max-width:768px) { .review-slides { grid-template-columns: 1fr; } }
+          .review-card { background: ${C.white}; border: 1px solid ${C.border}; border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; }
+          .review-image { width: 100%; height: 200px; background: #E0E0E0; flex-shrink: 0; }
+          .review-image img { width: 100%; height: 100%; object-fit: cover; }
+          .review-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+          .review-company { font-weight: 700; color: ${C.text}; margin-bottom: 8px; font-size: 12px; }
+          .review-title { font-weight: 700; color: ${C.primary}; margin-bottom: 8px; font-size: 13px; }
+          .review-content { color: ${C.textSub}; font-size: 12px; line-height: 1.6; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex: 1; }
+          .review-product { font-size: 11px; color: #fff; background: ${C.primary}; padding: 4px 10px; border-radius: 2px; display: inline-block; align-self: flex-start; }
+          .carousel-nav { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px; }
+          .carousel-btn { width: 32px; height: 32px; border-radius: 2px; border: none; background: ${C.primary}; color: #fff; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+          .carousel-btn:hover { background: ${C.primaryDark}; }
+          .carousel-dots { display: flex; gap: 8px; }
+          .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: ${C.border}; cursor: pointer; }
+          .carousel-dot.active { background: ${C.primary}; }
+        `}</style>
+
+        <div className="review-carousel">
+          <div className="review-slides">
+            {displayReviews.map((review, i) => (
+              <div key={review.id} className="review-card">
+                <div className="review-image">
+                  {review.image ? (
+                    <img src={`https://directus-production-2cfe.up.railway.app/assets/${review.image}?width=400`} alt={review.title} />
+                  ) : (
+                    <div style={{width:'100%',height:'100%',background:'#E8E8E8'}}/>
+                  )}
+                </div>
+                <div className="review-body">
+                  <div className="review-company">{review.company_name}</div>
+                  <div className="review-title">{review.title}</div>
+                  <div className="review-content">{review.content}</div>
+                  {review.product && <span className="review-product">{review.product}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {reviews.length > 0 && (
+          <div className="carousel-nav">
+            <button className="carousel-btn" onClick={() => setPage(p => Math.max(0, p - 1))}>❮</button>
+            <div className="carousel-dots">
+              {Array.from({length: Math.ceil(reviews.length / cardsPerPage)}).map((_, i) => (
+                <div key={i} className={`carousel-dot ${i === Math.floor(page / cardsPerPage) ? 'active' : ''}`} onClick={() => setPage(i * cardsPerPage)} />
+              ))}
+            </div>
+            <button className="carousel-btn" onClick={() => setPage(p => Math.min((Math.ceil(reviews.length / cardsPerPage) - 1) * cardsPerPage, p + 1))}>❯</button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function CorporatePage() {
   const router=useRouter();
   const [corpProducts, setCorpProducts] = useState<any[]>([]);
@@ -134,7 +225,7 @@ export default function CorporatePage() {
         <div style={{maxWidth:840,margin:"0 auto",padding:"0 20px",textAlign:"center"}}>
           <h1 style={{fontSize:26,fontWeight:900,color:C.text,marginBottom:12,lineHeight:1.3}}>法人向けサービス</h1>
           <p style={{fontSize:14,color:C.textSub,lineHeight:2,maxWidth:600,margin:"0 auto 28px"}}>
-            AI Across法人会社は、企業・学校・官公庁向けに中古PC・スマートフォン・タブレット等の一括調達サービスを提供しています。
+            合同会社AI Acrossは、企業・学校・官公庁向けに中古PC・スマートフォン・タブレット等の一括調達サービスを提供しています。
             10台以上のまとめ買いから、キッティング・長期保証まで一括対応で対応いたします。
           </p>
           <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:24}}>
@@ -324,7 +415,7 @@ export default function CorporatePage() {
       <div style={{background:C.bg,padding:"44px 0"}}>
         <div style={{maxWidth:960,margin:"0 auto",padding:"0 20px"}}>
           <div style={{textAlign:"center",marginBottom:24}}>
-            <div style={{fontSize:18,fontWeight:900,color:C.text,marginBottom:8}}>AI Across法人会社とは</div>
+            <div style={{fontSize:18,fontWeight:900,color:C.text,marginBottom:8}}>合同会社AI Acrossとは</div>
             <div style={{fontSize:13,color:C.textSub,maxWidth:560,margin:"0 auto",lineHeight:1.9}}>
               デジタルをもっと身近に、もっとサステイナブルに、をテーマに取り組んでいます。
             </div>
@@ -336,10 +427,10 @@ export default function CorporatePage() {
           `}</style>
           <div className="company-intro-grid">
             {[
-              {num:"年台50,000台+",label:"購入実績",        body:"全国の個人・法人向けに年台5万台以上の中古PCデバイスを購入しています。"},
-              {num:"複数台購入保証",label:"保証・コンプライアンス",body:"厳格な環境基準に基づいた適正な情報管理で信頼できる品質提供しています。"},
-              {num:"30日間返品保証",  label:"全品納期返品保証",  body:"購入するすべての商品に返品保証を付きます。"},
-              {num:"プレミアムプラン",label:"豪華・サービス",      body:"プレミアムプラン加入時に、全額返金サービスに対応いたします。"},
+              {num:"累計35万台以上",label:"豊富な取扱実績",body:"創業以来、累計35万台以上の中古PCデバイスを個人・法人のお客様へ安定供給。豊富な在庫と実績をもとに、まとめ買いにも柔軟に対応します。"},
+              {num:"複数台まとめ購入",label:"法人・業務向け対応",body:"10台以上のまとめ購入に対応。ご要望に応じた機種選定や納品スケジュールの調整など、法人のニーズに寄り添った対応をいたします。"},
+              {num:"30日間返品保証",  label:"安心のアフターサポート",  body:"お届けした商品に万が一不具合があった場合、30日以内であれば返品・交換に対応。安心してご利用いただけます。"},
+              {num:"プレミアム保証プラン",label:"購入後も長く使える安心",body:"プレミアム保証プランに加入いただくと、対象機器の修理を生涯にわたって保証。日常業務で長く使い続けたい方に最適なプランです。"},
             ].map(({num,label,body},i)=>(
               <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,borderRadius:"0 0 2px 2px",padding:20,textAlign:"center"}}>
                 <div style={{width:80,height:80,background:"#D4E4E3",borderRadius:"50%",margin:"0 auto 14px"}}/>
@@ -353,27 +444,8 @@ export default function CorporatePage() {
       </div>
 
       {/* 8. Customer Reviews */}
-      <div style={{background:C.white,padding:"44px 0"}}>
-        <div style={{maxWidth:960,margin:"0 auto",padding:"0 20px"}}>
-          <div style={{textAlign:"center",marginBottom:24}}>
-            <div style={{fontSize:18,fontWeight:900,color:C.text,marginBottom:6}}>ご利用者の声</div>
-            <div style={{fontSize:13,color:C.textSub}}>実際にご利用いただいた個人ユーザー様からのご質問をご紹介します。</div>
-          </div>
-          {/* review images: /public/corporate/reviews/review{1-3}.webp */}
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:16}}>
-            {[0,1,2].map(i=>(
-              <div key={i} style={{height:200,background:"#D4E4E3",borderRadius:2}}/>
-            ))}
-          </div>
-          <div style={{textAlign:"center"}}>
-            <button onClick={()=>router.push("/search")}
-              style={{background:"none",border:`1px solid ${C.primary}`,color:C.primary,padding:"9px 28px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}
-              onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=C.primaryBg;}}
-              onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background="none";}}>
-              レビューをもっと見る &#x2192;            </button>
-          </div>
-        </div>
-      </div>
+      <ReviewCarousel />
+
 
       {/* 9. FAQ */}
       <div style={{background:C.bg,padding:"44px 0"}}>

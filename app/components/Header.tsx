@@ -135,14 +135,14 @@ export default function Header() {
             {label:"BLOG",path:"/blog"},
           ].map((item,i)=>(
             <div key={i} onClick={()=>router.push(item.path)}
-              style={{padding:"7px 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap",display:"flex",alignItems:"center"}}
+              style={{padding:"0 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap",display:"flex",alignItems:"center",height:"100%",boxSizing:"border-box",background:"transparent"}}
               onMouseEnter={e=>(e.currentTarget.style.background=C.primaryDark)}
               onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>
               {item.label}
             </div>
           ))}
           <div onClick={()=>router.push("/customer-reviews")}
-            style={{padding:"7px 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap"}}
+            style={{padding:"0 14px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer",borderRight:`1px solid ${C.primaryDark}`,whiteSpace:"nowrap",display:"flex",alignItems:"center",height:"100%",boxSizing:"border-box",background:"transparent"}}
             onMouseEnter={e=>(e.currentTarget.style.background=C.primaryDark)}
             onMouseLeave={e=>(e.currentTarget.style.background="transparent")}>
             お客様の声

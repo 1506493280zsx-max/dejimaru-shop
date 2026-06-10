@@ -503,10 +503,8 @@ export default function CorporatePage() {
           <div style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.6)",letterSpacing:3,marginBottom:8}}>PARTNER</div>
           <div style={{fontSize:20,fontWeight:900,color:"#fff",marginBottom:12,lineHeight:1.3}}>パートナー募集</div>
           <div style={{fontSize:13,color:"rgba(255,255,255,0.8)",maxWidth:520,margin:"0 auto 24px",lineHeight:1.9}}>
-            リユースPC・デバイスのビジネスに関心のある企業・個人の方、ぜひご連絡ください。
+            中古PC・デジタル機器のリユースビジネスに関心をお持ちの企業様・個人事業主様、ぜひ私たちと一緒に取り組みませんか。仕入れ・販売・法人向け導入支援など、多様な形での連携を歓迎しています。お気軽にお問い合わせください。
           </div>
-          {/* partner logo: /public/corporate/partner/logo.webp */}
-          <div style={{width:120,height:56,background:"rgba(255,255,255,0.1)",borderRadius:2,margin:"0 auto 20px"}}/>
           <div style={{fontSize:12,color:"rgba(255,255,255,0.5)",marginBottom:20,lineHeight:1.8}}>
             TEL: 050-3091-0226 / info@aiacross.com
           </div>

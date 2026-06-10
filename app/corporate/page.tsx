@@ -415,9 +415,10 @@ export default function CorporatePage() {
       <div style={{background:C.bg,padding:"44px 0"}}>
         <div style={{maxWidth:960,margin:"0 auto",padding:"0 20px"}}>
           <div style={{textAlign:"center",marginBottom:24}}>
-            <div style={{fontSize:18,fontWeight:900,color:C.text,marginBottom:8}}>合同会社AI Acrossとは</div>
+            <div style={{fontSize:18,fontWeight:900,color:C.text,marginBottom:8}}>AI Acrossが選ばれる理由</div>
             <div style={{fontSize:13,color:C.textSub,maxWidth:560,margin:"0 auto",lineHeight:1.9}}>
-              デジタルをもっと身近に、もっとサステイナブルに、をテーマに取り組んでいます。
+              <div style={{fontWeight:700,marginBottom:8}}>安心・品質・サポート。</div>
+              中古PCを初めて購入される方にも、法人導入をご検討中のお客様にも、安心してご利用いただけるサービスをご提供しています。
             </div>
           </div>
           <style>{`
@@ -427,10 +428,10 @@ export default function CorporatePage() {
           `}</style>
           <div className="company-intro-grid">
             {[
-              {num:"累計35万台以上",label:"豊富な取扱実績",body:"創業以来、累計35万台以上の中古PCデバイスを個人・法人のお客様へ安定供給。豊富な在庫と実績をもとに、まとめ買いにも柔軟に対応します。"},
-              {num:"複数台まとめ購入",label:"法人・業務向け対応",body:"10台以上のまとめ購入に対応。ご要望に応じた機種選定や納品スケジュールの調整など、法人のニーズに寄り添った対応をいたします。"},
-              {num:"30日間返品保証",  label:"安心のアフターサポート",  body:"お届けした商品に万が一不具合があった場合、30日以内であれば返品・交換に対応。安心してご利用いただけます。"},
-              {num:"プレミアム保証プラン",label:"購入後も長く使える安心",body:"プレミアム保証プランに加入いただくと、対象機器の修理を生涯にわたって保証。日常業務で長く使い続けたい方に最適なプランです。"},
+              {num:"累計35万台以上",label:"豊富な販売実績",body:"全国のお客様へ累計35万台以上のPCを販売。長年培った経験と実績で安心のお取引をサポートします。"},
+              {num:"法人・教育機関向け",label:"大量導入・お見積り対応",body:"10台から数百台規模まで柔軟に対応。学校・企業・自治体向けの導入相談も承ります。"},
+              {num:"30日間返品保証",  label:"ご購入後も安心",  body:"万が一の初期不良や不具合にも対応。商品到着後30日以内であれば返品・交換が可能です。"},
+              {num:"プレミアム保証",label:"さらに長く安心",body:"長期利用をサポートする保証プランをご用意。業務利用や法人利用にも安心してご利用いただけます。"},
             ].map(({num,label,body},i)=>(
               <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,borderRadius:"0 0 2px 2px",padding:20,textAlign:"center"}}>
                 {i===0&&<div style={{width:'80px',height:'80px',margin:'0 auto 1rem'}}>

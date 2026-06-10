@@ -189,11 +189,6 @@ export default function PurchasePanel({
           {product.grade && (
             <span style={{ background: gs.bg, color: gs.color, border: `1px solid ${gs.border}`, borderRadius: 2, fontSize: 11, fontWeight: 700, padding: "3px 10px" }}>{gs.label}</span>
           )}
-          {product.condition && (
-            <span style={{ background: "#F5F5F5", color: "#555", border: "1px solid #CCC", borderRadius: 2, fontSize: 11, padding: "3px 10px" }}>
-              {product.condition === "used" ? "中古品" : product.condition === "new" ? "新品" : "リファービッシュ"}
-            </span>
-          )}
           <span style={{ background: "#F0FFF4", color: "#22AA44", border: "1px solid #88DD88", borderRadius: 2, fontSize: 11, padding: "3px 10px" }}>在庫あり</span>
         </div>
 

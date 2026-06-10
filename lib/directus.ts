@@ -48,7 +48,7 @@ export async function getNewArrivals() {
 export async function getProductBySlug(slug: string) {
   try {
     const res = await fetch(
-      `${DIRECTUS_URL}/items/products?filter[slug][_eq]=${slug}&fields[]=id,slug,name,description,short_description,price,compare_at_price,grade,condition,cpu,cpu_generation,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,premium_warranty_enabled,premium_warranty_price,brand_id.name,category_id.name,category_id.slug,images.image_file_id`,
+      `${DIRECTUS_URL}/items/products?filter[slug][_eq]=${slug}&fields[]=id,slug,name,description,short_description,price,compare_at_price,grade,condition,cpu,cpu_generation,os,memory,storage,display_size,model,release_year,color,battery_health,resolution,refresh_rate,premium_warranty_enabled,premium_warranty_price,brand_id.name,category_id.id,category_id.name,category_id.slug,images.image_file_id`,
       { headers: publicHeaders, next: { revalidate: 300 } }
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);

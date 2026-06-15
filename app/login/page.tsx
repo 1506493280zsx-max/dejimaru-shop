@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { useAuthStore } from "@/lib/auth-store";
@@ -22,14 +22,30 @@ function LoginContent() {
   const [error, setError] = useState("");
   const [tab, setTab] = useState<"login"|"register">("login");
 
+  useEffect(() => {
+    const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+    if (siteKey) {
+      const script = document.createElement("script");
+      script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }, []);
+
   const handleLogin = async () => {
     if (!email || !password) { setError("メールとパスワードを入力してください"); return; }
     setLoading(true); setError("");
     try {
+      let recaptchaToken = "";
+      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+      if (siteKey && typeof window !== "undefined" && (window as any).grecaptcha) {
+        recaptchaToken = await (window as any).grecaptcha.execute(siteKey, { action: "login" });
+      }
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, recaptchaToken }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "ログインに失敗しました"); setLoading(false); return; }
@@ -53,10 +69,15 @@ function LoginContent() {
     if (password.length < 8) { setError("パスワードは8文字以上で入力してください"); return; }
     setLoading(true); setError("");
     try {
+      let recaptchaToken = "";
+      const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+      if (siteKey && typeof window !== "undefined" && (window as any).grecaptcha) {
+        recaptchaToken = await (window as any).grecaptcha.execute(siteKey, { action: "register" });
+      }
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, firstName, lastName }),
+        body: JSON.stringify({ email, password, firstName, lastName, recaptchaToken }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || "登録に失敗しました"); setLoading(false); return; }

@@ -5,7 +5,26 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN!;
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, password, firstName, lastName } = await req.json();
+    const { email, password, firstName, lastName, recaptchaToken } = await req.json();
+
+    if (recaptchaToken && process.env.RECAPTCHA_SECRET_KEY) {
+      try {
+        const captchaRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`,
+        });
+        const captchaData = await captchaRes.json();
+        if (!captchaData.success || (captchaData.score && captchaData.score < 0.5)) {
+          return NextResponse.json(
+            { error: "不正なアクセスが検出されました" },
+            { status: 400 }
+          );
+        }
+      } catch (e) {
+        console.error("[register] reCAPTCHA verification error", e);
+      }
+    }
 
     // バリデーション
     if (!email || !password || !firstName || !lastName) {

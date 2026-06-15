@@ -1,7 +1,7 @@
 import { getBrands, getCategories } from "@/lib/directus";
 import SearchClient from "./SearchClient";
 
-const DIRECTUS = process.env.DIRECTUS_URL || "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
 
 export default async function SearchPage({
   searchParams

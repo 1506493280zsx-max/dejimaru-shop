@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const DIRECTUS = process.env.DIRECTUS_URL || "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
 const TOKEN = process.env.ADMIN_TOKEN!;
 const H = { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" };
 
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     const token = authHeader?.replace("Bearer ", "");
     if (!token) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
-    const meRes = await fetch(`${process.env.DIRECTUS_URL || "https://directus-production-2cfe.up.railway.app"}/users/me`, {
+    const meRes = await fetch(`${process.env.DIRECTUS_URL || "http://13.158.171.41:8055"}/users/me`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!meRes.ok) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

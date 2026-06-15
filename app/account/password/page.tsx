@@ -9,7 +9,7 @@ const C = {
   text:"#333", textSub:"#666", textLight:"#999",
 };
 
-const DIRECTUS = "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS = "http://13.158.171.41:8055";
 
 export default function PasswordPage() {
   const router = useRouter();

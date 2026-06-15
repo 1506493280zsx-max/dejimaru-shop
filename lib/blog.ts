@@ -1,4 +1,4 @@
-const DIRECTUS_URL_FALLBACK = process.env.DIRECTUS_URL ?? "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS_URL_FALLBACK = process.env.DIRECTUS_URL ?? "http://13.158.171.41:8055";
 
 // adminHeadersを固定せず、毎回動的に生成する
 function getAdminHeaders(): Record<string, string> {

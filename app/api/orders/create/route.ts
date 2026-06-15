@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendOrderConfirmationEmail } from "@/lib/mail";
 
-const DIRECTUS = "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS = "http://13.158.171.41:8055";
 const TOKEN =
   process.env.DIRECTUS_TOKEN ||
   process.env.ADMIN_TOKEN ||

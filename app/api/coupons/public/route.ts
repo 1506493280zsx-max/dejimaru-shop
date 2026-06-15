@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-const DIRECTUS = process.env.DIRECTUS_URL || "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
 const TOKEN = process.env.ADMIN_TOKEN!;
 const H = () => ({ Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" });
 

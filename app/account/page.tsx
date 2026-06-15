@@ -43,7 +43,7 @@ export default function AccountPage() {
   }, [user, token]);
 
   useEffect(() => {
-    fetch("https://directus-production-2cfe.up.railway.app/items/Blog_Posts?sort=-date_published&limit=3&fields=title,date_published,date_created,slug&filter[status][_eq]=published")
+    fetch("http://13.158.171.41:8055/items/Blog_Posts?sort=-date_published&limit=3&fields=title,date_published,date_created,slug&filter[status][_eq]=published")
       .then(r => r.json())
       .then(d => {
         const posts = (d.data || []).map((p: any) => ({

@@ -5,7 +5,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const filterField = searchParams.get('filterField');
     const filterValue = searchParams.get('filterValue');
-    const DIRECTUS = process.env.DIRECTUS_URL || "https://directus-production-2cfe.up.railway.app";
+    const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
     const TOKEN = process.env.ADMIN_TOKEN!;
 
     const invRes = await fetch(

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import ProductPageClient from "./ProductPageClient";
 import type { Metadata } from "next";
 
-const DIRECTUS = "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS = "http://13.158.171.41:8055";
 const BASE_URL = "https://aiacrossshop.co.jp";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -66,7 +66,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             "@type": "Product",
             "name": product?.name || "",
             "description": product?.description?.replace(/<[^>]*>/g, "") || "",
-            "image": product?.images?.[0] ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL || "https://directus-production-2cfe.up.railway.app"}/assets/${product.images[0]}` : "",
+            "image": product?.images?.[0] ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://13.158.171.41:8055"}/assets/${product.images[0]}` : "",
             "offers": {
               "@type": "Offer",
               "price": product?.price || 0,

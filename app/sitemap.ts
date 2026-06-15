@@ -1,6 +1,6 @@
 import { MetadataRoute } from "next";
 
-const DIRECTUS = "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS = "http://13.158.171.41:8055";
 const BASE = "https://aiacrossshop.co.jp";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

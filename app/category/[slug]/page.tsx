@@ -3,7 +3,7 @@ import SearchClient from "@/app/search/SearchClient";
 import type { Metadata } from "next";
 
 const BASE_URL = "https://aiacrossshop.co.jp";
-const DIRECTUS = "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS = "http://13.158.171.41:8055";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;

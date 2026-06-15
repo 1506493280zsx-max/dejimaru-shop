@@ -19,26 +19,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { email, password, recaptchaToken } = await req.json();
+    const { email, password } = await req.json();
 
-    if (recaptchaToken && process.env.RECAPTCHA_SECRET_KEY) {
-      try {
-        const captchaRes = await fetch("https://www.google.com/recaptcha/api/siteverify", {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`,
-        });
-        const captchaData = await captchaRes.json();
-        if (captchaData.success === false) {
-          return NextResponse.json(
-            { error: "不正なアクセスが検出されました" },
-            { status: 400 }
-          );
-        }
-      } catch (e) {
-        console.error("[login] reCAPTCHA verification error", e);
-      }
-    }
     const res = await fetch(`${DIRECTUS_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

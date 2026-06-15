@@ -1,4 +1,5 @@
 const DIRECTUS_URL = process.env.DIRECTUS_URL ?? "http://13.158.171.41:8055";
+const PUBLIC_URL = (typeof window !== "undefined" ? process.env.NEXT_PUBLIC_DIRECTUS_URL : process.env.DIRECTUS_URL) ?? "http://13.158.171.41:8055";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
 
 // ─── TYPES ────────────────────────────────────────────────────
@@ -85,7 +86,7 @@ export async function getHomepageAds() {
 
 export function getImageUrl(fileId: string, width = 400, height = 300) {
   if (!fileId) return null;
-  return `${DIRECTUS_URL}/assets/${fileId}?width=${width}&height=${height}&fit=cover`;
+  return `${PUBLIC_URL}/assets/${fileId}?width=${width}&height=${height}&fit=cover`;
 }
 
 // ─── AUTH ─────────────────────────────────────────────────────

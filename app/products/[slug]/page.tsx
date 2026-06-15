@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       ? product.description.replace(/<[^>]*>/g, "").slice(0, 160)
       : `${product.name}を${product.price?.toLocaleString()}円で販売中。全商品30日間動作保証付き。`;
     const imageUrl = product.images?.[0]
-      ? `${DIRECTUS}/assets/${product.images[0]}?width=1200&height=630&fit=cover`
+      ? `${process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://13.158.171.41:8055"}/assets/${product.images[0]}?width=1200&height=630&fit=cover`
       : `${BASE_URL}/opengraph-image`;
 
     return {

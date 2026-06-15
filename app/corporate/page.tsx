@@ -164,7 +164,7 @@ function ReviewCarousel() {
               <div key={review.id} className="review-card">
                 <div className="review-image">
                   {review.image ? (
-                    <img src={`http://13.158.171.41:8055/assets/${review.image}?width=400`} alt={review.title} />
+                    <img src={`${process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://13.158.171.41:8055"}/assets/${review.image}?width=400`} alt={review.title} />
                   ) : (
                     <div style={{width:'100%',height:'100%',background:'#E8E8E8'}}/>
                   )}

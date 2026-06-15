@@ -40,7 +40,12 @@ function LoginContent() {
       let recaptchaToken = "";
       const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
       if (siteKey && typeof window !== "undefined" && (window as any).grecaptcha) {
-        recaptchaToken = await (window as any).grecaptcha.execute(siteKey, { action: "login" });
+        try {
+          await new Promise<void>((resolve) => (window as any).grecaptcha.ready(resolve));
+          recaptchaToken = await (window as any).grecaptcha.execute(siteKey, { action: "login" });
+        } catch (e) {
+          console.error("reCAPTCHA error", e);
+        }
       }
       const res = await fetch("/api/auth/login", {
         method: "POST",
@@ -72,7 +77,12 @@ function LoginContent() {
       let recaptchaToken = "";
       const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
       if (siteKey && typeof window !== "undefined" && (window as any).grecaptcha) {
-        recaptchaToken = await (window as any).grecaptcha.execute(siteKey, { action: "register" });
+        try {
+          await new Promise<void>((resolve) => (window as any).grecaptcha.ready(resolve));
+          recaptchaToken = await (window as any).grecaptcha.execute(siteKey, { action: "register" });
+        } catch (e) {
+          console.error("reCAPTCHA error", e);
+        }
       }
       const res = await fetch("/api/auth/register", {
         method: "POST",

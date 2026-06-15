@@ -20,7 +20,7 @@ type BlogPost = {
   type: "tips" | "news";
 };
 
-const DIRECTUS_URL = "https://directus-production-2cfe.up.railway.app";
+const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL || "http://13.158.171.41:8055";
 
 function getImageUrl(id: string) {
   return `${DIRECTUS_URL}/assets/${id}?width=400&height=300&fit=cover`;

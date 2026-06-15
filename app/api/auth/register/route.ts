@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
           body: `secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`,
         });
         const captchaData = await captchaRes.json();
-        if (!captchaData.success || (captchaData.score && captchaData.score < 0.5)) {
+        if (captchaData.success === false) {
           return NextResponse.json(
             { error: "不正なアクセスが検出されました" },
             { status: 400 }

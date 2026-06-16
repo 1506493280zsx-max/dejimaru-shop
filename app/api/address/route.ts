@@ -84,6 +84,24 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
+    // ホワイトリスト：許可されたフィールドのみ受け付ける
+    const allowed = {
+      name_last: body.name_last || "",
+      name_first: body.name_first || "",
+      postal_code: body.postal_code || "",
+      prefecture: body.prefecture || "",
+      city: body.city || "",
+      address1: body.address1 || "",
+      address2: body.address2 || "",
+      phone: body.phone || "",
+      is_default: body.is_default || false,
+      customer_id: body.customer_id || null,
+    };
+
+    if (!allowed.name_last || !allowed.name_first || !allowed.postal_code || !allowed.prefecture || !allowed.city || !allowed.address1) {
+      return NextResponse.json({ error: "必須項目が未入力です" }, { status: 400 });
+    }
+
     const res = await fetch(
       `${DIRECTUS}/items/addresses`,
       {
@@ -92,7 +110,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${TOKEN}`,
         },
-        body: JSON.stringify(body),
+        body: JSON.stringify(allowed),
       }
     );
 

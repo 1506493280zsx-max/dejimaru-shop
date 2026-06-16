@@ -1,5 +1,5 @@
 const DIRECTUS_URL = process.env.DIRECTUS_URL ?? "http://13.158.171.41:8055";
-const PUBLIC_URL = (typeof window !== "undefined" ? process.env.NEXT_PUBLIC_DIRECTUS_URL : process.env.DIRECTUS_URL) ?? "http://13.158.171.41:8055";
+const PUBLIC_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL ?? "http://13.158.171.41:8055";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN ?? "";
 
 // ─── TYPES ────────────────────────────────────────────────────

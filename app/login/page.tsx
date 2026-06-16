@@ -23,7 +23,9 @@ function LoginContent() {
   const [tab, setTab] = useState<"login"|"register">("login");
 
   const handleLogin = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email || !password) { setError("メールとパスワードを入力してください"); return; }
+    if (!emailRegex.test(email)) { setError("メールアドレスの形式が正しくありません"); return; }
     setLoading(true); setError("");
     try {
       const res = await fetch("/api/auth/login", {

@@ -19,6 +19,8 @@ export default function ContactPage() {
 
   const handleSubmit = async () => {
     if (!isValid) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) { setError("メールアドレスの形式が正しくありません"); return; }
     setLoading(true);
     setError("");
     try {

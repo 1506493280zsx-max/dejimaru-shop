@@ -217,7 +217,6 @@ function BannerAd({ad}:{ad:any}) {
       {imgUrl&&(
         <img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>
       )}
-      {imgUrl&&<div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.28)"}}/>}
       <div style={{position:"relative",zIndex:1,textAlign:"center",padding:"0 32px"}}>
         <div style={{fontSize:22,fontWeight:700,color:imgUrl?"#fff":C.primaryDeep,lineHeight:1.4,textShadow:imgUrl?"0 1px 4px rgba(0,0,0,0.6)":"none"}}>{ad.title}</div>
         {ad.subtitle&&<div style={{fontSize:13,marginTop:8,color:imgUrl?"rgba(255,255,255,0.9)":C.textSub,textShadow:imgUrl?"0 1px 3px rgba(0,0,0,0.5)":"none"}}>{ad.subtitle}</div>}

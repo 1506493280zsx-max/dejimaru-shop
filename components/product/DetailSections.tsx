@@ -29,14 +29,17 @@ function Panel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function DetailSections({ product }: { product: any }) {
+export default function DetailSections({ product, selectedVariant }: { product: any; selectedVariant?: any }) {
   const router = useRouter();
+
+  const displayMemory = selectedVariant?.memory || product.memory;
+  const displayStorage = selectedVariant?.storage || product.storage;
 
   const specs = [
     (product.cpu || product.cpu_generation) && { key: "CPU", value: [product.cpu_generation, product.cpu].filter(Boolean).join(" ") },
     product.os           && { key: "OS",           value: product.os },
-    product.memory       && { key: "メモリ",       value: product.memory },
-    product.storage      && { key: "ストレージ",   value: product.storage },
+    displayMemory        && { key: "メモリ",       value: displayMemory },
+    displayStorage       && { key: "ストレージ",   value: displayStorage },
     product.display_size && { key: "ディスプレイ", value: product.display_size },
     product.condition    && { key: "状態",         value: product.condition === "used" ? "中古品" : product.condition === "new" ? "新品" : "リファービッシュ" },
     product.grade        && { key: "グレード",     value: (GRADE_STYLE[product.grade] || GRADE_STYLE.C).label },

@@ -43,8 +43,8 @@ interface Variant {
 }
 
 export default function PurchasePanel({
-  product, avgRating = 0, reviewCount = 0,
-}: { product: any; avgRating?: number; reviewCount?: number }) {
+  product, avgRating = 0, reviewCount = 0, onVariantChange,
+}: { product: any; avgRating?: number; reviewCount?: number; onVariantChange?: (variant: any | null) => void }) {
   const router = useRouter();
   const { addItem } = useCartStore();
   const [qty, setQty] = useState(1);
@@ -95,6 +95,7 @@ export default function PurchasePanel({
       (selectedCapacity === null || v.capacity === selectedCapacity)
     );
     setSelectedVariant(matched || null);
+    if (onVariantChange) onVariantChange(matched || null);
   }, [selectedColor, selectedMemory, selectedStorage, selectedCapacity, variants]);
 
   // ユニーク選択肢

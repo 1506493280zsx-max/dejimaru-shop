@@ -21,6 +21,7 @@ export default function ProductPageClient({ product }: { product: any }) {
   const [avgRating, setAvgRating] = useState(0);
   const [reviewCount, setReviewCount] = useState(0);
   const { user, token } = useAuthStore();
+  const [selectedVariant, setSelectedVariant] = useState<any>(null);
   const [coupons, setCoupons] = useState<any[]>([]);
   const [claimingId, setClaimingId] = useState<number | null>(null);
   const [claimMsg, setClaimMsg] = useState<Record<number, string>>({});
@@ -97,11 +98,11 @@ export default function ProductPageClient({ product }: { product: any }) {
               })}
             </div>
           </div>
-          <PurchasePanel product={product} avgRating={avgRating} reviewCount={reviewCount} />
+          <PurchasePanel product={product} avgRating={avgRating} reviewCount={reviewCount} onVariantChange={setSelectedVariant} />
         </div>
 
         {/* Detail content body (8 sections) */}
-        <DetailSections product={product} />
+        <DetailSections product={product} selectedVariant={selectedVariant} />
 
         {/* Customer Reviews */}
         <ReviewSection

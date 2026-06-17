@@ -245,7 +245,6 @@ function FeaturedBannerSlider({ads}:{ads:any[]}) {
       <style>{`.fb-banner{width:100%;height:auto;aspect-ratio:4/1;border-radius:2px;overflow:hidden;position:relative;background:linear-gradient(135deg,#E8F8F8,#B8EAE8);border:1px solid #B0E0DE;cursor:pointer;display:flex;align-items:center;justify-content:center}@media(max-width:640px){.fb-banner{height:auto;aspect-ratio:4/1;min-height:120px}}`}</style>
       <div className="fb-banner" onClick={()=>router.push(ad.link_url||"/")}>
         {imgUrl&&<img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover",objectPosition:"center"}}/>}
-        {imgUrl&&<div style={{position:"absolute",top:0,left:0,right:0,bottom:0,background:"rgba(0,0,0,0.25)"}}/>}
         <div style={{position:"relative",zIndex:1,textAlign:"center",padding:"0 40px"}}>
           <div style={{fontSize:24,fontWeight:700,color:imgUrl?"#fff":C.primaryDeep,lineHeight:1.4,textShadow:imgUrl?"0 1px 4px rgba(0,0,0,0.6)":"none"}}>{ad.title}</div>
           {ad.subtitle&&<div style={{fontSize:13,marginTop:8,color:imgUrl?"rgba(255,255,255,0.9)":C.textSub,textShadow:imgUrl?"0 1px 3px rgba(0,0,0,0.5)":"none"}}>{ad.subtitle}</div>}

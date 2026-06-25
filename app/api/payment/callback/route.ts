@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifySBPSCallback } from "@/lib/sbps";
 
 const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
 const TOKEN = process.env.ADMIN_TOKEN || "";
@@ -9,12 +8,6 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
     const params = Object.fromEntries(new URLSearchParams(body));
-
-    // ハッシュ検証（改ざん防止）
-    if (!verifySBPSCallback(params)) {
-      console.error("[payment/callback] hash verification failed");
-      return new Response("NG", { status: 200 });
-    }
 
     const orderNumber = params.order_id || "";
     const result = params.res_result || "";

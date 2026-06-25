@@ -59,7 +59,7 @@ export function buildSBPSParams(input: {
     hashkey: SBPS_CONFIG.hashKey,
   };
 
-  const hashStr = HASH_FIELDS.map(f => params[f] ?? "").join("") + SBPS_CONFIG.hashKey;
+  const hashStr = HASH_FIELDS.map(f => params[f] ?? "").join("");
   params.sps_hashcode = crypto.createHash("sha1").update(hashStr).digest("hex");
 
   return params;

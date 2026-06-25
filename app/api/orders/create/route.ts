@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendOrderConfirmationEmail } from "@/lib/mail";
 
 const DIRECTUS = "http://13.158.171.41:8055";
 const TOKEN =
@@ -288,40 +287,6 @@ export async function POST(req: NextRequest) {
     }
     // 注意：積分付与（earn）は発送確定時（orders/ship）で行う。ここでは呼ばない。
 
-    // 確認メール送信
-    try {
-      let firstName = shippingAddress?.firstName || shippingAddress?.lastName || "";
-      if (!firstName && customerId) {
-        try {
-          const userRes = await fetch(`${DIRECTUS}/users/${customerId}?fields=first_name,last_name`, {
-            headers: { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" }
-          });
-          const userData = (await userRes.json()).data;
-          firstName = userData?.last_name || userData?.first_name || "";
-        } catch {}
-      }
-      const mailItems = (items as any[]).map((item: any) => ({
-        product_name: item.name || item.product_name || "",
-        quantity: item.quantity,
-        unit_price: itemsRes.find((ir: any) => ir.id === item.id || ir.product_id === item.id)?.unit_price || item.price || item.unit_price || 0,
-        warranty_selected: item.warrantySelected ?? false,
-        warranty_price: itemsRes.find((ir: any) => ir.id === item.id || ir.product_id === item.id)?.warranty_price ?? item.warrantyPrice ?? 0,
-      }));
-      await sendOrderConfirmationEmail({
-        to: email,
-        firstName,
-        orderNumber: order_number,
-        items: mailItems,
-        subtotal: serverSubtotal,
-        warrantySubtotal: serverWarrantySubtotal,
-        shippingFee: serverShippingFee,
-        discountAmount: serverDiscount,
-        pointsDiscount: serverPointsDiscount,
-        total: serverTotal,
-      });
-    } catch (mailErr) {
-      console.error("[orders/create] mail error", mailErr);
-    }
 
     // product_id が有効な商品については Directus から正規の商品名を一括取得する
     const productIdList = [...new Set(

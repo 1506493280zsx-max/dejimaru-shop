@@ -1,5 +1,4 @@
 import crypto from "crypto";
-import * as iconv from "iconv-lite";
 
 export const SBPS_CONFIG = {
   merchantId: process.env.SBPS_MERCHANT_ID || "30132",
@@ -64,7 +63,7 @@ export function buildSBPSParams(input: {
     order_id: input.orderNumber,
     item_id: `ORD${input.orderId}`,
     pay_item_id: "",
-    item_name: input.itemName.slice(0, 40),
+    item_name: input.itemName.slice(0, 40).replace(/[^\x00-\x7F]/g, "").trim(),
     tax: "",
     amount: String(input.amount),
     pay_type: "0",
@@ -89,7 +88,7 @@ export function buildSBPSParams(input: {
   };
 
   const hashStr = HASH_FIELDS.map(f => params[f] ?? "").join("");
-  params.sps_hashcode = crypto.createHash("sha1").update(iconv.encode(hashStr, "Shift_JIS")).digest("hex");
+  params.sps_hashcode = crypto.createHash("sha1").update(hashStr, "utf8").digest("hex");
 
   return params;
 }

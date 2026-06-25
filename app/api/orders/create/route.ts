@@ -314,7 +314,7 @@ export async function POST(req: NextRequest) {
     }
 
     const itemResults = await Promise.all(
-      (items as any[]).map((item) => {
+      (itemsRes as any[]).map((item) => {
         const productId = (item.id !== null && item.id !== undefined && item.id !== "" && Number.isFinite(Number(item.id))) ? Number(item.id) : null;
         // Directus の products.name を優先し、取得できなければカートの name を使用
         const productName = (productId !== null && productNameMap[productId]) ? productNameMap[productId] : item.name;

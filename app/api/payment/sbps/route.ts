@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
     baseUrl,
   });
 
+  console.log("[sbps] params:", JSON.stringify(params));
   return NextResponse.json({
     paymentUrl: SBPS_CONFIG.paymentUrl,
     params,

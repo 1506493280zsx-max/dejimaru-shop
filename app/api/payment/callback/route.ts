@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendOrderConfirmationEmail } from "@/lib/mail";
+import crypto from "crypto";
 
 const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
 const TOKEN = process.env.ADMIN_TOKEN || "";
@@ -8,6 +9,38 @@ const H = () => ({ Authorization: `Bearer ${TOKEN}`, "Content-Type": "applicatio
 export async function POST(req: NextRequest) {
   try {
     const body = await req.text();
+
+    // SBPSコールバックのハッシュ検証（rawボディの順序で計算）
+    const hashKey = process.env.SBPS_HASH_KEY || "";
+    const isValid = (() => {
+      try {
+        const pairs = body.split("&");
+        let hashStr = "";
+        let receivedHash = "";
+        for (const pair of pairs) {
+          const eqIdx = pair.indexOf("=");
+          if (eqIdx === -1) continue;
+          const key = decodeURIComponent(pair.slice(0, eqIdx));
+          const value = decodeURIComponent(pair.slice(eqIdx + 1).replace(/\+/g, " "));
+          if (key === "sps_hashcode") {
+            receivedHash = value;
+          } else {
+            hashStr += value;
+          }
+        }
+        hashStr += hashKey;
+        const expected = crypto.createHash("sha1").update(hashStr, "utf8").digest("hex");
+        return receivedHash === expected;
+      } catch {
+        return false;
+      }
+    })();
+
+    if (!isValid) {
+      console.error("[payment/callback] hash verification failed");
+      return new Response("NG", { status: 200 });
+    }
+
     const params = Object.fromEntries(new URLSearchParams(body));
 
     const orderNumber = params.order_id || "";

@@ -230,8 +230,32 @@ export default function CheckoutPage() {
       });
       const data = await res.json();
       if (data.success) {
+        // SB Paymentへ遷移
+        const payRes = await fetch("/api/payment/sbps", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orderId: data.orderId,
+            orderNumber: data.orderNumber,
+            amount: grand,
+            itemName: items.map(i => i.name).join(", "),
+            custCode: user?.id ? String(user.id) : null,
+          }),
+        });
+        const payData = await payRes.json();
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = payData.paymentUrl;
+        Object.entries(payData.params).forEach(([key, value]) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = key;
+          input.value = String(value);
+          form.appendChild(input);
+        });
         clearCart();
-        router.push(`/checkout/success?orderNumber=${encodeURIComponent(data.orderNumber ?? "")}`);
+        document.body.appendChild(form);
+        form.submit();
         return;
       } else {
         setPlaceError(data.error ?? "注文処理に失敗しました。もう一度お試しください。");
@@ -514,8 +538,12 @@ export default function CheckoutPage() {
               <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>
                 💳 お支払い方法
               </div>
-              <div style={{background:"#FFFBF0",border:"1px solid #FFE082",borderRadius:2,padding:12,fontSize:12,color:"#7A6000",textAlign:"center"}}>
-                🚧 Stripe / PayPal coming soon
+              <div style={{background:"#F0F8FF",border:"1px solid #B0D0F0",borderRadius:2,padding:12,fontSize:12,color:"#333"}}>
+                <div style={{fontWeight:700,marginBottom:6}}>💳 クレジットカード決済</div>
+                <div style={{color:"#666",fontSize:11,lineHeight:1.8}}>
+                  VISA / MasterCard / JCB / AMEX / Diners<br/>
+                  「注文を確定する」ボタンを押すと決済画面へ移動します
+                </div>
               </div>
             </div>
 

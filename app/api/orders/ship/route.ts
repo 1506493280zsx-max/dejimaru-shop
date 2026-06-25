@@ -4,7 +4,6 @@ import { Resend } from "resend";
 const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
 const TOKEN = process.env.ADMIN_TOKEN!;
 const H = () => ({ Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" });
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 function renderTemplate(html: string, vars: Record<string, string>) {
   return Object.entries(vars).reduce((t, [k, v]) => t.replaceAll(`{{${k}}}`, v), html);
@@ -12,6 +11,7 @@ function renderTemplate(html: string, vars: Record<string, string>) {
 
 export async function POST(req: NextRequest) {
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY || "");
     // Directus FlowまたはADMIN_TOKENからの呼び出しのみ許可
     const body = await req.json();
     const authHeader = req.headers.get("Authorization");

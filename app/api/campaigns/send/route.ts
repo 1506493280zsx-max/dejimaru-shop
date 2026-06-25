@@ -4,7 +4,6 @@ import { Resend } from "resend";
 const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
 const TOKEN = process.env.ADMIN_TOKEN!;
 const H = { Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" };
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 function wrapHtml(innerHtml: string, subject: string): string {
   return `<!DOCTYPE html>
@@ -60,6 +59,7 @@ export async function POST(req: NextRequest) {
     const customers = (await cusRes.json()).data || [];
 
     // 3. 一件ずつ送信
+    const resend = new Resend(process.env.RESEND_API_KEY || "");
     let sentCount = 0;
     for (const customer of customers) {
       if (!customer.email) continue;

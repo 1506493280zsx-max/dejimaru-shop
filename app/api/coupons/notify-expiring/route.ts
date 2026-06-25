@@ -4,7 +4,6 @@ import { Resend } from "resend";
 const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
 const TOKEN = process.env.ADMIN_TOKEN!;
 const H = () => ({ Authorization: `Bearer ${TOKEN}`, "Content-Type": "application/json" });
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET(req: NextRequest) {
   // Cron Job認証（Vercelの自動実行のみ許可）
@@ -14,6 +13,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY || "");
     const now = new Date();
     const in3days = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
 

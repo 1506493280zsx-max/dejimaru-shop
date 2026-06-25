@@ -245,6 +245,7 @@ export default function CheckoutPage() {
         const payData = await payRes.json();
         const form = document.createElement("form");
         form.method = "POST";
+        form.acceptCharset = "Shift_JIS";
         form.action = payData.paymentUrl;
         Object.entries(payData.params).forEach(([key, value]) => {
           const input = document.createElement("input");

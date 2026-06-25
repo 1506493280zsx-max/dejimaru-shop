@@ -7,13 +7,38 @@ export const SBPS_CONFIG = {
   paymentUrl: process.env.SBPS_PAYMENT_URL || "https://stbfep.sps-system.com/f01/FepBuyInfoReceive.do",
 };
 
+// 按照仕様書 A01-1 都度課金 的顺序定义哈希字段
 const HASH_FIELDS = [
-  "merchant_id","service_id","cust_code","order_id","item_id",
-  "item_name","tax","amount","pay_type","auto_charge_type",
-  "service_type","div_settele","last_charge_month","camp_type",
-  "tracking_id","terminal_type","success_url","cancel_url",
-  "error_url","pagecon_url","free1","free2","free3","free_csv_input",
-  "request_date","limit_second","hashkey",
+  "merchant_id",
+  "service_id",
+  "cust_code",
+  "sps_cust_no",
+  "sps_payment_no",
+  "order_id",
+  "item_id",
+  "pay_item_id",
+  "item_name",
+  "tax",
+  "amount",
+  "pay_type",
+  "auto_charge_type",
+  "service_type",
+  "div_settele",
+  "last_charge_month",
+  "camp_type",
+  "tracking_id",
+  "terminal_type",
+  "success_url",
+  "cancel_url",
+  "error_url",
+  "pagecon_url",
+  "free1",
+  "free2",
+  "free3",
+  "free_csv",
+  "request_date",
+  "limit_second",
+  "hashkey",
 ];
 
 export function buildSBPSParams(input: {
@@ -24,17 +49,20 @@ export function buildSBPSParams(input: {
   custCode: string;
   baseUrl: string;
 }): Record<string, string> {
-  const requestDate = new Date()
-    .toISOString()
-    .replace(/[-T:.Z]/g, "")
-    .slice(0, 14);
+  const now = new Date();
+  // 用日本时间生成 YYYYMMDDHHMMSS
+  const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  const requestDate = jst.toISOString().replace(/[-T:.Z]/g, "").slice(0, 14);
 
   const params: Record<string, string> = {
     merchant_id: SBPS_CONFIG.merchantId,
     service_id: SBPS_CONFIG.serviceId,
     cust_code: input.custCode,
+    sps_cust_no: "",
+    sps_payment_no: "",
     order_id: input.orderNumber,
     item_id: `ORD${input.orderId}`,
+    pay_item_id: "",
     item_name: input.itemName.slice(0, 40),
     tax: "",
     amount: String(input.amount),
@@ -45,7 +73,7 @@ export function buildSBPSParams(input: {
     last_charge_month: "",
     camp_type: "",
     tracking_id: "",
-    terminal_type: "",
+    terminal_type: "0",
     success_url: `${input.baseUrl}/checkout/success?orderNumber=${encodeURIComponent(input.orderNumber)}`,
     cancel_url: `${input.baseUrl}/checkout`,
     error_url: `${input.baseUrl}/checkout/error`,
@@ -53,14 +81,14 @@ export function buildSBPSParams(input: {
     free1: "",
     free2: "",
     free3: "",
-    free_csv_input: "",
+    free_csv: "",
     request_date: requestDate,
     limit_second: "",
     hashkey: SBPS_CONFIG.hashKey,
   };
 
   const hashStr = HASH_FIELDS.map(f => params[f] ?? "").join("");
-  params.sps_hashcode = crypto.createHash("sha1").update(hashStr).digest("hex");
+  params.sps_hashcode = crypto.createHash("sha1").update(hashStr, "utf8").digest("hex");
 
   return params;
 }
@@ -68,9 +96,10 @@ export function buildSBPSParams(input: {
 export function verifySBPSCallback(params: Record<string, string>): boolean {
   const received = params.sps_hashcode;
   if (!received) return false;
-  const withoutHash = { ...params };
-  delete withoutHash.sps_hashcode;
-  const hashStr = HASH_FIELDS.map(f => withoutHash[f] ?? "").join("") + SBPS_CONFIG.hashKey;
-  const expected = crypto.createHash("sha1").update(hashStr).digest("hex");
+  const copy = { ...params };
+  delete copy.sps_hashcode;
+  copy.hashkey = SBPS_CONFIG.hashKey;
+  const hashStr = HASH_FIELDS.map(f => copy[f] ?? "").join("");
+  const expected = crypto.createHash("sha1").update(hashStr, "utf8").digest("hex");
   return received === expected;
 }

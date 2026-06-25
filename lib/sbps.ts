@@ -63,7 +63,7 @@ export function buildSBPSParams(input: {
     order_id: input.orderNumber,
     item_id: `ORD${input.orderId}`,
     pay_item_id: "",
-    item_name: input.itemName.slice(0, 40).replace(/[^\x00-\x7F]/g, ""),
+    item_name: input.itemName.slice(0, 40).replace(/[^\x00-\x7F]/g, "").trim(),
     tax: "",
     amount: String(input.amount),
     pay_type: "0",

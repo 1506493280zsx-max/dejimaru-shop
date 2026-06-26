@@ -38,7 +38,7 @@ export default function Header() {
       <div style={{background:"#FFF0F0",borderBottom:"1px solid #E0B0B0",padding:"5px 0",textAlign:"center"}}>
         <div style={{maxWidth:1100,margin:"0 auto",padding:"0 10px",fontSize:11,color:C.red}}>
           【重要】Microsoftメール（Hotmail、Outlook等）をご利用のお客様へ →
-          <span style={{textDecoration:"underline",cursor:"pointer"}}> 詳細はこちら</span>
+          <span onClick={()=>router.push("/microsoft-mail")} style={{textDecoration:"underline",cursor:"pointer"}}> 詳細はこちら</span>
         </div>
       </div>
 

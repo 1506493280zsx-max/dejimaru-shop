@@ -176,6 +176,8 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
 
 function AdColumn({ads}: {ads:any[]}) {
   const router = useRouter();
+  const hasContent = ads.some(ad => ad.image_desktop);
+  if (!hasContent) return null;
   return (
     <div style={{width:90,flexShrink:0,display:"flex",flexDirection:"column",gap:4}}>
       {ads.map((ad,i)=>{

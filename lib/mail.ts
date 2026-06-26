@@ -174,3 +174,34 @@ export async function sendWelcomeEmail(email: string, firstName: string, lastNam
 </div>`,
   });
 }
+
+export async function sendPasswordResetEmail(email: string, resetUrl: string) {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+  return resend.emails.send({
+    from: `AI Across Shop <${process.env.RESEND_FROM_EMAIL}>`,
+    to: email,
+    subject: "【AI Across Shop】パスワードリセットのご案内",
+    html: `
+      <div style="font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;color:#333;">
+        <div style="background:#0ABAB5;padding:24px;border-radius:8px 8px 0 0;text-align:center;">
+          <h1 style="color:#fff;margin:0;font-size:22px;">パスワードリセット</h1>
+        </div>
+        <div style="background:#fff;border:1px solid #ddd;border-top:none;padding:24px;border-radius:0 0 8px 8px;">
+          <p>パスワードリセットのリクエストを受け付けました。</p>
+          <p>下記のボタンからパスワードを再設定してください。</p>
+          <p style="color:#e53e3e;font-size:13px;">※このリンクは1時間で有効期限が切れます。</p>
+          <div style="text-align:center;margin:32px 0;">
+            <a href="${resetUrl}"
+              style="display:inline-block;background:#0ABAB5;color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:4px;font-size:16px;font-weight:bold;">
+              パスワードを再設定する
+            </a>
+          </div>
+          <p style="color:#888;font-size:12px;">
+            このメールに心当たりがない場合は無視してください。<br>
+            AI Across Shop カスタマーサポート
+          </p>
+        </div>
+      </div>
+    `,
+  });
+}

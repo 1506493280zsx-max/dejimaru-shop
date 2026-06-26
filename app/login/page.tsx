@@ -107,6 +107,11 @@ function LoginContent() {
                     type="password" placeholder="パスワード"
                     style={{width:"100%",border:`1px solid ${C.border}`,borderRadius:3,padding:"9px 12px",fontSize:13,outline:"none",fontFamily:"inherit",boxSizing:"border-box" as any}}/>
                 </div>
+                  <div style={{textAlign:"right",marginBottom:8}}>
+                    <button onClick={()=>router.push("/reset-password")} style={{background:"none",border:"none",color:"#0ABAB5",fontSize:11,cursor:"pointer",textDecoration:"underline",fontFamily:"inherit"}}>
+                      パスワードをお忘れの方
+                    </button>
+                  </div>
                 <button onClick={handleLogin} disabled={loading}
                   style={{width:"100%",background:loading?"#AAA":C.primary,color:"#fff",border:"none",borderRadius:3,padding:"12px",fontSize:14,fontWeight:700,cursor:loading?"not-allowed":"pointer",fontFamily:"inherit"}}>
                   {loading?"ログイン中...":"ログイン"}

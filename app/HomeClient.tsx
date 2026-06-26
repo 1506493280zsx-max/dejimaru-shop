@@ -181,14 +181,14 @@ function AdColumn({ads}: {ads:any[]}) {
   return (
     <div style={{width:90,flexShrink:0,display:"flex",flexDirection:"column",gap:4}}>
       {ads.map((ad,i)=>{
-        const imgUrl = ad.image_desktop ? getImageUrl(ad.image_desktop, 90, 400) : null;
+        const imgUrl = ad.image_desktop ? getImageUrl(ad.image_desktop, 90, 440) : null;
         return (
           <div key={ad.id??i} onClick={()=>router.push(ad.link_url||"/")}
-            style={{width:90,aspectRatio:"9/44",height:"auto",background:"#E8E8E8",border:"1px dashed #AAA",borderRadius:2,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",transition:"opacity 0.15s",writingMode:"vertical-rl",textOrientation:"mixed",overflow:"hidden",position:"relative"}}
+            style={{width:90,aspectRatio:"9/44",background:"#E8E8E8",borderRadius:2,cursor:"pointer",transition:"opacity 0.15s",overflow:"hidden",position:"relative"}}
             onMouseEnter={e=>(e.currentTarget.style.opacity="0.85")}
             onMouseLeave={e=>(e.currentTarget.style.opacity="1")}>
             {imgUrl
-              ? <img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"cover"}}/>
+              ? <img src={imgUrl} alt={ad.title||""} style={{position:"absolute",top:0,left:0,width:"100%",height:"100%",objectFit:"fill"}}/>
               : <div style={{fontSize:11,color:"#999",textAlign:"center",lineHeight:1.8,whiteSpace:"pre-line"}}>{ad.title}</div>
             }
           </div>

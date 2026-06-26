@@ -100,12 +100,12 @@ export default function Header() {
                 </div>
               ) : (
                 <>
-                  <button onClick={()=>router.push("/login")} style={{background:"#4488CC",color:"#fff",border:"none",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontFamily:"inherit"}}>👤 会員登録</button>
-                  <button onClick={()=>router.push("/login")} style={{background:"#44AA44",color:"#fff",border:"none",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontFamily:"inherit"}}>🔑 ログイン</button>
+                  <button onClick={()=>router.push("/login")} style={{background:"#4488CC",color:"#fff",border:"none",padding:"8px 16px",borderRadius:4,fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontFamily:"inherit"}}>👤 会員登録</button>
+                  <button onClick={()=>router.push("/login")} style={{background:"#44AA44",color:"#fff",border:"none",padding:"8px 16px",borderRadius:4,fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4,fontFamily:"inherit"}}>🔑 ログイン</button>
                 </>
               )}
               <button onClick={()=>router.push("/cart")}
-                style={{background:C.red,color:"#fff",border:"none",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit",position:"relative",display:"flex",alignItems:"center",gap:4}}>
+                style={{background:C.red,color:"#fff",border:"none",padding:"8px 18px",borderRadius:4,fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:"inherit",position:"relative",display:"flex",alignItems:"center",gap:6}}>
                 🛒 カート
                 {cartCount>0&&<span style={{background:"#FFE000",color:"#333",borderRadius:10,padding:"1px 6px",fontSize:10,fontWeight:900}}>{cartCount}</span>}
               </button>
@@ -114,7 +114,7 @@ export default function Header() {
                   const val = prompt("注文番号を入力してください");
                   if (val && val.trim()) window.open("/api/invoice/" + val.trim(), "_blank");
                 }}
-                style={{background:"#fff",color:"#0ABAB5",border:"2px solid #0ABAB5",padding:"6px 12px",borderRadius:2,fontSize:11,fontWeight:700,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}
+                style={{background:"#fff",color:"#0ABAB5",border:"2px solid #0ABAB5",padding:"8px 18px",borderRadius:4,fontSize:13,fontWeight:700,cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}
               >
                 📄 請求書発行
               </button>

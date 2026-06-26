@@ -162,12 +162,22 @@ export default function SearchClient({initialProducts,brands,categories,query,br
       !categoryFilter
       || p.category_id?.slug === categoryFilter
       || p.category_id?.name === categoryFilter;
-    const minPrice = p.min_price ?? p.price ?? 0;
-    const matchPMin = !priceMinFilter || minPrice >= parseInt(priceMinFilter);
-    const matchPMax = !priceMaxFilter || minPrice <= parseInt(priceMaxFilter);
+    const activeVariants = (p.product_variants || []).filter((v: any) => v.status === "active" && v.price > 0);
+    const hasVariants = activeVariants.length > 0;
+    let matchPMin = true;
+    let matchPMax = true;
+    if (hasVariants) {
+      const variantPrices: number[] = activeVariants.map((v: any) => v.price);
+      if (priceMinFilter) matchPMin = variantPrices.some((price: number) => price >= parseInt(priceMinFilter, 10));
+      if (priceMaxFilter) matchPMax = variantPrices.some((price: number) => price <= parseInt(priceMaxFilter, 10));
+    } else {
+      const productPrice = p.price ?? 0;
+      if (priceMinFilter) matchPMin = productPrice >= parseInt(priceMinFilter, 10);
+      if (priceMaxFilter) matchPMax = productPrice <= parseInt(priceMaxFilter, 10);
+    }
     const matchCpu = !cpuFilter || p.cpu === cpuFilter;
-    const matchCpuGen = !cpuGenerationFilter || p.cpu_generation === cpuGenerationFilter;
-    const matchScreenSize = !screenSizeFilter || p.display_size === screenSizeFilter;
+    const matchCpuGen = !cpuGenerationFilter || (p.cpu_generation && p.cpu_generation.toString().includes(cpuGenerationFilter));
+    const matchScreenSize = !screenSizeFilter || (p.display_size && p.display_size.toString().includes(screenSizeFilter));
     return matchQ&&matchG&&matchB&&matchC&&matchPMin&&matchPMax&&matchCpu&&matchCpuGen&&matchScreenSize;
   }).sort((a,b)=>{
     if(sort==="price-asc") return a.price-b.price;

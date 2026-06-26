@@ -359,7 +359,6 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
       <div style={{width:"100%",maxWidth:"1800px",margin:"10px auto",padding:"0 12px"}}>
         <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
 
-          <AdColumn ads={adsFor('left')}/>
           <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats} brands={brands}/>
 
           <div style={{flex:1,minWidth:0}}>
@@ -435,19 +434,18 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
 
             <div style={{marginBottom:14}}>
               <SectionHeader title={"ブランドから探す"} en="BRANDS" color="#555"/>
-              <div style={{display:"flex",flexWrap:"wrap",gap:6,background:C.white,border:`1px solid ${C.border}`,padding:10}}>
+              <div style={{display:"flex",flexWrap:"wrap",gap:8,background:C.white,border:`1px solid ${C.border}`,padding:12,borderRadius:4}}>
                 {brands.map((b:any)=>(
                   <div key={b.id} onClick={()=>router.push(`/search?brand=${b.slug}`)}
-                    style={{border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"4px 12px",fontSize:11,color:C.primaryDeep,cursor:"pointer",background:C.primaryBg,fontWeight:700}}
-                    onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=C.primary;(e.currentTarget as HTMLElement).style.color="#fff";}}
-                    onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=C.primaryBg;(e.currentTarget as HTMLElement).style.color=C.primaryDeep;}}
+                    style={{border:`1px solid ${C.primaryBorder}`,borderRadius:20,padding:"6px 16px",fontSize:13,color:C.primaryDeep,cursor:"pointer",background:C.primaryBg,fontWeight:700,transition:"all 0.15s",whiteSpace:"nowrap"}}
+                    onMouseEnter={e=>{(e.currentTarget as HTMLElement).style.background=C.primary;(e.currentTarget as HTMLElement).style.color="#fff";(e.currentTarget as HTMLElement).style.transform="translateY(-1px)";(e.currentTarget as HTMLElement).style.boxShadow="0 2px 8px rgba(10,186,181,0.3)";}}
+                    onMouseLeave={e=>{(e.currentTarget as HTMLElement).style.background=C.primaryBg;(e.currentTarget as HTMLElement).style.color=C.primaryDeep;(e.currentTarget as HTMLElement).style.transform="none";(e.currentTarget as HTMLElement).style.boxShadow="none";}}
                   >{b.name}</div>
                 ))}
               </div>
             </div>
           </div>
 
-          <AdColumn ads={adsFor('right')}/>
         </div>
       </div>
 

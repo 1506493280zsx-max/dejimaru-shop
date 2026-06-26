@@ -46,8 +46,8 @@ export default function Header() {
         <div style={{maxWidth:1100,margin:"0 auto",padding:"10px"}}>
           <div style={{display:"flex",alignItems:"center",gap:12}}>
             <div style={{flexShrink:0,cursor:"pointer"}} onClick={()=>router.push("/")}>
-              <div style={{fontSize:22,fontWeight:900,color:C.primary,letterSpacing:"-1px",lineHeight:1,fontFamily:"Arial Black,sans-serif"}}>AI Across ショップ</div>
-              <div style={{fontSize:9,color:C.textLight}}>中古PC・スマホならAI Across ！</div>
+              <div style={{fontSize:28,fontWeight:900,color:C.primary,letterSpacing:"-1px",lineHeight:1,fontFamily:"Arial Black,sans-serif"}}>AI Across ショップ</div>
+              <div style={{fontSize:11,color:C.textLight}}>中古PC・スマホならAI Across ！</div>
             </div>
             <div style={{flex:1,display:"flex",maxWidth:500}}>
               <input value={search} onChange={e=>setSearch(e.target.value)}

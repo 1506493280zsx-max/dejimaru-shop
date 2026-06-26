@@ -359,6 +359,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
       <div style={{width:"100%",maxWidth:"1800px",margin:"10px auto",padding:"0 12px"}}>
         <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
 
+          <AdColumn ads={adsFor('left').slice(0, 12)}/>
           <CategorySidebar categories={categories} openCats={openCats} setOpenCats={setOpenCats} brands={brands}/>
 
           <div style={{flex:1,minWidth:0}}>
@@ -446,6 +447,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
             </div>
           </div>
 
+          <AdColumn ads={adsFor('right').slice(0, 12)}/>
         </div>
       </div>
 

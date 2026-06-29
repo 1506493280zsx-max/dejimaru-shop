@@ -1,18 +1,22 @@
 import { useAuthStore } from "./auth-store";
 
 export async function authFetch(input: string, init: RequestInit = {}): Promise<Response> {
-  const { token, refreshToken, setAuth, clearAuth, user } = useAuthStore.getState();
+  const { token, refreshToken, updateTokens, clearAuth } = useAuthStore.getState();
 
-  const withAuth = (t: string): RequestInit => ({
+  const withAuth = (t: string | null): RequestInit => ({
     ...init,
     headers: {
       ...(init.headers as Record<string, string> | undefined),
-      Authorization: `Bearer ${t}`,
+      ...(t ? { Authorization: `Bearer ${t}` } : {}),
     },
   });
 
-  const res = await fetch(input, withAuth(token ?? ""));
-  if (res.status !== 401 || !refreshToken) return res;
+  let res = await fetch(input, withAuth(token));
+  if (res.status !== 401) return res;
+  if (!refreshToken) {
+    clearAuth();
+    return res;
+  }
 
   const refreshRes = await fetch("/api/auth/refresh", {
     method: "POST",
@@ -26,11 +30,12 @@ export async function authFetch(input: string, init: RequestInit = {}): Promise<
   }
 
   const refreshData = await refreshRes.json();
-  if (!refreshData.token || !user) {
+  if (!refreshData.token) {
     clearAuth();
     return res;
   }
 
-  setAuth(user, refreshData.token, refreshData.refresh_token ?? refreshToken);
-  return fetch(input, withAuth(refreshData.token));
+  updateTokens(refreshData.token, refreshData.refresh_token ?? refreshToken);
+  res = await fetch(input, withAuth(refreshData.token));
+  return res;
 }

@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
+import { authFetch } from "@/lib/auth-fetch";
 import { useCartStore } from "@/lib/cart-store";
 import { useWishlistStore } from "@/lib/wishlist-store";
 import { useState, useEffect } from "react";
@@ -13,7 +14,7 @@ const C = {
 
 export default function AccountPage() {
   const router = useRouter();
-  const { user, token, clearAuth } = useAuthStore();
+  const { user, token, clearAuth, hasHydrated } = useAuthStore();
   const { count: cartCount } = useCartStore();
   const { count: wishCount } = useWishlistStore();
   const [mounted, setMounted] = useState(false);
@@ -23,24 +24,20 @@ export default function AccountPage() {
   useEffect(()=>setMounted(true),[]);
 
   useEffect(() => {
-    if (!user?.id) return;
-    fetch(`/api/points/balance?customerId=${user.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    if (!hasHydrated || !user?.id) return;
+    authFetch(`/api/points/balance?customerId=${user.id}`)
       .then(r => r.json())
       .then(d => setPointBalance(d.points || 0))
       .catch(() => {});
-  }, [user]);
+  }, [hasHydrated, user]);
 
   useEffect(() => {
-    if (!user?.id) return;
-    fetch(`/api/orders/list`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    if (!hasHydrated || !user?.id) return;
+    authFetch(`/api/orders/list`)
       .then(r => r.json())
       .then(d => setOrderCount((d.data || []).length))
       .catch(() => {});
-  }, [user, token]);
+  }, [hasHydrated, user]);
 
   useEffect(() => {
     fetch("http://13.158.171.41:8055/items/Blog_Posts?sort=-date_published&limit=3&fields=title,date_published,date_created,slug&filter[status][_eq]=published")
@@ -61,7 +58,7 @@ export default function AccountPage() {
     router.push("/");
   };
 
-  if (mounted && !user) {
+  if (mounted && hasHydrated && !user) {
     return (
       <div style={{background:C.bg,minHeight:"100vh",fontFamily:"'Meiryo','ＭＳ Ｐゴシック',sans-serif",fontSize:13}}>
         <div style={{maxWidth:500,margin:"60px auto",padding:"0 10px",textAlign:"center"}}>

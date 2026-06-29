@@ -12,6 +12,14 @@ export async function POST(req: NextRequest) {
     const params = Object.fromEntries(new URLSearchParams(body));
 
     const orderNumber = params.order_id || "";
+
+    // === 一時デバッグ：コールバック全体を確認 ===
+    console.log("[callback-debug] raw body:", body);
+    console.log("[callback-debug] parsed params:", JSON.stringify(params));
+    console.log("[callback-debug] sps_hashcode received:", params.sps_hashcode || "(none)");
+    console.log("[callback-debug] has non-ascii:", /[^\x00-\x7F]/.test(body));
+    // === デバッグここまで ===
+
     const result = params.res_result || "";
 
     if (result !== "OK") {

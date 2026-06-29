@@ -31,9 +31,28 @@ export default function CategoryBannerSwiper({ ads }: { ads: any[] }) {
         .cat-swiper-slide:hover .cat-swiper-media {
           transform: scale(1.02);
         }
+
+        /* Swiper初期化前のチラつき防止：JS実行前からslide幅を確定させる */
+        .cat-swiper-wrap .swiper-wrapper {
+          display: flex;
+        }
+        .cat-swiper-wrap .swiper-slide {
+          flex-shrink: 0;
+          width: 100%;
+        }
+        @media (min-width: 640px) {
+          .cat-swiper-wrap .swiper-slide {
+            width: calc(100% / 2);
+          }
+        }
+        @media (min-width: 1024px) {
+          .cat-swiper-wrap .swiper-slide {
+            width: calc(100% / 3);
+          }
+        }
       `}</style>
 
-      <div style={{ marginBottom: 0, margin: 0, overflow: "hidden" }}>
+      <div className="cat-swiper-wrap" style={{ marginBottom: 0, margin: 0, overflow: "hidden" }}>
         <Swiper
           modules={[Autoplay]}
           slidesPerView={1}

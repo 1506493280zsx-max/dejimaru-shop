@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/auth-store";
+import { authFetch } from "@/lib/auth-fetch";
 import { useRouter } from "next/navigation";
 
 export default function PointsPage() {
-  const { user, token } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [rate, setRate] = useState(100);
@@ -12,18 +13,15 @@ export default function PointsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!hasHydrated) return;
     if (!user?.id) { router.push("/login"); return; }
-    fetch(`/api/points/balance?customerId=${user.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    authFetch(`/api/points/balance?customerId=${user.id}`)
       .then(r => r.json())
       .then(d => { setBalance(d.points || 0); setRate(d.rate || 100); });
-    fetch(`/api/points/history?customerId=${user.id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    authFetch(`/api/points/history?customerId=${user.id}`)
       .then(r => r.json())
       .then(d => { setTransactions(d.transactions || []); setLoading(false); });
-  }, [user]);
+  }, [hasHydrated, user]);
 
   return (
     <div style={{maxWidth:680,margin:"0 auto",padding:"24px 16px"}}>

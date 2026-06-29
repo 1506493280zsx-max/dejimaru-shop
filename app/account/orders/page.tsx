@@ -2,6 +2,7 @@
 export const dynamic = "force-dynamic";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
+import { authFetch } from "@/lib/auth-fetch";
 import { useState, useEffect } from "react";
 
 const C = {
@@ -33,7 +34,7 @@ const STATUS_LABEL: Record<string,{label:string,color:string,bg:string}> = {
 
 export default function OrdersPage() {
   const router = useRouter();
-  const { user, token } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const [mounted, setMounted] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -42,18 +43,18 @@ export default function OrdersPage() {
 
   useEffect(()=>{
     if (!mounted) return;
+    if (!hasHydrated) return;
     if (!user) { router.push("/login"); return; }
     fetchOrders();
-  },[mounted, user]);
+  },[mounted, hasHydrated, user]);
 
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const res = await fetch(
+      const res = await authFetch(
         `/api/orders/list?email=${encodeURIComponent(user!.email)}`,
         {
           cache: "no-store",
-          headers: { Authorization: `Bearer ${token}` }
         }
       );
       const data = await res.json();
@@ -68,11 +69,10 @@ export default function OrdersPage() {
   const handleCancel = async (orderId: string) => {
     if (!confirm("この注文をキャンセルしますか？")) return;
     try {
-      const res = await fetch("/api/orders/cancel", {
+      const res = await authFetch("/api/orders/cancel", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ orderId }),
       });

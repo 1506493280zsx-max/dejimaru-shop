@@ -10,12 +10,12 @@ const C = {
 
 const ROWS: { label: string; value: React.ReactNode }[] = [
   { label: "販売業者",           value: "AI Across合同会社" },
-  { label: "運営責任者",         value: "代表社員　豊嶋 修来" },
+  { label: "運営責任者",         value: "豊嶋 修来" },
   { label: "所在地",             value: "〒306-0052　茨城県古河市大山1331-2" },
   { label: "関東センター",       value: "〒336-0026　埼玉県さいたま市南区辻8丁目3-5" },
   { label: "電話番号",           value: <>050-3091-0226 / 048-816-3967<br />受付時間：平日 10:00〜18:00（土日祝休）</> },
   { label: "メールアドレス",     value: "info@aiacross.com" },
-  { label: "ウェブサイト",       value: "https://aiacross.com/" },
+  { label: "ウェブサイト",       value: "https://aiacrossshop.co.jp/" },
   { label: "販売価格",           value: "各商品ページに表示された価格（税込）" },
   { label: "送料",               value: (
     <div>
@@ -42,9 +42,9 @@ const ROWS: { label: string; value: React.ReactNode }[] = [
       <div style={{ marginTop: 8, fontSize: 11, color: "#888" }}>※ ¥20,000以上のご購入で送料無料（一部地域・大型商品を除く）</div>
     </div>
   ) },
-  { label: "支払方法",           value: "クレジットカード（VISA / Mastercard / JCB / AMEX）、PayPay、楽天ペイ、au PAY、Apple Pay、Google Pay、銀行振込" },
+  { label: "支払方法",           value: "クレジットカード（JCB / AMEX / Diners）" },
   { label: "商品の引渡し時期",   value: "ご注文確認後、通常1〜3営業日以内に発送（在庫状況により異なる場合があります）" },
-  { label: "返品・交換",         value: <>商品到着後8日以内かつ未開封・未使用品に限り返品可。お客様都合の返品は送料お客様負担。<br />初期不良品は到着後8日以内にご連絡ください（送料当社負担で交換対応）。</> },
+  { label: "返品・交換",         value: <>商品到着後30日以内かつ未開封・未使用品に限り返品可。お客様都合の返品は送料お客様負担。<br />初期不良品は到着後30日以内にご連絡ください（送料当社負担で交換対応）。</> },
   { label: "保証",               value: (
     <>
       <div style={{ marginBottom: 6 }}>
@@ -57,7 +57,7 @@ const ROWS: { label: string; value: React.ReactNode }[] = [
       </div>
     </>
   ) },
-  { label: "古物商許可番号",     value: "茨城県公安委員会許可　第081234567890号" },
+  { label: "古物商許可番号",     value: "埼玉県公安委員会許可　第431030058175号" },
   { label: "個人情報の取扱い",   value: "当社プライバシーポリシーに基づき適切に管理します。第三者への提供は法令に定める場合を除き行いません。" },
 ];
 

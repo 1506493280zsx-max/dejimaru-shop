@@ -96,10 +96,22 @@ export function buildSBPSParams(input: {
 export function verifySBPSCallback(params: Record<string, string>): boolean {
   const received = params.sps_hashcode;
   if (!received) return false;
-  const copy = { ...params };
-  delete copy.sps_hashcode;
-  copy.hashkey = SBPS_CONFIG.hashKey;
-  const hashStr = HASH_FIELDS.map(f => copy[f] ?? "").join("");
-  const expected = crypto.createHash("sha1").update(hashStr, "utf8").digest("hex");
-  return received === expected;
+
+  // 結果CGI(A02-1)の項目定義順（明細dtl_*は無い前提、sps_hashcode除外）
+  const CGI_ORDER = [
+    "pay_method", "merchant_id", "service_id", "cust_code", "sps_cust_no",
+    "sps_payment_no", "order_id", "item_id", "pay_item_id", "item_name",
+    "tax", "amount", "pay_type", "auto_charge_type", "service_type",
+    "div_settele", "last_charge_month", "camp_type", "tracking_id", "terminal_type",
+    "free1", "free2", "free3", "request_date",
+    "res_pay_method", "res_result", "res_tracking_id", "res_sps_cust_no",
+    "res_sps_payment_no", "res_payinfo_key", "res_payment_date", "res_err_code",
+    "res_date", "limit_second",
+  ];
+
+  // 各値の前後の半角スペースを除去して項目定義順に連結、末尾にhashkey、UTF-8でSHA1、大文字
+  const hashStr = CGI_ORDER.map(f => (params[f] ?? "").trim()).join("") + SBPS_CONFIG.hashKey;
+  const expected = crypto.createHash("sha1").update(hashStr, "utf8").digest("hex").toUpperCase();
+
+  return received.toUpperCase() === expected;
 }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendOrderConfirmationEmail } from "@/lib/mail";
+import { verifySBPSCallback } from "@/lib/sbps";
 
 const DIRECTUS = process.env.DIRECTUS_URL || "http://13.158.171.41:8055";
 const TOKEN = process.env.ADMIN_TOKEN || "";
@@ -13,12 +14,11 @@ export async function POST(req: NextRequest) {
 
     const orderNumber = params.order_id || "";
 
-    // === 一時デバッグ：コールバック全体を確認 ===
-    console.log("[callback-debug] raw body:", body);
-    console.log("[callback-debug] parsed params:", JSON.stringify(params));
-    console.log("[callback-debug] sps_hashcode received:", params.sps_hashcode || "(none)");
-    console.log("[callback-debug] has non-ascii:", /[^\x00-\x7F]/.test(body));
-    // === デバッグここまで ===
+    // SBPSハッシュ署名検証（改ざん・偽造コールバック拒否）
+    if (!verifySBPSCallback(params)) {
+      console.error("[payment/callback] hash verification failed:", orderNumber);
+      return new Response("NG", { status: 200 });
+    }
 
     const result = params.res_result || "";
 

@@ -11,7 +11,7 @@ export default function PaymentMethods() {
         height={120}
         style={{
           width: "100%",
-          maxWidth: "360px",
+          maxWidth: "210px",
           height: "auto",
           objectFit: "contain",
           display: "block",

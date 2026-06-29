@@ -154,8 +154,8 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
           </div>
           <div style={{maxHeight:shippingOpen?320:0,overflow:"hidden",transition:"max-height 0.25s ease"}}>
             <div style={{borderTop:`1px solid ${C.primaryBorder}`,padding:"6px 8px",display:"flex",flexDirection:"column",gap:3}}>
-              {SHIPPING_RATES.map(({r,p})=>(
-                <div key={r} style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:6,fontSize:10,color:C.text}}>
+              {SHIPPING_RATES.map(({r,p},idx)=>(
+                <div key={r} style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:6,fontSize:10,color:C.text,paddingBottom:4,marginBottom:4,borderBottom:idx<SHIPPING_RATES.length-1?"1px solid #EEE":"none"}}>
                   <span style={{flex:1,lineHeight:1.4}}>{r}</span>
                   <span style={{fontWeight:700,color:C.primaryDeep,whiteSpace:"nowrap",flexShrink:0}}>¥{p.toLocaleString()}</span>
                 </div>

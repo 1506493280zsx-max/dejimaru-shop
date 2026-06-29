@@ -87,9 +87,11 @@ function ProductCard({product, size="normal"}: {product:any, size?:string}) {
 }
 
 const SHIPPING_RATES = [
-  {r:"北海道",p:1430},{r:"東北",p:880},{r:"関東",p:880},
-  {r:"中部",p:880},{r:"関西",p:880},{r:"中国",p:880},
-  {r:"四国",p:880},{r:"九州",p:880},{r:"沖縄・離島",p:1980},
+  {r:"南東北・関東・信越・北陸・中部",p:1430},
+  {r:"東北・関西",p:1540},
+  {r:"中国・四国",p:1650},
+  {r:"北海道・九州",p:1760},
+  {r:"沖縄",p:2420},
 ];
 
 function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:any[],openCats:string[],setOpenCats:any,brands:Brand[]}) {
@@ -153,9 +155,9 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
           <div style={{maxHeight:shippingOpen?320:0,overflow:"hidden",transition:"max-height 0.25s ease"}}>
             <div style={{borderTop:`1px solid ${C.primaryBorder}`,padding:"6px 8px",display:"flex",flexDirection:"column",gap:3}}>
               {SHIPPING_RATES.map(({r,p})=>(
-                <div key={r} style={{display:"flex",justifyContent:"space-between",fontSize:10,color:C.text}}>
-                  <span>{r}</span>
-                  <span style={{fontWeight:700,color:C.primaryDeep}}>¥{p.toLocaleString()}</span>
+                <div key={r} style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:6,fontSize:10,color:C.text}}>
+                  <span style={{flex:1,lineHeight:1.4}}>{r}</span>
+                  <span style={{fontWeight:700,color:C.primaryDeep,whiteSpace:"nowrap",flexShrink:0}}>¥{p.toLocaleString()}</span>
                 </div>
               ))}
             </div>

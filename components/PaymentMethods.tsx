@@ -7,11 +7,11 @@ export default function PaymentMethods() {
       <Image
         src="/payment/payment-methods-transparent.png"
         alt="Payment Methods"
-        width={604}
-        height={120}
+        width={201}
+        height={44}
         style={{
           width: "100%",
-          maxWidth: "210px",
+          maxWidth: "160px",
           height: "auto",
           objectFit: "contain",
           display: "block",

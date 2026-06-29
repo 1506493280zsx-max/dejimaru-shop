@@ -321,10 +321,10 @@ export default function PurchasePanel({
             <Image
               src="/images/payment-methods.png"
               alt="対応決済方法"
-              width={2000}
-              height={300}
+              width={201}
+              height={44}
               priority
-              style={{ width: "100%", height: "auto", display: "block" }}
+              style={{ width: "100%", maxWidth: "160px", height: "auto", display: "block" }}
             />
           </div>
         </div>

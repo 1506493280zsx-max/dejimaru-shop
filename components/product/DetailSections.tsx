@@ -135,9 +135,9 @@ export default function DetailSections({ product, selectedVariant }: { product: 
           <Image
             src="/images/payment-methods.png"
             alt="お支払い方法"
-            width={2000}
-            height={300}
-            style={{ width: "100%", height: "auto", display: "block" }}
+            width={201}
+            height={44}
+            style={{ width: "100%", maxWidth: "160px", height: "auto", display: "block" }}
           />
         </div>
         <p style={{ margin: "10px 0 0", fontSize: 12 }}>※ 銀行振込手数料はお客様負担となります。代金引換は30万円以上ではご利用いただけません。</p>

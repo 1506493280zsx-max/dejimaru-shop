@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
+import { authFetch } from "@/lib/auth-fetch";
 import { useState, useEffect, useRef } from "react";
 
 const C = {
@@ -13,7 +14,7 @@ const PREFS = ["北海道","青森県","岩手県","宮城県","秋田県","山�
 
 export default function AddressPage() {
   const router = useRouter();
-  const { user, token } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const [mounted, setMounted] = useState(false);
   const [addresses, setAddresses] = useState<any[]>([]);
   const [customerId, setCustomerId] = useState<string|null>(null);
@@ -37,14 +38,13 @@ export default function AddressPage() {
   };
 
   useEffect(()=>{ setMounted(true); },[]);
-  useEffect(()=>{ if(mounted&&!user) router.push("/login"); else if(mounted&&user) fetchData(); },[mounted,user]);
+  useEffect(()=>{ if(!mounted||!hasHydrated) return; if(!user) router.push("/login"); else fetchData(); },[mounted,hasHydrated,user]);
 
 const fetchData = async () => {
   setLoading(true);
 
   try {
-    const res = await fetch(`/api/address`, {
-      headers: { Authorization: `Bearer ${token}` },
+    const res = await authFetch(`/api/address`, {
       cache: "no-store",
     });
 
@@ -110,20 +110,18 @@ const fetchData = async () => {
   let res;
 
   if (editId) {
-    res = await fetch(`/api/address/${editId}`, {
+    res = await authFetch(`/api/address/${editId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     });
   } else {
-    res = await fetch(`/api/address`, {
+    res = await authFetch(`/api/address`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(body),
     });
@@ -150,9 +148,8 @@ const handleDelete = async (id:number) => {
   if (!confirm("この住所を削除しますか？")) return;
 
   try {
-    const res = await fetch(`/api/address/${id}`, {
+    const res = await authFetch(`/api/address/${id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!res.ok) {

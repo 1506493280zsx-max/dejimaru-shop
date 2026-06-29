@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
+import { authFetch } from "@/lib/auth-fetch";
 
 const C = {
   primary:"#0ABAB5", primaryBg:"#E8F8F8", primaryBorder:"#B0E0DE",
@@ -10,7 +11,7 @@ const C = {
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user, token } = useAuthStore();
+  const { user, token, hasHydrated } = useAuthStore();
   const [form, setForm] = useState({ last_name:"", first_name:"", phone:"" });
   const [pwForm, setPwForm] = useState({ current_password:"", new_password:"", confirm_password:"" });
   const [msg, setMsg] = useState("");
@@ -22,19 +23,19 @@ export default function ProfilePage() {
   const [emailLoading, setEmailLoading] = useState(false);
 
   useEffect(() => {
-    if (!token) return;
-    fetch("/api/account/profile", { headers: { Authorization: `Bearer ${token}` } })
+    if (!hasHydrated || !token) return;
+    authFetch("/api/account/profile")
       .then(r => r.json())
       .then(d => {
         if (d.data) setForm({ last_name: d.data.last_name || "", first_name: d.data.first_name || "", phone: d.data.phone || "" });
       });
-  }, [token]);
+  }, [hasHydrated, token]);
 
   const handleSubmit = async () => {
     setLoading(true); setMsg("");
-    const r = await fetch("/api/account/profile", {
+    const r = await authFetch("/api/account/profile", {
       method: "PATCH",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form)
     });
     const d = await r.json();
@@ -45,9 +46,9 @@ export default function ProfilePage() {
   const handlePassword = async () => {
     if (pwForm.new_password !== pwForm.confirm_password) { setPwMsg("❌ 新しいパスワードが一致しません"); return; }
     setPwLoading(true); setPwMsg("");
-    const r = await fetch("/api/account/password", {
+    const r = await authFetch("/api/account/password", {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ current_password: pwForm.current_password, new_password: pwForm.new_password })
     });
     const d = await r.json();
@@ -59,9 +60,9 @@ export default function ProfilePage() {
   const handleEmail = async () => {
     if (!emailForm.current_password || !emailForm.new_email) { setEmailMsg("❌ 入力内容を確認してください"); return; }
     setEmailLoading(true); setEmailMsg("");
-    const r = await fetch("/api/account/email", {
+    const r = await authFetch("/api/account/email", {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(emailForm)
     });
     const d = await r.json();

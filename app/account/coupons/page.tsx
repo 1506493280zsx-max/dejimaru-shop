@@ -2,6 +2,7 @@
 export const dynamic = "force-dynamic";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/lib/auth-store";
+import { authFetch } from "@/lib/auth-fetch";
 import { useState, useEffect } from "react";
 
 const C = {
@@ -29,7 +30,7 @@ type CouponItem = {
 
 export default function MyCouponsPage() {
   const router = useRouter();
-  const { user, token } = useAuthStore();
+  const { user, hasHydrated } = useAuthStore();
   const [mounted, setMounted] = useState(false);
   const [coupons, setCoupons] = useState<CouponItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,12 +39,13 @@ export default function MyCouponsPage() {
 
   useEffect(() => {
     if (!mounted) return;
+    if (!hasHydrated) return;
     if (!user) { router.push("/login"); return; }
-    fetch("/api/coupons/my", { headers: { Authorization: `Bearer ${token}` } })
+    authFetch("/api/coupons/my")
       .then(r => r.json())
       .then(d => setCoupons(d.data || []))
       .finally(() => setLoading(false));
-  }, [mounted, user]);
+  }, [mounted, hasHydrated, user]);
 
   const statusLabel = (s: string) => {
     if (s === "available") return { label: "利用可能", color: C.primary };

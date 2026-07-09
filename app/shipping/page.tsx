@@ -31,9 +31,11 @@ function InfoBox({ children }: { children: React.ReactNode }) {
 }
 
 const FEES = [
-  { region: "本州・四国・九州", standard: "¥880（税込）", over: "¥15,000以上で送料無料" },
-  { region: "北海道",           standard: "¥1,430（税込）", over: "¥15,000以上で送料無料" },
-  { region: "沖縄・離島",       standard: "¥1,980（税込）", over: "―" },
+  { region: "南東北・関東・信越・北陸・中部", standard: "¥1,430（税込）", over: "¥15,000以上で送料無料" },
+  { region: "東北・関西",                     standard: "¥1,540（税込）", over: "¥15,000以上で送料無料" },
+  { region: "中国・四国",                     standard: "¥1,650（税込）", over: "¥15,000以上で送料無料" },
+  { region: "北海道・九州",                   standard: "¥1,760（税込）", over: "¥15,000以上で送料無料" },
+  { region: "沖縄",                           standard: "¥2,420（税込）", over: "—" },
 ];
 
 const TIMES = [

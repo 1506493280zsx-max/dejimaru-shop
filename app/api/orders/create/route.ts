@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getZone, getShipping } from "@/lib/shipping";
 
 const DIRECTUS = "http://13.158.171.41:8055";
 const TOKEN =
@@ -104,7 +105,9 @@ export async function POST(req: NextRequest) {
     // ポイント割引をサーバー側で検証（1pt=1円）
     const pointsToUse = Number(points_used) || 0;
     const serverPointsDiscount = Math.min(pointsToUse, serverSubtotal);
-    const serverShippingFee = serverSubtotal >= 5000 ? 0 : 800;
+    // 送料は配送先の都道府県から地域別料金を算出（フロントの値を信用しない）
+    const shipZone = getZone(shippingAddress?.prefecture ?? "");
+    const { shippingFee: serverShippingFee } = await getShipping(serverSubtotal, shipZone);
     const serverTotal = Math.max(0,
       serverSubtotal + serverWarrantySubtotal + serverShippingFee
       - serverDiscount - serverPointsDiscount

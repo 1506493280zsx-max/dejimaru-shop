@@ -45,7 +45,7 @@ export default function CheckoutPage() {
 
   // ── 送料 state ───────────────────────────────────────────────
   const [shippingFee, setShippingFee] = useState(0);
-  const [freeThreshold, setFreeThreshold] = useState(10000);
+  const [freeThreshold, setFreeThreshold] = useState(15000);
   const [isFreeShipping, setIsFreeShipping] = useState(false);
   const [shippingLoading, setShippingLoading] = useState(false);
   const [guestEmail, setGuestEmail] = useState("");
@@ -153,7 +153,7 @@ export default function CheckoutPage() {
         const d = await res.json();
         if (d.error) return;
         setShippingFee(d.shippingFee ?? 0);
-        setFreeThreshold(d.freeShippingThreshold ?? 10000);
+        setFreeThreshold(d.freeShippingThreshold ?? 15000);
         setIsFreeShipping(d.isFreeShipping ?? false);
       } catch {}
       finally { setShippingLoading(false); }

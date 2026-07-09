@@ -39,7 +39,7 @@ const ROWS: { label: string; value: React.ReactNode }[] = [
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 8, fontSize: 11, color: "#888" }}>※ ¥20,000以上のご購入で送料無料（一部地域・大型商品を除く）</div>
+      <div style={{ marginTop: 8, fontSize: 11, color: "#888" }}>※ ¥15,000以上のご購入で送料無料（一部地域を除く）</div>
     </div>
   ) },
   { label: "支払方法",           value: "クレジットカード（JCB / AMEX / Diners）" },

@@ -150,7 +150,7 @@ export default function DetailSections({ product, selectedVariant }: { product: 
           {[
             { t: "配送業者", d: "ヤマト運輸 / 日本郵便" },
             { t: "出荷日",   d: "平日14時までは当日出荷" },
-            { t: "送料",     d: "全国一律無料（離島除く）" },
+            { t: "送料",     d: "地域別（¥15,000以上で送料無料・沖縄を除く）" },
           ].map((item, i) => (
             <div key={i} style={{ background: C.primaryBg, border: `1px solid ${C.primaryBorder}`, borderRadius: 2, padding: 10, textAlign: "center" }}>
               <div style={{ fontSize: 11, color: C.textSub, marginBottom: 4 }}>{item.t}</div>

@@ -80,7 +80,7 @@ export default function CartPage() {
               </div>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:8,fontSize:12}}>
                 <span style={{color:C.textSub}}>送料</span>
-                <span style={{color:C.primary,fontWeight:700}}>無料</span>
+                <span style={{color:C.textSub,fontSize:11,textAlign:"right"}}>お届け地域により異なります<br/>（¥15,000以上で送料無料・一部地域を除く）</span>
               </div>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:16,fontSize:16,fontWeight:700,paddingTop:8,borderTop:`1px solid ${C.border}`}}>
                 <span>合計（税込）</span>
@@ -103,7 +103,7 @@ export default function CartPage() {
               )}
 
               <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
-                {["🛡️ 30日間動作保証","🚚 送料無料","🔒 安全な決済"].map(t=>(
+                {["🛡️ 30日間動作保証","🚚 送料はお届け地域により異なります（¥15,000以上で送料無料・一部地域を除く）","🔒 安全な決済"].map(t=>(
                   <div key={t} style={{fontSize:11,color:C.textSub,display:"flex",alignItems:"center",gap:4}}>{t}</div>
                 ))}
               </div>

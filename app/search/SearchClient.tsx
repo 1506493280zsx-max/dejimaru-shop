@@ -123,7 +123,7 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
         );
       })}
       <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
-        {[{icon:"🚚",title:"送料について",sub:"全国一律送料"},{icon:"🛡️",title:"30日間保証",sub:"全商品保証付き"},{icon:"📞",title:"お問い合わせ",sub:"03-0000-0000"}].map((item,i)=>(
+        {[{icon:"🚚",title:"送料について",sub:"全国一律送料"},{icon:"🛡️",title:"90日間保証",sub:"全商品保証付き"},{icon:"📞",title:"お問い合わせ",sub:"03-0000-0000"}].map((item,i)=>(
           <div key={i} style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>
             <div style={{fontSize:12,fontWeight:700,color:C.text,display:"flex",alignItems:"center",gap:5}}><span>{item.icon}</span>{item.title}</div>
             <div style={{fontSize:10,color:C.textLight,marginTop:2}}>{item.sub}</div>

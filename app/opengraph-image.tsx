@@ -26,7 +26,7 @@ export default function Image() {
         中古PC・スマホの専門店
       </div>
       <div style={{ fontSize: 24, color: "rgba(255,255,255,0.7)", marginTop: 16 }}>
-        全商品30日間動作保証 | 送料無料
+        全商品90日間動作保証 | 送料無料
       </div>
     </div>,
     { ...size }

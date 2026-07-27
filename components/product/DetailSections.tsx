@@ -51,7 +51,7 @@ export default function DetailSections({ product, selectedVariant }: { product: 
     : [
         `グレード${gradeLabel}の高品質な商品です`,
         "発送前に動作確認・初期化済みでお届けします",
-        "商品到着後30日間の初期不良保証付き",
+        "商品到着後90日間の初期不良保証付き",
         "平日14時までのご注文は当日出荷対応",
       ];
 
@@ -104,7 +104,7 @@ export default function DetailSections({ product, selectedVariant }: { product: 
       <Panel>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 12 }}>
           {[
-            { t: "初期不良保証", d: "商品到着後30日間の初期不良保証が付いています。" },
+            { t: "初期不良保証", d: "商品到着後90日間の初期不良保証が付いています。" },
             { t: "動作確認済み", d: "発送前に全商品の動作確認・初期化を実施しています。" },
             { t: "保証対象外",   d: "お客様の過失・改造・水没による故障は対象外です。" },
             { t: "プレミアム保証",     d: "プレミアム保証プランに加入いただくと、対象機器の修理を生涯にわたって保証いたします。" },
@@ -165,7 +165,7 @@ export default function DetailSections({ product, selectedVariant }: { product: 
       <SH title="返品・交換ポリシー" icon="↩️" />
       <Panel>
         <div style={{ marginBottom: 10, padding: "10px 14px", background: "#FFF8E8", border: "1px solid #F0D080", borderRadius: 2, fontSize: 12 }}>
-          <strong>返品受付期間：</strong>商品到着後30日以内にご連絡ください
+          <strong>返品受付期間：</strong>商品到着後90日以内にご連絡ください
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
           <div>
@@ -180,7 +180,7 @@ export default function DetailSections({ product, selectedVariant }: { product: 
             <div style={{ fontWeight: 700, color: C.red, marginBottom: 6, fontSize: 12 }}>返品不可な場合</div>
             <ul style={{ paddingLeft: 16, margin: 0, fontSize: 12 }}>
               <li>お客様都合による返品</li>
-              <li>到着後30日以降のご連絡</li>
+              <li>到着後90日以降のご連絡</li>
               <li>お客様による破損・改造</li>
             </ul>
           </div>

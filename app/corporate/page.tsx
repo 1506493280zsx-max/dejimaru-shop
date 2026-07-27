@@ -20,7 +20,7 @@ const CORP_FAQS = [
   {q:"請求書の違い・返却・交換は可能ですか？", a:"個人のご連絡に基づき、書き替えや返却・交換対応する場合がございます。弊社までお気軽にお問い合わせください。"},
   {q:"複数ご購入の分割払いに対応してくれますか？", a:"はい。複数のご利用・スペック・業種ごとに分割払いに対応しております。事前にご相談いただければ調整いたします。"},
   {q:"キッティングサービスとはどのようなものですか？", a:"OS設定・ソフトウェアインストール・ドメイン参加・管理レベル設定などを事前に実施するサービスです。ご質問等はお気軽にお問い合わせください。"},
-  {q:"保証期間を教えてください", a:"全品納期30日間保証返品いたします。初期不良は迅速に対応いたします。または弊社で対応いたします。長期保証オプションもご利用しております。"},
+  {q:"保証期間を教えてください", a:"全品納期90日間保証返品いたします。初期不良は迅速に対応いたします。または弊社で対応いたします。長期保証オプションもご利用しております。"},
   {q:"複数台購入は対応してくれますか？", a:"はい。複数台購入については、別途複数台購入対応いたします。"},
   {q:"仕様の確認や入替・交換は可能ですか？", a:"大規模導入の場合には、事前にご相談いただければ可能な限り仕様確認いたします。お気軽にお問い合わせください。"},
   {q:"データ消去対応は行われますか？", a:"はい。当社による環境からのデータ消去実施および秘密保証オプション等も承っております。"},
@@ -249,14 +249,14 @@ export default function CorporatePage() {
       {/* 3a. POINT 1: left image / right text */}
       <div style={{background:C.bg,padding:"52px 0"}}>
         <div style={{maxWidth:960,margin:"0 auto",padding:"0 20px"}}>
-          <PointLabel num={1} title="全品納期30日間返品保証" sub="注文されたすべての商品に返品保証が付きます。不良品は迅速に対応いたします。" />
+          <PointLabel num={1} title="全品納期90日間返品保証" sub="注文されたすべての商品に返品保証が付きます。不良品は迅速に対応いたします。" />
           <div style={{display:"flex",gap:28,alignItems:"center",flexWrap:"wrap"}}>
             <div style={{width:"50%",flex:"0 0 50%",minWidth:0}}>
-              <img src="/corporate/points/point1.png" alt="蜈ｨ蝠・刀30譌･髢灘虚菴應ｿ晁ｨｼ" loading="eager" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" style={{width:"100%",height:"auto",display:"block",borderRadius:12}}/>
+              <img src="/corporate/points/point1.png" alt="全商品90日間動作保証" loading="eager" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px" style={{width:"100%",height:"auto",display:"block",borderRadius:12}}/>
             </div>
             <div style={{flex:1,minWidth:0}}>
               <BulletList items={[
-                "全品納期で30日間保証返品をお付けします",
+                "全品納期で90日間保証返品をお付けします",
                 "初期不良は迅速に対応対応",
                 "長期保証オプション、最長1年も選択可能",
                 "IT専門家による毎日対応をフォロー",
@@ -354,7 +354,7 @@ export default function CorporatePage() {
             {[
               {num:"最大60%",label:"新品同比コスト削減"},
               {num:"10台～",label:"まとめ買いへの対応"},
-              {num:"30日間",label:"全品納期返品保証"},
+              {num:"90日間",label:"全品納期返品保証"},
             ].map(({num,label},i)=>(
               <div key={i} style={{background:"rgba(255,255,255,0.1)",borderRadius:2,padding:"22px 16px",textAlign:"center",border:"1px solid rgba(255,255,255,0.18)"}}>
                 <div style={{fontSize:28,fontWeight:900,color:"#fff",marginBottom:6}}>{num}</div>
@@ -430,7 +430,7 @@ export default function CorporatePage() {
             {[
               {num:"累計35万台以上",label:"豊富な販売実績",body:"全国のお客様へ累計35万台以上のPCを販売。長年培った経験と実績で安心のお取引をサポートします。"},
               {num:"法人・教育機関向け",label:"大量導入・お見積り対応",body:"10台から数百台規模まで柔軟に対応。学校・企業・自治体向けの導入相談も承ります。"},
-              {num:"30日間返品保証",  label:"ご購入後も安心",  body:"万が一の初期不良や不具合にも対応。商品到着後30日以内であれば返品・交換が可能です。"},
+              {num:"90日間返品保証",  label:"ご購入後も安心",  body:"万が一の初期不良や不具合にも対応。商品到着後90日以内であれば返品・交換が可能です。"},
               {num:"プレミアム保証",label:"さらに長く安心",body:"長期利用をサポートする保証プランをご用意。業務利用や法人利用にも安心してご利用いただけます。"},
             ].map(({num,label,body},i)=>(
               <div key={i} style={{background:C.white,border:`1px solid ${C.border}`,borderTop:`3px solid ${C.primary}`,borderRadius:"0 0 2px 2px",padding:20,textAlign:"center"}}>

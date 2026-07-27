@@ -93,7 +93,7 @@ export default function GuideClient({categories, brands = []}:{categories:any[],
             </Section>
 
             <Section id="warranty" title="保証について">
-              <Row label="保証期間" value="商品到着後30日間（初期不良対応）"/>
+              <Row label="保証期間" value="商品到着後90日間（初期不良対応）"/>
               <Row label="保証内容" value="通常使用における故障・初期不良の場合、交換または返金対応"/>
               <Row label="対象外" value="お客様の過失による破損・水没・改造等"/>
             </Section>
@@ -101,7 +101,7 @@ export default function GuideClient({categories, brands = []}:{categories:any[],
             <Section id="defect" title="初期不良について">
               <p>万が一初期不良があった場合の対応です。</p><br/>
               <ol style={{paddingLeft:20}}>
-                <li style={{marginBottom:6}}>商品到着後30日以内にご連絡ください</li>
+                <li style={{marginBottom:6}}>商品到着後90日以内にご連絡ください</li>
                 <li style={{marginBottom:6}}>当ショップにて状況を確認いたします</li>
                 <li style={{marginBottom:6}}>代替品の発送またはご返金にて対応いたします</li>
               </ol>

@@ -102,7 +102,7 @@ export default function Footer() {
             </div>
 
             <div style={{ fontSize: 12, color: FC.textSub, lineHeight: 1.7, marginBottom: 16 }}>
-              中古PC・スマホ・タブレットの専門店。全商品30日保証・送料無料。
+              中古PC・スマホ・タブレットの専門店。全商品90日保証・送料無料。
             </div>
 
             <div style={{ fontSize: 11, color: FC.textSub, lineHeight: 1.9, marginBottom: 16 }}>

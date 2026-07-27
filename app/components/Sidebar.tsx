@@ -54,7 +54,7 @@ export default function Sidebar({categories, brands=[]}: {categories:any[], bran
       })}
       <SearchFilter brands={brands} />
       <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
-        {[{title:"送料について",sub:"全国一律無料"},{title:"30日間保証",sub:"全商品保証付き"},{title:"お問い合わせ",sub:"メールにて受付"}].map((item,i)=>(
+        {[{title:"送料について",sub:"全国一律無料"},{title:"90日間保証",sub:"全商品保証付き"},{title:"お問い合わせ",sub:"メールにて受付"}].map((item,i)=>(
           <div key={i} style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>
             <div style={{fontSize:12,fontWeight:700,color:C.text}}>{item.title}</div>
             <div style={{fontSize:10,color:C.textLight,marginTop:2}}>{item.sub}</div>

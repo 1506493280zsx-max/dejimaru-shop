@@ -647,7 +647,7 @@ export default function CheckoutPage() {
             </button>
 
             <div style={{display:"flex",flexDirection:"column",gap:6,marginTop:8}}>
-              {["🛡️ 30日間動作保証","🚚 送料について","🔒 安全な決済"].map(t => (
+              {["🛡️ 90日間動作保証","🚚 送料について","🔒 安全な決済"].map(t => (
                 <div key={t} style={{fontSize:11,color:C.textSub,display:"flex",alignItems:"center",gap:4}}>{t}</div>
               ))}
             </div>

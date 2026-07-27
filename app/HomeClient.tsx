@@ -164,7 +164,7 @@ function CategorySidebar({categories,openCats,setOpenCats,brands}: {categories:a
           </div>
         </div>
         <div style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>
-          <div style={{fontSize:12,fontWeight:700,color:C.text}}>🛡️ 30日間保証</div>
+          <div style={{fontSize:12,fontWeight:700,color:C.text}}>🛡️ 90日間保証</div>
           <div style={{fontSize:10,color:C.textLight,marginTop:2}}>全商品保証付き</div>
         </div>
         <div style={{background:C.primaryBg,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"6px 8px"}}>
@@ -371,7 +371,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
             <div style={{background:`linear-gradient(135deg,${C.primaryBg},#C8EEEC)`,border:`1px solid ${C.primaryBorder}`,borderRadius:2,padding:"14px 18px",marginBottom:10,display:"flex",alignItems:"center",gap:16}}>
               <div>
                 <div style={{fontSize:18,fontWeight:900,color:C.primaryDeep}}>{"中古PC・スマートフォンが激安！"}</div>
-                <div style={{fontSize:12,color:C.textSub,marginTop:4}}>{"全商品30日間返金保証付き・当日出荷対応"}</div>
+                <div style={{fontSize:12,color:C.textSub,marginTop:4}}>{"全商品90日間返金保証付き・当日出荷対応"}</div>
               </div>
               <div style={{marginLeft:"auto"}}>
                 <button onClick={()=>router.push("/search")} style={{background:C.primary,color:"#fff",border:"none",padding:"8px 16px",borderRadius:2,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>{"商品一覧を見る"} &rarr;</button>
@@ -423,7 +423,7 @@ export default function HomeClient({featured,newArrivals,categories,brands,blogP
 
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
               {[
-                {title:"30日間返金保証",body:"全商品に返金保証をつけてお届けします。一点一点の商品の確認・清掃対応いたします。"},
+                {title:"90日間返金保証",body:"全商品に返金保証をつけてお届けします。一点一点の商品の確認・清掃対応いたします。"},
                 {title:"当日・翌日出荷",body:"年中14時までのご注文で当日出荷・翌日出荷。最速翌日お届け可能です（一部離島除く）。"},
                 {title:"専任スタッフが対応",body:"商品選びのお問い合わせは電話・メールで承っております。お気軽にお問い合わせください。"},
               ].map((item,i)=>(

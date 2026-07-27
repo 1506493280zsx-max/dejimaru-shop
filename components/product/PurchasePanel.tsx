@@ -309,7 +309,7 @@ export default function PurchasePanel({
         </button>
 
         <div style={{ display: "flex", gap: 16, marginTop: 8, flexWrap: "wrap" }}>
-          {["🛡️ 30日間保証", "🚚 即日発送", "📞 サポート付き"].map(t => (
+          {["🛡️ 90日間保証", "🚚 即日発送", "📞 サポート付き"].map(t => (
             <div key={t} style={{ fontSize: 11, color: C.textSub }}>{t}</div>
           ))}
         </div>

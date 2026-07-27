@@ -103,7 +103,7 @@ export default function CartPage() {
               )}
 
               <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
-                {["🛡️ 30日間動作保証","🚚 送料はお届け地域により異なります（¥15,000以上で送料無料・一部地域を除く）","🔒 安全な決済"].map(t=>(
+                {["🛡️ 90日間動作保証","🚚 送料はお届け地域により異なります（¥15,000以上で送料無料・一部地域を除く）","🔒 安全な決済"].map(t=>(
                   <div key={t} style={{fontSize:11,color:C.textSub,display:"flex",alignItems:"center",gap:4}}>{t}</div>
                 ))}
               </div>

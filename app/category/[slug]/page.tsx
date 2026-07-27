@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const title = `${name}の中古品一覧 | AI Across ショップ`;
     const description = category?.description
       ? category.description.replace(/<[^>]*>/g, "").slice(0, 160)
-      : `${name}の中古品を多数取り揃えています。全商品30日間動作保証・送料無料。`;
+      : `${name}の中古品を多数取り揃えています。全商品90日間動作保証・送料無料。`;
 
     return {
       title,

@@ -154,31 +154,32 @@ export default function SearchClient({initialProducts,brands,categories,query,br
   const [openCats,setOpenCats]=useState(initOpen);
 
   const filtered=initialProducts.filter(p=>{
-    const q=search.toLowerCase();
-    const matchQ=!q||p.name?.toLowerCase().includes(q)||p.brand_id?.name?.toLowerCase().includes(q)||p.short_description?.toLowerCase().includes(q);
+    // 关键字：服务端已用 Directus _icontains 查询过 name/description/sku，
+    // 这里不再二次过滤，避免把服务端命中的结果误删
     const matchG=!grade||p.grade===grade;
     const matchB=!brandFilter||p.brand_id?.slug===brandFilter||p.brand_id?.name?.toLowerCase()===brandFilter.toLowerCase();
     const matchC =
       !categoryFilter
       || p.category_id?.slug === categoryFilter
       || p.category_id?.name === categoryFilter;
+
+    // 价格：优先用变体价格，其次 min_price/max_price，最后 price；全部为空时不因价格过滤而排除
     const activeVariants = (p.product_variants || []).filter((v: any) => v.status === "active" && v.price > 0);
-    const hasVariants = activeVariants.length > 0;
+    const candidatePrices: number[] = activeVariants.length > 0
+      ? activeVariants.map((v: any) => v.price)
+      : [p.min_price, p.max_price, p.price].filter((x: any) => x != null && x > 0) as number[];
+
     let matchPMin = true;
     let matchPMax = true;
-    if (hasVariants) {
-      const variantPrices: number[] = activeVariants.map((v: any) => v.price);
-      if (priceMinFilter) matchPMin = variantPrices.some((price: number) => price >= parseInt(priceMinFilter, 10));
-      if (priceMaxFilter) matchPMax = variantPrices.some((price: number) => price <= parseInt(priceMaxFilter, 10));
-    } else {
-      const productPrice = p.price ?? 0;
-      if (priceMinFilter) matchPMin = productPrice >= parseInt(priceMinFilter, 10);
-      if (priceMaxFilter) matchPMax = productPrice <= parseInt(priceMaxFilter, 10);
+    if (candidatePrices.length > 0) {
+      if (priceMinFilter) matchPMin = candidatePrices.some((price) => price >= parseInt(priceMinFilter, 10));
+      if (priceMaxFilter) matchPMax = candidatePrices.some((price) => price <= parseInt(priceMaxFilter, 10));
     }
+
     const matchCpu = !cpuFilter || p.cpu === cpuFilter;
     const matchCpuGen = !cpuGenerationFilter || (p.cpu_generation && p.cpu_generation.toString().includes(cpuGenerationFilter));
     const matchScreenSize = !screenSizeFilter || (p.display_size && p.display_size.toString().includes(screenSizeFilter));
-    return matchQ&&matchG&&matchB&&matchC&&matchPMin&&matchPMax&&matchCpu&&matchCpuGen&&matchScreenSize;
+    return matchG&&matchB&&matchC&&matchPMin&&matchPMax&&matchCpu&&matchCpuGen&&matchScreenSize;
   }).sort((a,b)=>{
     if(sort==="price-asc") return a.price-b.price;
     if(sort==="price-desc") return b.price-a.price;

@@ -176,9 +176,32 @@ export default function SearchClient({initialProducts,brands,categories,query,br
       if (priceMaxFilter) matchPMax = candidatePrices.some((price) => price <= parseInt(priceMaxFilter, 10));
     }
 
-    const matchCpu = !cpuFilter || p.cpu === cpuFilter;
-    const matchCpuGen = !cpuGenerationFilter || (p.cpu_generation && p.cpu_generation.toString().includes(cpuGenerationFilter));
-    const matchScreenSize = !screenSizeFilter || (p.display_size && p.display_size.toString().includes(screenSizeFilter));
+    // CPU：规范化后做包含匹配（去掉 Intel/インテル/AMD/Apple 前缀，忽略大小写和空格）
+    // 这样 "Core i5" 能匹配筛选值 "Intel Core i5"，将来 "Intel Core i7-1165G7" 也能匹配 "Intel Core i7"
+    const normalizeCpu = (s: string) =>
+      (s || "")
+        .toLowerCase()
+        .replace(/intel|インテル|amd|apple|®|™|\s+/g, "")
+        .trim();
+    const matchCpu = !cpuFilter || (() => {
+      const pv = normalizeCpu(p.cpu);
+      const fv = normalizeCpu(cpuFilter);
+      return pv !== "" && fv !== "" && pv.includes(fv);
+    })();
+
+    // CPU世代：数据库是 "第10世代"，筛选值是纯数字 "10"。用精确的 "第N世代" 匹配，避免 "1" 误伤 "10/11/12"
+    const matchCpuGen = !cpuGenerationFilter || (p.cpu_generation != null && p.cpu_generation.toString().includes(`第${cpuGenerationFilter}世代`));
+
+    // 画面サイズ：数据库是 "13インチ"，筛选值是 "13"。用 "Nインチ" 精确匹配，"16+" 单独处理
+    const matchScreenSize = !screenSizeFilter || (() => {
+      if (p.display_size == null) return false;
+      const ds = p.display_size.toString();
+      if (screenSizeFilter === "16+") {
+        const num = parseInt(ds, 10);
+        return !isNaN(num) && num >= 16;
+      }
+      return ds.includes(`${screenSizeFilter}インチ`);
+    })();
     return matchG&&matchB&&matchC&&matchPMin&&matchPMax&&matchCpu&&matchCpuGen&&matchScreenSize;
   }).sort((a,b)=>{
     if(sort==="price-asc") return a.price-b.price;
